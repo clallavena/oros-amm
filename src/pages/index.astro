@@ -1,11 +1,270 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import Button from "../components/Button.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Importation des images
+import { Image } from "astro:assets";
+
+import heroImage from "../images/hero-montagne.jpg";
+import randonneeImage from "../images/randonnee.jpg";
+import natureImage from "../images/nature.jpg";
+import sortieImage from "../images/sortie.jpg";
+import profilImage from "../images/profil.jpg";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout
+  title="Clément Allavena — Accompagnateur en Moyenne Montagne"
+  description="Découvrez la montagne autrement, accompagné par un professionnel."
+>
+  <!-- HERO -->
+  <section
+    class="relative flex min-h-[90vh] items-end overflow-hidden"
+  >
+    <!-- Image -->
+	<Image
+	src={heroImage}
+	alt="Paysage de montagne des Alpes"
+	widths={[640, 1280, 1920]}
+	sizes="100vw"
+	class="absolute inset-0 h-full w-full object-cover"
+	/>
+
+    <!-- Overlay -->
+    <div
+      class="absolute inset-0 bg-black/35"
+    ></div>
+
+    <!-- Dégradé bas -->
+    <div
+      class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 to-transparent"
+    ></div>
+
+    <!-- Contenu -->
+    <Container class="relative z-10 pb-20 pt-32 md:pb-28">
+      <div class="max-w-3xl">
+        <p
+          class="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-white/80"
+        >
+          Accompagnateur en Moyenne Montagne
+        </p>
+
+        <h1
+          class="max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl"
+        >
+          La montagne,
+          <br />
+          à hauteur de pas.
+        </h1>
+
+        <p
+          class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 md:text-xl"
+        >
+          Des randonnées pour prendre le temps de découvrir,
+          comprendre et profiter de la montagne autrement.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-4">
+          <Button href="/sorties">
+            Découvrir les sorties
+          </Button>
+
+          <a
+            href="/a-propos"
+            class="inline-flex items-center justify-center rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-primary"
+          >
+            Qui suis-je ?
+          </a>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+
+  <!-- SORTIES -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      <SectionTitle
+        eyebrow="Explorer"
+        title="Des sorties pour découvrir la montagne autrement"
+        description="Que vous souhaitiez simplement profiter d'une belle randonnée ou approfondir votre découverte du milieu montagnard, je vous accompagne au rythme qui vous convient."
+      />
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+
+        <!-- Card 1 -->
+        <article
+          class="group overflow-hidden rounded-2xl bg-surface shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div class="aspect-4/3 overflow-hidden bg-primary-light">
+			
+            <Image
+              src={randonneeImage}
+              alt="Randonnée en montagne"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+          </div>
+
+          <div class="p-6">
+            <p class="text-sm font-semibold text-secondary">
+              Randonnée
+            </p>
+
+            <h3 class="mt-2 text-xl font-bold">
+              Explorer les sentiers
+            </h3>
+
+            <p class="mt-3 leading-relaxed text-text-muted">
+              Des itinéraires adaptés à votre niveau pour prendre
+              le temps de découvrir les paysages.
+            </p>
+
+            <a
+              href="/sorties"
+              class="mt-5 inline-block font-semibold text-primary"
+            >
+              Découvrir →
+            </a>
+          </div>
+        </article>
+
+
+        <!-- Card 2 -->
+        <article
+          class="group overflow-hidden rounded-2xl bg-surface shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div class="aspect-4/3 overflow-hidden bg-primary-light">
+            <Image
+              src={natureImage}
+              alt="Faune et flore de montagne"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+          </div>
+
+          <div class="p-6">
+            <p class="text-sm font-semibold text-secondary">
+              Nature
+            </p>
+
+            <h3 class="mt-2 text-xl font-bold">
+              Observer et comprendre
+            </h3>
+
+            <p class="mt-3 leading-relaxed text-text-muted">
+              Apprendre à observer la faune, la flore et les
+              paysages qui nous entourent.
+            </p>
+
+            <a
+              href="/sorties"
+              class="mt-5 inline-block font-semibold text-primary"
+            >
+              En savoir plus →
+            </a>
+          </div>
+        </article>
+
+
+        <!-- Card 3 -->
+        <article
+          class="group overflow-hidden rounded-2xl bg-surface shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div class="aspect-4/3 overflow-hidden bg-primary-light">
+            <Image
+              src={sortieImage}
+              alt="Sortie accompagnée en montagne"
+              class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+          </div>
+
+          <div class="p-6">
+            <p class="text-sm font-semibold text-secondary">
+              Sur mesure
+            </p>
+
+            <h3 class="mt-2 text-xl font-bold">
+              Une sortie rien que pour vous
+            </h3>
+
+            <p class="mt-3 leading-relaxed text-text-muted">
+              Une randonnée imaginée selon vos envies, votre
+              niveau et vos objectifs.
+            </p>
+
+            <a
+              href="/contact"
+              class="mt-5 inline-block font-semibold text-primary"
+            >
+              Parlons-en →
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </Container>
+  </section>
+
+
+  <!-- À PROPOS -->
+  <section class="bg-white py-24 md:py-32">
+    <Container>
+      <div class="grid items-center gap-12 md:grid-cols-2 md:gap-20">
+
+        <div class="overflow-hidden rounded-3xl">
+          <Image
+            src={profilImage}
+            alt="Ton prénom en montagne"
+            class="aspect-4/5 w-full object-cover"
+          />
+        </div>
+
+        <div>
+          <SectionTitle
+            eyebrow="À propos"
+            title="La montagne comme terrain de découverte"
+            description="Je suis [Prénom], Accompagnateur en Moyenne Montagne. J'aime partager les paysages, les histoires et les petits détails qui rendent chaque sortie unique."
+          />
+
+          <div class="mt-8">
+            <Button href="/a-propos" variant="ghost">
+              En savoir plus sur moi
+            </Button>
+          </div>
+        </div>
+
+      </div>
+    </Container>
+  </section>
+
+
+  <!-- CTA -->
+  <section class="bg-primary py-24 md:py-28">
+    <Container>
+      <div class="mx-auto max-w-3xl text-center">
+        <p
+          class="text-sm font-semibold uppercase tracking-[0.2em] text-white/60"
+        >
+          Votre prochaine sortie
+        </p>
+
+        <h2
+          class="mt-4 text-4xl font-bold tracking-tight text-white md:text-5xl"
+        >
+          Et si on partait en montagne ?
+        </h2>
+
+        <p class="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-white/75">
+          Une envie, une idée d'itinéraire ou simplement besoin
+          de conseils ? Écrivez-moi.
+        </p>
+
+        <div class="mt-8">
+          <Button href="/contact">
+            Me contacter
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

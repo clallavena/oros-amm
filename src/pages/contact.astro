@@ -1,0 +1,126 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+---
+
+<BaseLayout
+  title="Contact — Clément Allavena, Accompagnateur en Montagne"
+  description="Une question, une idée de sortie ou envie de réserver ? Contactez Clément Allavena, Accompagnateur en Moyenne Montagne."
+>
+  <!-- HEADER DE PAGE -->
+  <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+    <Container>
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+        Contact
+      </p>
+      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+        Parlons de votre prochaine sortie
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+        Une question, une envie d'itinéraire ou besoin de conseils ?
+        Écrivez-moi, je réponds sous 48h.
+      </p>
+    </Container>
+  </section>
+
+  <!-- FORMULAIRE + INFOS -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      <div class="grid gap-12 md:grid-cols-3 md:gap-16">
+        <!-- Formulaire -->
+        <form
+          class="md:col-span-2 grid gap-6 rounded-3xl bg-surface p-8 shadow-sm md:p-10"
+          method="POST"
+        >
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="nom" class="text-sm font-semibold text-text">
+                Nom
+              </label>
+              <input
+                type="text"
+                id="nom"
+                name="nom"
+                required
+                class="mt-2 w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-text outline-none transition focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="text-sm font-semibold text-text">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="mt-2 w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-text outline-none transition focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="sortie" class="text-sm font-semibold text-text">
+              Sortie qui vous intéresse
+            </label>
+            <select
+              id="sortie"
+              name="sortie"
+              class="mt-2 w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-text outline-none transition focus:border-primary"
+            >
+              <option value="balade-decouverte">Balade découverte</option>
+              <option value="immersion-nature">Immersion nature</option>
+              <option value="sur-mesure">Sortie sur mesure</option>
+              <option value="autre">Je ne sais pas encore</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="message" class="text-sm font-semibold text-text">
+              Votre message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              required
+              class="mt-2 w-full resize-none rounded-xl border border-border bg-white px-4 py-3 text-sm text-text outline-none transition focus:border-primary"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            class="inline-flex w-fit items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          >
+            Envoyer le message
+          </button>
+        </form>
+
+        <!-- Infos pratiques -->
+        <div class="flex flex-col gap-8">
+          <div>
+            <SectionTitle eyebrow="Coordonnées" title="Me contacter directement" />
+            <ul class="mt-5 flex flex-col gap-3 text-text-muted">
+              <li>
+                <a href="mailto:contact@oros-amm.fr" class="font-medium text-primary">
+                  contact@oros-amm.fr
+                </a>
+              </li>
+              <li>Annecy, Haute-Savoie</li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface p-6">
+            <h3 class="font-bold text-text">Zone d'intervention</h3>
+            <p class="mt-2 leading-relaxed text-text-muted">
+              Massif des Bornes-Aravis et alentours d'Annecy. D'autres
+              secteurs peuvent être envisagés selon la demande.
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

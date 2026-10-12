@@ -1,0 +1,119 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import Button from "../components/Button.astro";
+import { Image } from "astro:assets";
+
+import profilImage from "../images/profil.jpg";
+
+const valeurs = [
+  {
+    title: "Au rythme de chacun",
+    description:
+      "Chaque sortie est adaptée au niveau et aux envies du groupe, pas l'inverse.",
+  },
+  {
+    title: "Sécurité avant tout",
+    description:
+      "Itinéraires préparés en amont, matériel adapté et vigilance constante sur le terrain.",
+  },
+  {
+    title: "Transmettre, pas seulement guider",
+    description:
+      "Comprendre un paysage, reconnaître une plante ou lire une carte : la montagne se partage.",
+  },
+];
+---
+
+<BaseLayout
+  title="À propos — Clément Allavena, Accompagnateur en Montagne"
+  description="Diplômé d'État Accompagnateur en Moyenne Montagne, je partage ma passion pour la montagne à travers des sorties accompagnées."
+>
+  <!-- HERO -->
+  <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+    <Container>
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+        À propos
+      </p>
+      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+        La montagne, une passion à partager
+      </h1>
+    </Container>
+  </section>
+
+  <!-- PRÉSENTATION -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      <div class="grid items-center gap-12 md:grid-cols-2 md:gap-20">
+        <div class="overflow-hidden rounded-3xl">
+          <Image
+            src={profilImage}
+            alt="Clément Allavena en montagne"
+            class="aspect-4/5 w-full object-cover"
+          />
+        </div>
+
+        <div>
+          <SectionTitle
+            eyebrow="Qui suis-je ?"
+            title="Clément Allavena"
+            description="Accompagnateur en Moyenne Montagne diplômé d'État, basé en Haute-Savoie. Depuis toujours attaché aux Alpes, j'ai fait de cette passion mon métier : accompagner celles et ceux qui veulent découvrir la montagne à leur rythme, qu'ils soient débutants ou habitués des sentiers."
+          />
+          <p class="mt-6 leading-relaxed text-text-muted">
+            Mon approche : prendre le temps. Le temps d'observer un
+            paysage, de comprendre un écosystème, de respirer. Chaque
+            sortie est une occasion de voir la montagne autrement —
+            pas seulement de la traverser.
+          </p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- VALEURS -->
+  <section class="bg-white py-24 md:py-32">
+    <Container>
+      <SectionTitle
+        align="center"
+        eyebrow="Ma philosophie"
+        title="Ce qui guide chaque sortie"
+      />
+
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {valeurs.map((valeur) => (
+          <div class="rounded-2xl border border-border bg-surface p-8">
+            <h3 class="text-lg font-bold text-text">{valeur.title}</h3>
+            <p class="mt-3 leading-relaxed text-text-muted">
+              {valeur.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-primary py-24 md:py-28">
+    <Container>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-white md:text-4xl">
+          Envie de partir ensemble ?
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/75">
+          Découvrez les sorties proposées ou contactez-moi pour
+          construire la vôtre.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <Button href="/sorties">Voir les sorties</Button>
+          <a
+            href="/contact"
+            class="inline-flex items-center justify-center rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-primary"
+          >
+            Me contacter
+          </a>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

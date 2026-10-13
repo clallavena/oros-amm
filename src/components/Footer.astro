@@ -1,0 +1,68 @@
+---
+import Container from "./Container.astro";
+
+const year = new Date().getFullYear();
+
+const navLinks = [
+  { href: "/sorties", label: "Sorties" },
+  { href: "/a-propos", label: "À propos" },
+  { href: "/blog", label: "Blog" },
+  { href: "/contact", label: "Contact" },
+];
+---
+
+<footer class="bg-primary text-white">
+  <Container class="py-16">
+    <div class="grid gap-12 md:grid-cols-3">
+      <!-- Identité -->
+      <div>
+        <p class="text-lg font-bold">Clément Allavena</p>
+        <p class="mt-2 text-sm leading-relaxed text-white/70">
+          Accompagnateur en Montagne. Des sorties pour
+          découvrir la montagne à votre rythme.
+        </p>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-widest text-white/50">
+          Navigation
+        </p>
+        <ul class="mt-4 flex flex-col gap-2">
+          {navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="text-sm text-white/80 transition hover:text-white"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-widest text-white/50">
+          Contact
+        </p>
+        <ul class="mt-4 flex flex-col gap-2 text-sm text-white/80">
+          <li>
+            <a href="mailto:contact@oros-amm.fr" class="transition hover:text-white">
+              contact@oros-amm.fr
+            </a>
+          </li>
+          <li>Annecy, Haute-Savoie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-4 border-t border-white/15 pt-8 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Clément Allavena — Accompagnateur en Moyenne Montagne.</p>
+      <p>Diplômé d'État AMM</p>
+    </div>
+  </Container>
+</footer>

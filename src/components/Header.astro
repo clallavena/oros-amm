@@ -50,28 +50,28 @@
 
         <a
           href="/sorties"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-white"
+          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary-light"
         >
           Sorties
         </a>
 
         <a
           href="/a-propos"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-white"
+          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary-light"
         >
           À propos
         </a>
 
         <a
           href="/blog"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-white"
+          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary-light"
         >
           Blog
         </a>
 
         <a
           href="/contact"
-          class="nav-cta rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:bg-white/90"
+          class="nav-cta rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:bg-secondary-light"
         >
           Me contacter
         </a>
@@ -177,13 +177,17 @@
     navLinks.forEach((link) => {
         link.classList.toggle("text-white/90", !scrolled);
         link.classList.toggle("text-text", scrolled);
+        link.classList.toggle("hover:text-secondary-light", !scrolled);
+        link.classList.toggle("hover:text-primary", scrolled);
     });
 
     navCta?.classList.toggle("bg-white", !scrolled);
     navCta?.classList.toggle("text-primary", !scrolled);
+    navCta?.classList.toggle("hover:bg-secondary-light", !scrolled);
 
     navCta?.classList.toggle("bg-primary", scrolled);
     navCta?.classList.toggle("text-white", scrolled);
+    navCta?.classList.toggle("hover:bg-text", scrolled);
     };
 
 

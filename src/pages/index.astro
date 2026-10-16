@@ -244,7 +244,7 @@ import profilImage from "../images/profil.jpg";
     <Container>
       <div class="mx-auto max-w-3xl text-center">
         <p
-          class="text-sm font-semibold uppercase tracking-[0.2em] text-white/60"
+          class="text-sm font-semibold uppercase tracking-[0.2em] text-on-primary-muted"
         >
           Votre prochaine sortie
         </p>
@@ -265,12 +265,12 @@ import profilImage from "../images/profil.jpg";
             href="/contact"
             variant="secondary"
             size="lg"
-            class="group gap-3 shadow-lg shadow-black/20 hover:-translate-y-0.5 hover:shadow-xl"
+            class="group gap-3 shadow-lg shadow-black/20 motion-safe:hover:-translate-y-0.5 hover:shadow-xl"
           >
             Me contacter
             <span
               aria-hidden="true"
-              class="transition-transform duration-200 group-hover:translate-x-1"
+              class="transition-transform duration-200 motion-safe:group-hover:translate-x-1"
             >
               →
             </span>

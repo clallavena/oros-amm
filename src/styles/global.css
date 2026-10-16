@@ -1,18 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #285943;
-  --color-primary-light: #6f8f72;
-  --color-secondary: #c58b55;
-  --color-secondary-light: #e9c9a5;
-  --color-accent: #6f9da3;
+  /* On retire la palette par défaut de Tailwind : seules nos couleurs existent. */
+  --color-*: initial;
 
-  --color-background: #f7f5ef;
-  --color-surface: #ffffff;
+  /* ---------- Primitives (« quelle couleur ») ---------- */
+  /* Échelle forêt : teinte fixe 162°, seule la clarté L varie (+ chroma réduit aux extrêmes). */
+  --color-forest-50: oklch(98% 0.012 162);
+  --color-forest-100: oklch(94.9% 0.026 162);
+  --color-forest-200: oklch(89.1% 0.051 162);
+  --color-forest-300: oklch(78% 0.07 162);
+  --color-forest-400: oklch(61.9% 0.079 162);
+  --color-forest-500: oklch(42.3% 0.065 162); /* #285943 */
+  --color-forest-600: oklch(32.9% 0.049 162);
+  --color-forest-700: oklch(23.8% 0.034 162);
+  --color-forest-800: oklch(17.9% 0.019 162);
 
-  --color-text: #26302b;
-  --color-text-muted: #69736d;
-  --color-border: #dde2dc;
+  --color-stone-500: oklch(52% 0.03 162); /* neutre légèrement vert pour le texte secondaire */
+  --color-lime-400: oklch(85.4% 0.15 112);
+  --color-clay-500: oklch(52% 0.15 35);
+
+  --color-white: #fff;
+  --color-black: #000;
+
+  /* ---------- Rôles (« pour quoi faire ») ---------- */
+  /* Les composants n'utilisent que ces noms-là. */
+  --color-primary: var(--color-forest-500);
+  --color-primary-light: var(--color-forest-300);
+  --color-on-primary-muted: var(--color-forest-200);
+
+  --color-secondary: var(--color-lime-400);
+  --color-on-secondary: var(--color-forest-800);
+
+  --color-background: var(--color-forest-50);
+  --color-surface: var(--color-white);
+
+  --color-text: var(--color-forest-700);
+  --color-text-muted: var(--color-stone-500);
+
+  --color-border: var(--color-forest-200);
+  --color-border-strong: var(--color-forest-400);
+
+  --color-danger: var(--color-clay-500);
 }
 
 html {

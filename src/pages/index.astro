@@ -260,9 +260,20 @@ import profilImage from "../images/profil.jpg";
           de conseils ? Écrivez-moi.
         </p>
 
-        <div class="mt-8">
-          <Button href="/contact">
+        <div class="mt-10">
+          <Button
+            href="/contact"
+            variant="light"
+            size="lg"
+            class="group gap-3 shadow-lg shadow-black/20 hover:-translate-y-0.5 hover:shadow-xl"
+          >
             Me contacter
+            <span
+              aria-hidden="true"
+              class="transition-transform duration-200 group-hover:translate-x-1"
+            >
+              →
+            </span>
           </Button>
         </div>
       </div>

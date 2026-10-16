@@ -26,6 +26,7 @@
   /* ---------- Rôles (« pour quoi faire ») ---------- */
   /* Les composants n'utilisent que ces noms-là. */
   --color-primary: var(--color-forest-500);
+  --color-primary-hover: var(--color-forest-600);
   --color-primary-light: var(--color-forest-300);
   --color-on-primary-muted: var(--color-forest-200);
 
@@ -42,6 +43,10 @@
   --color-border-strong: var(--color-forest-400);
 
   --color-danger: var(--color-clay-500);
+
+  /* Anneau de focus double (WCAG technique C40) : contour foncé + liseré blanc.
+     Le foncé contraste sur fond clair, le blanc sur fond vert. */
+  --color-focus: var(--color-forest-700);
 }
 
 html {

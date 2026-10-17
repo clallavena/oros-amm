@@ -11,10 +11,16 @@ export default defineConfig({
     provider: fontProviders.fontsource(),
     name: "Epilogue",
     cssVariable: "--font-epilogue",
+    weights: ["600 700"],
+    styles: ["normal"],
+    fallbacks: ["sans-serif"],
   }, {
     provider: fontProviders.fontsource(),
     name: "Inter",
     cssVariable: "--font-inter",
+    weights: ["400 700"],
+    styles: ["normal", "italic"],
+    fallbacks: ["sans-serif"],
   }],
   vite: {
     plugins: [tailwindcss()]

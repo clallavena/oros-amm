@@ -2,6 +2,7 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
+import { Font } from "astro:assets";
 
 interface Props {
   title?: string;
@@ -28,6 +29,8 @@ const {
 
     <meta name="theme-color" content="#285943" />
     <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-epilogue"/>
+    <Font cssVariable="--font-inter"/>
   </head>
 
   <body class="bg-background text-text antialiased">

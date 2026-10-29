@@ -3,20 +3,24 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 import { Font } from "astro:assets";
+import { THEME_COLOR, type Univers } from "../lib/univers";
 
 interface Props {
   title?: string;
   description?: string;
+  /** Ambiance de la page. Par défaut, la marque (forêt). */
+  univers?: Univers;
 }
 
 const {
   title = "Accompagnateur en Montagne",
   description = "Découvrez la montagne autrement.",
+  univers = "forest",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-univers={univers}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -27,7 +31,7 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
 
-    <meta name="theme-color" content="#285943" />
+    <meta name="theme-color" content={THEME_COLOR[univers]} />
     <meta name="generator" content={Astro.generator} />
     <Font cssVariable="--font-epilogue"/>
     <Font cssVariable="--font-inter"/>

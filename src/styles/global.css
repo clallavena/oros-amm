@@ -28,8 +28,6 @@
   --color-white: #fff;
   --color-black: #000;
 
-  /* ---------- Rôles (« pour quoi faire ») ---------- */
-  /* Les composants n'utilisent que ces noms-là. */
   --color-primary: var(--color-forest-500);
   --color-primary-hover: var(--color-forest-600);
   --color-primary-light: var(--color-forest-300);
@@ -52,6 +50,79 @@
   /* Anneau de focus double (WCAG technique C40) : contour foncé + liseré blanc.
      Le foncé contraste sur fond clair, le blanc sur fond vert. */
   --color-focus: var(--color-forest-700);
+}
+
+/* ---------- Primitives des univers ---------- */
+/* Même clarté L que forest-* pour chaque cran : seules la teinte et le chroma changent.
+   Les contrastes texte/fond restent donc ceux de la forêt (tous ≥ 4,5:1, WCAG 1.4.3).
+   « static » : Tailwind génère ces variables même si aucune classe ne les utilise,
+   car elles ne sont lues que par les blocs [data-univers] plus bas. */
+@theme static {
+  /* Glacier (univers Neige) : teinte 248°, chroma ×1,3 par rapport à la forêt. */
+  --color-glacier-50: oklch(98% 0.008 248);
+  --color-glacier-100: oklch(94.9% 0.024 248);
+  --color-glacier-200: oklch(89.1% 0.055 248);
+  --color-glacier-300: oklch(78% 0.092 248);
+  --color-glacier-400: oklch(61.9% 0.103 248);
+  --color-glacier-500: oklch(42.3% 0.085 248); /* #23517a */
+  --color-glacier-600: oklch(32.9% 0.064 248);
+  --color-glacier-700: oklch(23.8% 0.044 248);
+  --color-glacier-800: oklch(17.9% 0.025 248);
+  --color-glacier-stone-500: oklch(52% 0.03 248);
+  --color-ice-300: oklch(88.1% 0.075 210); /* #9ce6f3, accent CTA */
+
+  /* Dusk (univers Crépuscule) : teinte 340°, chroma ×1,77 par rapport à la forêt. */
+  --color-dusk-50: oklch(98% 0.013 340);
+  --color-dusk-100: oklch(94.9% 0.034 340);
+  --color-dusk-200: oklch(89.1% 0.076 340);
+  --color-dusk-300: oklch(78% 0.124 340);
+  --color-dusk-400: oklch(61.9% 0.14 340);
+  --color-dusk-500: oklch(42.3% 0.115 340); /* #753061 */
+  --color-dusk-600: oklch(32.9% 0.087 340);
+  --color-dusk-700: oklch(23.8% 0.06 340);
+  --color-dusk-800: oklch(17.9% 0.034 340);
+  --color-dusk-stone-500: oklch(52% 0.03 340);
+  --color-apricot-400: oklch(80% 0.12 55); /* #f9a870, accent CTA */
+}
+
+/* ---------- Rôles par univers ---------- */
+/* On ne redéfinit que les rôles : les composants n'ont pas à changer.
+   L'univers « foret » n'a pas de bloc : c'est la valeur par défaut (la marque).
+   Ne changent jamais : surface, danger, focus (couleurs d'état). */
+:root[data-univers="snow"] {
+  --color-primary: var(--color-glacier-500);
+  --color-primary-hover: var(--color-glacier-600);
+  --color-primary-light: var(--color-glacier-300);
+  --color-on-primary-muted: var(--color-glacier-200);
+
+  --color-secondary: var(--color-ice-300);
+  --color-on-secondary: var(--color-glacier-800);
+
+  --color-background: var(--color-glacier-50);
+
+  --color-text: var(--color-glacier-700);
+  --color-text-muted: var(--color-glacier-stone-500);
+
+  --color-border: var(--color-glacier-200);
+  --color-border-strong: var(--color-glacier-400);
+}
+
+:root[data-univers="sunset"] {
+  --color-primary: var(--color-dusk-500);
+  --color-primary-hover: var(--color-dusk-600);
+  --color-primary-light: var(--color-dusk-300);
+  --color-on-primary-muted: var(--color-dusk-200);
+
+  --color-secondary: var(--color-apricot-400);
+  --color-on-secondary: var(--color-dusk-800);
+
+  --color-background: var(--color-dusk-50);
+
+  --color-text: var(--color-dusk-700);
+  --color-text-muted: var(--color-dusk-stone-500);
+
+  --color-border: var(--color-dusk-200);
+  --color-border-strong: var(--color-dusk-400);
 }
 
 html {

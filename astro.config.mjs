@@ -22,8 +22,13 @@ export default defineConfig({
     styles: ["normal", "italic"],
     fallbacks: ["sans-serif"],
   }],
+  // Le blog s'appelle désormais « Carnet » : les anciennes adresses restent valides.
+  redirects: {
+    "/blog": "/carnet",
+    "/blog/[slug]": "/carnet/[slug]",
+  },
   vite: {
     plugins: [tailwindcss()]
   },
   integrations: [react()]
-});
+});

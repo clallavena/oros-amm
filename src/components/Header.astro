@@ -1,4 +1,7 @@
 ---
+import { NAV_LINKS, CONTACT_LINK, isActive } from "../lib/navigation";
+
+const { pathname } = Astro.url;
 ---
 
 <header
@@ -39,7 +42,7 @@
             id="logo-subtitle"
             class="mt-1 text-xs text-white/75 transition-colors duration-300"
           >
-            Accompagnateur en montagne
+            Accompagnateur en montagne stagiaire
           </p>
         </div>
       </a>
@@ -48,32 +51,30 @@
       <!-- NAVIGATION DESKTOP -->
       <div class="hidden items-center gap-8 md:flex">
 
-        <a
-          href="/sorties"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary"
-        >
-          Sorties
-        </a>
+        {NAV_LINKS.map((link) => {
+          const active = isActive(pathname, link.href);
+          return (
+            <a
+              href={link.href}
+              aria-current={active ? "page" : undefined}
+              class:list={[
+                "nav-link text-sm text-white/90 transition-colors duration-300 hover:text-secondary",
+                active
+                  ? "font-semibold underline decoration-secondary decoration-2 underline-offset-[6px]"
+                  : "font-medium",
+              ]}
+            >
+              {link.label}
+            </a>
+          );
+        })}
 
         <a
-          href="/a-propos"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary"
-        >
-          À propos
-        </a>
-
-        <a
-          href="/blog"
-          class="nav-link text-sm font-medium text-white/90 transition-colors duration-300 hover:text-secondary"
-        >
-          Blog
-        </a>
-
-        <a
-          href="/contact"
+          href={CONTACT_LINK.href}
+          aria-current={isActive(pathname, CONTACT_LINK.href) ? "page" : undefined}
           class="nav-cta rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:bg-secondary"
         >
-          Me contacter
+          {CONTACT_LINK.label}
         </a>
 
       </div>
@@ -96,6 +97,7 @@
           stroke-width="2"
           stroke="currentColor"
           class="h-5 w-5"
+          aria-hidden="true"
         >
           <path
             stroke-linecap="round"
@@ -116,32 +118,28 @@
 
       <div class="flex flex-col gap-1">
 
-        <a
-          href="/sorties"
-          class="rounded-xl px-4 py-3 text-sm font-medium text-text transition hover:bg-background"
-        >
-          Sorties
-        </a>
+        {NAV_LINKS.map((link) => {
+          const active = isActive(pathname, link.href);
+          return (
+            <a
+              href={link.href}
+              aria-current={active ? "page" : undefined}
+              class:list={[
+                "rounded-xl px-4 py-3 text-sm text-text transition hover:bg-background",
+                active ? "bg-background font-semibold" : "font-medium",
+              ]}
+            >
+              {link.label}
+            </a>
+          );
+        })}
 
         <a
-          href="/a-propos"
-          class="rounded-xl px-4 py-3 text-sm font-medium text-text transition hover:bg-background"
+          href={CONTACT_LINK.href}
+          aria-current={isActive(pathname, CONTACT_LINK.href) ? "page" : undefined}
+          class="mt-2 rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-primary-hover"
         >
-          À propos
-        </a>
-
-        <a
-          href="/blog"
-          class="rounded-xl px-4 py-3 text-sm font-medium text-text transition hover:bg-background"
-        >
-          Blog
-        </a>
-
-        <a
-          href="/contact"
-          class="mt-2 rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-primary/90"
-        >
-          Me contacter
+          {CONTACT_LINK.label}
         </a>
 
       </div>
@@ -175,10 +173,17 @@
     logoSubtitle?.classList.toggle("text-text-muted", scrolled);
 
     navLinks.forEach((link) => {
-        link.classList.toggle("text-white/90", !scrolled);
-        link.classList.toggle("text-text", scrolled);
-        link.classList.toggle("hover:text-secondary", !scrolled);
-        link.classList.toggle("hover:text-primary", scrolled);
+      link.classList.toggle("text-white/90", !scrolled);
+      link.classList.toggle("text-text", scrolled);
+      link.classList.toggle("hover:text-secondary", !scrolled);
+      link.classList.toggle("hover:text-primary", scrolled);
+
+      // Soulignement de la page active : la couleur secondaire (claire) ne
+      // contraste pas sur le fond blanc du header défilé, on passe au primary.
+      if (link.getAttribute("aria-current") === "page") {
+        link.classList.toggle("decoration-secondary", !scrolled);
+        link.classList.toggle("decoration-primary", scrolled);
+      }
     });
 
     navCta?.classList.toggle("bg-white", !scrolled);
@@ -188,7 +193,7 @@
     navCta?.classList.toggle("bg-primary", scrolled);
     navCta?.classList.toggle("text-white", scrolled);
     navCta?.classList.toggle("hover:bg-primary-hover", scrolled);
-    };
+  };
 
 
   window.addEventListener("scroll", updateHeader, {

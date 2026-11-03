@@ -1,0 +1,78 @@
+---
+/*
+ * Page d'un univers : /sorties/randonnee, /sorties/hiver, /sorties/itinerance.
+ * Les pages sont générées depuis la liste UNIVERS, pas depuis le contenu :
+ * un univers sans sortie a quand même sa page (avec un message « bientôt »).
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Container from "../../../components/Container.astro";
+import Button from "../../../components/Button.astro";
+import SortieCard from "../../../components/SortieCard.astro";
+import { UNIVERS, UNIVERS_INFO, type Univers } from "../../../lib/univers";
+import { getSorties } from "../../../lib/sorties";
+
+export function getStaticPaths() {
+  return UNIVERS.map((univers) => ({
+    params: { univers },
+    props: { univers },
+  }));
+}
+
+interface Props {
+  univers: Univers;
+}
+
+const { univers } = Astro.props;
+const info = UNIVERS_INFO[univers];
+const sorties = await getSorties(univers);
+---
+
+<BaseLayout
+  title={`${info.label} — Sorties — Clément Allavena`}
+  description={info.accroche}
+  theme={info.theme}
+>
+  <!-- HEADER DE PAGE -->
+  <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+    <Container>
+      <nav aria-label="Fil d'Ariane" class="text-sm text-white/80">
+        <ol class="flex flex-wrap gap-2">
+          <li><a href="/sorties" class="text-white underline-offset-4 hover:underline">Sorties</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">{info.label}</li>
+        </ol>
+      </nav>
+
+      <h1 class="mt-6 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+        {info.label}
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+        {info.accroche}
+      </p>
+    </Container>
+  </section>
+
+  <!-- LISTE DES SORTIES -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      {sorties.length > 0 ? (
+        <div class="grid gap-6 md:grid-cols-3">
+          {sorties.map((sortie) => (
+            <SortieCard sortie={sortie} headingLevel={2} />
+          ))}
+        </div>
+      ) : (
+        <div class="mx-auto max-w-xl rounded-3xl border border-border bg-surface p-10 text-center">
+          <h2 class="text-2xl font-bold text-text">Les sorties arrivent bientôt</h2>
+          <p class="mt-3 leading-relaxed text-text-muted">
+            Cet univers est en préparation. Une envie précise ? Écrivez-moi,
+            on peut en parler dès maintenant.
+          </p>
+          <div class="mt-6 flex justify-center">
+            <Button href="/contact">Me contacter</Button>
+          </div>
+        </div>
+      )}
+    </Container>
+  </section>
+</BaseLayout>

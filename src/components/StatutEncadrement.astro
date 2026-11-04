@@ -1,0 +1,77 @@
+---
+/*
+ * Bloc « Qui vous encadre » : le statut de stagiaire expliqué clairement.
+ * Réutilisable (hub /sorties aujourd'hui, À propos ou fiches plus tard).
+ */
+
+const garanties = [
+  {
+    titre: "En formation au DE",
+    texte:
+      "Educateur sportif stagiaire, mon statut est vérifiable sur le site du ministère des sports.",
+    // toque de diplômé
+    icone: "M2 8l10-5 10 5-10 5zM6 10v5c3 2.5 9 2.5 12 0v-5",
+  },
+  {
+    titre: "Sous convention de stage",
+    texte:
+      "J'encadre dans le cadre de ma convention, suivi par un conseiller de stage diplômé.",
+    // document validé
+    icone: "M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 14l3 3 5-6",
+  },
+  {
+    titre: "Assuré",
+    texte:
+      "Responsabilité civile professionnelle d'accompagnateur stagiaire [TODO: assureur à completer].",
+    // bouclier
+    icone: "M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z",
+  },
+];
+---
+
+<section aria-labelledby="statut-titre">
+  <div class="flex flex-wrap items-start gap-x-12 gap-y-8 rounded-3xl bg-primary-light/25 p-8 md:p-10">
+    <div class="flex flex-[1_1_320px] flex-col gap-3.5">
+      <p class="text-sm font-semibold uppercase tracking-widest text-primary">
+        Qui vous encadre
+      </p>
+      <h2 id="statut-titre" class="text-3xl font-bold leading-tight tracking-tight text-text">
+        Accompagnateur stagiaire, encadrement en règle
+      </h2>
+      <p class="leading-relaxed text-text">
+        Je suis en formation au diplôme d'État d'accompagnateur en
+        montagne. Pendant ce cursus, la loi m'autorise à encadrer dans un cadre
+        précis : je préfère vous l'expliquer clairement.
+      </p>
+      <a
+        href="/a-propos"
+        class="inline-flex min-h-11 items-center self-start font-semibold text-primary underline-offset-4 hover:underline"
+      >
+        Mon parcours et mon statut →
+      </a>
+    </div>
+
+    <ul class="grid flex-[2_1_480px] gap-4 sm:grid-cols-3">
+      {garanties.map((g) => (
+        <li class="flex flex-col gap-2 rounded-2xl bg-surface p-5">
+          <svg
+            aria-hidden="true"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-primary"
+          >
+            <path d={g.icone} />
+          </svg>
+          <b class="font-bold text-text">{g.titre}</b>
+          <span class="text-[15px] leading-relaxed text-text-muted">{g.texte}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

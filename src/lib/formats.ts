@@ -29,6 +29,45 @@ export const NIVEAU_LABEL: Record<Niveau, string> = {
   adapte: "Adapté à votre niveau",
 };
 
+/* ---------- Comparatif des formats (hub /sorties) ---------- */
+
+export interface FormatInfo {
+  /** Ordre de grandeur, pas une promesse : chaque fiche donne sa vraie durée. */
+  duree: string;
+  effort: Niveau;
+  idealPour: string;
+  /**
+   * Libellé imposé pour la ligne « Univers ». Sinon, la ligne est calculée
+   * à partir des sorties publiées (voir resumer() dans sorties.ts).
+   */
+  universFixe?: string;
+}
+
+// TODO : confirmer les durées de la demi-journée et de la journée.
+export const FORMAT_INFO: Record<Format, FormatInfo> = {
+  "demi-journee": {
+    duree: "≈ 3 h de marche",
+    effort: "facile",
+    idealPour: "Familles, première fois",
+  },
+  journee: {
+    duree: "≈ 5 à 6 h de marche",
+    effort: "modere",
+    idealPour: "Marcheurs réguliers",
+  },
+  itinerance: {
+    duree: "2 à 5 jours",
+    effort: "soutenu",
+    idealPour: "Randonneurs entraînés",
+  },
+  "sur-mesure": {
+    duree: "Selon vos envies",
+    effort: "adapte",
+    idealPour: "Solo, amis, famille",
+    universFixe: "Tous",
+  },
+};
+
 /* ---------- Mise en forme ---------- */
 
 const euros = new Intl.NumberFormat("fr-FR", {

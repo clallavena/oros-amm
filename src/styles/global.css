@@ -87,9 +87,36 @@
 
 /* ---------- Rôles par thème ---------- */
 /* On ne redéfinit que les rôles : les composants n'ont pas à changer.
-   Le thème « forest » n'a pas de bloc : c'est la valeur par défaut (la marque).
-   Ne changent jamais : surface, danger, focus (couleurs d'état). */
-:root[data-theme="snow"] {
+   Ne changent jamais : surface, danger, focus (couleurs d'état).
+
+   Les sélecteurs [data-theme] ne sont pas limités à :root : un thème peut
+   s'appliquer à une page entière (<html data-theme>, via BaseLayout) OU à un
+   seul bloc (<article data-theme="snow">). Les variables CSS héritent dans
+   tout le sous-arbre, donc tout ce qui est dans le bloc prend ses couleurs.
+   Ces règles sont hors @layer : elles l'emportent sur le :root généré par
+   Tailwind (dans @layer theme), quelle que soit la spécificité. */
+
+/* Forest = valeurs par défaut de @theme. Ce bloc sert à revenir à la marque
+   à l'intérieur d'une page d'un autre thème (ex. une carte forest sur une page sunset). */
+[data-theme="forest"] {
+  --color-primary: var(--color-forest-500);
+  --color-primary-hover: var(--color-forest-600);
+  --color-primary-light: var(--color-forest-300);
+  --color-on-primary-muted: var(--color-forest-200);
+
+  --color-secondary: var(--color-lime-400);
+  --color-on-secondary: var(--color-forest-800);
+
+  --color-background: var(--color-forest-50);
+
+  --color-text: var(--color-forest-700);
+  --color-text-muted: var(--color-stone-500);
+
+  --color-border: var(--color-forest-200);
+  --color-border-strong: var(--color-forest-400);
+}
+
+[data-theme="snow"] {
   --color-primary: var(--color-glacier-500);
   --color-primary-hover: var(--color-glacier-600);
   --color-primary-light: var(--color-glacier-300);
@@ -107,7 +134,7 @@
   --color-border-strong: var(--color-glacier-400);
 }
 
-:root[data-theme="sunset"] {
+[data-theme="sunset"] {
   --color-primary: var(--color-dusk-500);
   --color-primary-hover: var(--color-dusk-600);
   --color-primary-light: var(--color-dusk-300);
@@ -138,4 +165,4 @@ body {
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-epilogue);
   }
-}
+}

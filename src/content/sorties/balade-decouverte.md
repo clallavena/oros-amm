@@ -13,7 +13,7 @@ couverture:
   src: ../../images/randonnee.jpg
   alt: "Randonnée sur un sentier de montagne"
 ordre: 1
-# À compléter quand tu as les infos (tous optionnels) :
+# À compléter quand on a les infos (tous optionnels) :
 # lieu: { massif: "…", depart: "…" }
 # duree: "≈ 3 h"
 # distanceKm: 6
@@ -28,6 +28,16 @@ ordre: 1
 #     heure: "9 h"
 #     texte: "…"
 # inclus: ["…"]
+# Lot 5 :
+# itineraireType: true
+# niveauDetail: "Vous marchez … Pas de passage technique ni de vide."
+# annulation: "…"
+# departs:
+#   - debut: 2027-06-12
+#     places: 6
+#   - debut: 2027-07-03
+#     fin: 2027-07-04
+#     places: 0
 ---
 
 Une sortie courte et accessible pour prendre l'air, observer le paysage et s'initier à la randonnée en montagne.

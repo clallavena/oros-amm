@@ -30,6 +30,8 @@
 
   --color-primary: var(--color-forest-500);
   --color-primary-hover: var(--color-forest-600);
+  /* Fond des en-têtes de page : le primary, ou plus sombre selon l'ambiance (design, planche Système). */
+  --color-hero: var(--color-forest-500);
   --color-primary-light: var(--color-forest-300);
   --color-on-primary-muted: var(--color-forest-200);
 
@@ -101,6 +103,8 @@
 [data-theme="forest"] {
   --color-primary: var(--color-forest-500);
   --color-primary-hover: var(--color-forest-600);
+  /* Fond des en-têtes de page : le primary, ou plus sombre selon l'ambiance (design, planche Système). */
+  --color-hero: var(--color-forest-500);
   --color-primary-light: var(--color-forest-300);
   --color-on-primary-muted: var(--color-forest-200);
 
@@ -119,6 +123,7 @@
 [data-theme="snow"] {
   --color-primary: var(--color-glacier-500);
   --color-primary-hover: var(--color-glacier-600);
+  --color-hero: var(--color-glacier-500);
   --color-primary-light: var(--color-glacier-300);
   --color-on-primary-muted: var(--color-glacier-200);
 
@@ -137,6 +142,7 @@
 [data-theme="sunset"] {
   --color-primary: var(--color-dusk-500);
   --color-primary-hover: var(--color-dusk-600);
+  --color-hero: var(--color-dusk-600); /* crépuscule : en-tête plus sombre */
   --color-primary-light: var(--color-dusk-300);
   --color-on-primary-muted: var(--color-dusk-200);
 

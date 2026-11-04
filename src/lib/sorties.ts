@@ -59,3 +59,16 @@ export function resumer(sorties: Sortie[]): ResumeSorties {
     themes: [...new Set(sorties.flatMap((s) => s.data.themes))],
   };
 }
+
+/**
+ * Renvoie les sorties les plus proches de la sortie donnée. Dans le même univers, triées par ordre puis prix croissant.
+ * @param sortie La sortie de référence pour trouver les sorties proches.
+ * @param max Le nombre maximum de sorties proches à renvoyer.
+ * @returns Au plus `max` sorties du même univers, hors la sortie elle-même ; [] s’il n’y en a pas.
+ */
+export async function getSortiesProches(sortie: Sortie, max = 2): Promise<Sortie[]> {
+  const sorties = await getSorties(sortie.data.univers);
+  return sorties
+    .filter((s) => s.id !== sortie.id)
+    .slice(0, max);
+}

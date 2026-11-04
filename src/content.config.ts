@@ -98,6 +98,44 @@ const sorties = defineCollection({
 
       inclus: z.array(z.string()).default([]),
 
+      /* ---------- Lot 5 : fiche complète ---------- */
+
+      /**
+       * true = itinéraire type, adaptable selon la météo et le groupe.
+       * Affiche le badge « Sortie type » et l'encadré d'explication.
+       */
+      itineraireType: z.boolean().default(false),
+
+      /**
+       * Le niveau en termes concrets, affiché dans « Le terrain »
+       * après « Niveau : modéré. » (commence donc par une majuscule).
+       * Ex. : « Vous marchez régulièrement et tenez 4 à 5 h de marche
+       * avec un sac de 6 à 8 kg. Pas de passage technique ni de vide. »
+       */
+      niveauDetail: z.string().optional(),
+
+      /**
+       * Dates programmées. Format AAAA-MM-JJ dans le frontmatter.
+       * Seules les dates à venir s'affichent (calculé au moment du build).
+       */
+      departs: z
+        .array(
+          z
+            .object({
+              debut: z.coerce.date(),
+              fin: z.coerce.date().optional(),
+              /** Places restantes ; 0 = complet ; absent = non affiché. */
+              places: z.number().int().nonnegative().optional(),
+            })
+            .refine((d) => d.fin === undefined || d.fin >= d.debut, {
+              error: "departs.fin doit être postérieure ou égale à departs.debut",
+            }),
+        )
+        .default([]),
+
+      /** Conditions d'annulation, en une phrase. */
+      annulation: z.string().optional(),
+
       /** Ordre d'affichage dans les listes (petit = en premier). */
       ordre: z.number().int().default(0),
       /** true = la sortie n'est pas publiée. */

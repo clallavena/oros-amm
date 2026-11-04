@@ -1,7 +1,7 @@
 ---
 /*
  * Fiche d'une sortie : /sorties/<univers>/<id>
- * Version de base (lot 3) : la mise en page complète du design arrive au lot 5.
+ * Design : planche « 3b · Fiche sortie type ».
  */
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Container from "../../../components/Container.astro";
@@ -9,13 +9,16 @@ import Button from "../../../components/Button.astro";
 import { Image } from "astro:assets";
 import { render } from "astro:content";
 import { UNIVERS_INFO } from "../../../lib/univers";
-import { getSorties, type Sortie } from "../../../lib/sorties";
+import { getSorties, getSortiesProches, type Sortie } from "../../../lib/sorties";
 import {
   FORMAT_LABEL,
   NIVEAU_LABEL,
   formatPrix,
   formatNombre,
+  formatPeriode,
+  formatPlaces,
 } from "../../../lib/formats";
+import SortieCardCompacte from "../../../components/SortieCardCompacte.astro";
 
 export async function getStaticPaths() {
   const sorties = await getSorties();
@@ -34,7 +37,7 @@ const { data } = sortie;
 const { Content } = await render(sortie);
 const info = UNIVERS_INFO[data.univers];
 
-/* Chiffres clés : on n'affiche que ceux qui sont renseignés. */
+/* ---------- Chiffres clés : seulement ceux qui sont renseignés ---------- */
 const chiffres: { label: string; valeur: string }[] = [];
 if (data.duree) chiffres.push({ label: "Durée", valeur: data.duree });
 if (data.marcheParJour) chiffres.push({ label: "Marche / jour", valeur: data.marcheParJour });
@@ -49,7 +52,25 @@ chiffres.push({
     : `Dès ${data.groupe.min} pers.`,
 });
 
+/* ---------- Photos : la couverture en grand, 2 photos de la galerie à côté ---------- */
 const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
+const photosCote = autresPhotos.slice(0, 2);
+
+/*
+ * ---------- Prochains départs ----------
+ * Site statique : « à venir » est évalué au moment du build. Une date passée
+ * reste affichée jusqu'au prochain build (pense à rebuilder régulièrement).
+ */
+const debutDuJour = new Date();
+debutDuJour.setHours(0, 0, 0, 0);
+const prochainsDeparts = data.departs
+  .filter((d) => d.debut >= debutDuJour)
+  .sort((a, b) => a.debut.valueOf() - b.debut.valueOf())
+  .slice(0, 3);
+
+const contactHref = `/contact?sortie=${sortie.id}`;
+
+const proches = await getSortiesProches(sortie);
 ---
 
 <BaseLayout
@@ -57,15 +78,15 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
   description={data.description}
   theme={info.theme}
 >
-  <!-- EN-TÊTE -->
-  <section class="bg-primary pb-16 pt-40 md:pb-20 md:pt-48">
+  <!-- ========== EN-TÊTE ========== -->
+  <section class="bg-hero pb-12 pt-40 md:pb-16 md:pt-44">
     <Container>
-      <nav aria-label="Fil d'Ariane" class="text-sm text-white/80">
+      <nav aria-label="Fil d'Ariane" class="text-sm text-white/85">
         <ol class="flex flex-wrap gap-2">
-          <li><a href="/sorties" class="text-white underline-offset-4 hover:underline">Sorties</a></li>
+          <li><a href="/sorties" class="text-white underline underline-offset-4">Sorties</a></li>
           <li aria-hidden="true">/</li>
           <li>
-            <a href={`/sorties/${data.univers}`} class="text-white underline-offset-4 hover:underline">
+            <a href={`/sorties/${data.univers}`} class="text-white underline underline-offset-4">
               {info.label}
             </a>
           </li>
@@ -74,23 +95,38 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
         </ol>
       </nav>
 
-      <div class="mt-6 flex flex-wrap gap-2">
-        <span class="rounded-full bg-secondary px-3 py-1 text-sm font-semibold text-on-secondary">
-          {FORMAT_LABEL[data.format]}
-        </span>
-        {data.duree && (
-          <span class="rounded-full bg-white/15 px-3 py-1 text-sm font-semibold text-white">
-            {data.duree}
+      <div class="mt-6 flex flex-wrap gap-2.5">
+        {data.itineraireType && (
+          <span class="rounded-full bg-secondary px-3 py-1 text-[13px] font-bold text-on-secondary">
+            Sortie type
           </span>
         )}
+        <span class="rounded-full bg-white/15 px-3 py-1 text-[13px] font-semibold text-white">
+          {FORMAT_LABEL[data.format]}{data.duree && ` · ${data.duree}`}
+        </span>
       </div>
 
-      <h1 class="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+      <h1 class="mt-4 max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl">
         {data.title}
       </h1>
 
       {data.lieu && (
-        <p class="mt-4 text-lg text-white/85">
+        <p class="mt-3 flex items-center gap-2 text-[17px] text-white/90">
+          <svg
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="shrink-0"
+          >
+            <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" />
+            <circle cx="12" cy="9.5" r="2.5" />
+          </svg>
           Massif {data.lieu.massif}
           {data.lieu.depart && <> · Départ {data.lieu.depart}</>}
         </p>
@@ -98,23 +134,23 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
     </Container>
   </section>
 
-  <!-- PHOTOS -->
+  <!-- ========== PHOTOS ========== -->
   <Container class="pt-8">
-    <div class:list={["grid gap-4", autresPhotos.length > 0 && "md:grid-cols-3"]}>
+    <div class:list={["grid gap-4", photosCote.length > 0 && "md:grid-cols-3"]}>
       <Image
         src={photoPrincipale.src}
         alt={photoPrincipale.alt}
         widths={[640, 960, 1280]}
-        sizes={autresPhotos.length > 0 ? "(min-width: 768px) 66vw, 100vw" : "100vw"}
+        sizes={photosCote.length > 0 ? "(min-width: 768px) 66vw, 100vw" : "100vw"}
         class:list={[
           "h-72 w-full rounded-3xl object-cover md:h-[420px]",
-          autresPhotos.length > 0 && "md:col-span-2",
+          photosCote.length > 0 && "md:col-span-2",
         ]}
         loading="eager"
       />
-      {autresPhotos.length > 0 && (
+      {photosCote.length > 0 && (
         <div class="grid gap-4">
-          {autresPhotos.slice(0, 2).map((photo) => (
+          {photosCote.map((photo) => (
             <Image
               src={photo.src}
               alt={photo.alt}
@@ -128,32 +164,39 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
     </div>
   </Container>
 
-  <!-- CHIFFRES CLÉS -->
+  <!-- ========== CHIFFRES CLÉS ========== -->
   <Container class="pt-6">
-    <dl class="grid grid-cols-2 overflow-hidden rounded-3xl border border-border bg-surface sm:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+    <!--
+      Les traits entre les cases : la grille a un fond couleur bordure et un
+      espacement de 1 px, et chaque case un fond blanc. Le fond ne se voit que
+      dans les interstices, quel que soit le nombre de cases par ligne.
+    -->
+    <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
       {chiffres.map((c) => (
-        <div class="border-b border-r border-border p-5">
-          <dt class="text-sm text-text-muted">{c.label}</dt>
-          <dd class="mt-1 text-lg font-bold text-text">{c.valeur}</dd>
+        <div class="bg-surface px-6 py-5">
+          <dt class="text-[13px] text-text-muted">{c.label}</dt>
+          <dd class="mt-1 text-xl font-bold text-text">{c.valeur}</dd>
         </div>
       ))}
     </dl>
   </Container>
 
-  <!-- CORPS + RÉSERVATION -->
-  <Container class="py-16 md:py-20">
-    <div class="grid gap-12 lg:grid-cols-[1fr_340px]">
-      <div class="flex flex-col gap-14">
+  <!-- ========== CORPS + RÉSERVATION ========== -->
+  <Container class="py-14 md:py-20">
+    <div class="grid items-start gap-12 lg:grid-cols-[1fr_340px]">
+      <div class="flex min-w-0 flex-col gap-14">
+
+        <!-- L'idée -->
         <section aria-labelledby="idee-titre">
-          <h2 id="idee-titre" class="text-3xl font-bold text-text">L'idée</h2>
+          <h2 id="idee-titre" class="text-3xl font-bold leading-tight text-text">L'idée</h2>
           <div class="fiche-content mt-4 max-w-2xl">
             <Content />
           </div>
 
           {data.themes.length > 0 && (
-            <ul aria-label="Thèmes abordés" class="mt-6 flex flex-wrap gap-2">
+            <ul aria-label="Thèmes abordés" class="mt-5 flex flex-wrap gap-2">
               {data.themes.map((theme) => (
-                <li class="rounded-full bg-primary-light/30 px-4 py-1.5 text-sm font-semibold text-primary">
+                <li class="rounded-full bg-primary-light/30 px-3.5 py-1.5 text-sm font-semibold text-primary">
                   {theme}
                 </li>
               ))}
@@ -161,16 +204,17 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
           )}
         </section>
 
+        <!-- Le programme -->
         {data.programme.length > 0 && (
           <section aria-labelledby="programme-titre">
-            <h2 id="programme-titre" class="text-3xl font-bold text-text">Le programme</h2>
+            <h2 id="programme-titre" class="text-3xl font-bold leading-tight text-text">Le programme</h2>
             <ol class="mt-6">
               {data.programme.map((etape) => (
-                <li class="grid grid-cols-[96px_1fr] gap-5 border-t border-border py-4 last:border-b">
-                  <span class="font-bold text-primary">
+                <li class="grid grid-cols-[96px_1fr] gap-5 border-t border-border py-4.5 last:border-b">
+                  <span class="font-[family-name:var(--font-epilogue)] font-bold text-primary">
                     {etape.moment}
                     {etape.heure && (
-                      <span class="block text-sm font-medium text-text-muted">{etape.heure}</span>
+                      <span class="block font-sans text-sm font-medium text-text-muted">{etape.heure}</span>
                     )}
                   </span>
                   <span class="text-text">{etape.texte}</span>
@@ -179,46 +223,124 @@ const [photoPrincipale, ...autresPhotos] = [data.couverture, ...data.galerie];
             </ol>
           </section>
         )}
+
+        <!-- Le terrain (profil altimétrique et carte : lot ultérieur) -->
+        {data.niveauDetail && (
+          <section aria-labelledby="terrain-titre">
+            <h2 id="terrain-titre" class="text-3xl font-bold leading-tight text-text">Le terrain</h2>
+            <p class="mt-4 max-w-2xl text-lg leading-relaxed text-text">
+              <b class="font-semibold">Niveau : {NIVEAU_LABEL[data.niveau].toLowerCase()}.</b>
+              {data.niveauDetail}
+            </p>
+          </section>
+        )}
+
+        <!-- Itinéraire type -->
+        {data.itineraireType && (
+          <div class="flex items-start gap-4 rounded-3xl border border-dashed border-border-strong bg-surface p-6">
+            <svg
+              aria-hidden="true"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="shrink-0 text-primary"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 8v5M12 16.5v.5" />
+            </svg>
+            <p class="text-text">
+              <b class="font-semibold">Itinéraire type.</b> Il sert de base :
+              selon la météo, l'enneigement et le groupe, je peux choisir une
+              variante. Vous êtes prévenus avant le départ.
+            </p>
+          </div>
+        )}
       </div>
 
-      <!-- RÉSERVATION -->
+      <!-- ========== RÉSERVATION ========== -->
       <aside
         aria-labelledby="reserver-titre"
-        class="flex h-fit flex-col gap-5 rounded-3xl border border-border bg-surface p-7 shadow-sm lg:sticky lg:top-28"
+        class="flex flex-col gap-5 rounded-3xl border border-border bg-surface p-7 shadow-lg shadow-primary/5 lg:sticky lg:top-28"
       >
         <h2 id="reserver-titre" class="sr-only">Réserver</h2>
 
-        <div class="flex items-baseline justify-between gap-3">
-          <span class="text-sm text-text-muted">Dès, par personne</span>
-          <span class="text-3xl font-bold text-primary">{formatPrix(data.prix.des)}</span>
+        <div>
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="text-sm text-text-muted">Dès, par personne</span>
+            <span class="text-3xl font-bold text-primary">{formatPrix(data.prix.des)}</span>
+          </div>
+          {data.prix.jusqua && (
+            <p class="mt-1 text-right text-sm text-text-muted">
+              Jusqu'à {formatPrix(data.prix.jusqua)} par personne
+            </p>
+          )}
         </div>
-        {data.prix.jusqua && (
-          <p class="-mt-3 text-sm text-text-muted">
-            Jusqu'à {formatPrix(data.prix.jusqua)} par personne
-          </p>
+
+        <div>
+          <h3 class="text-base font-semibold text-text">Prochains départs</h3>
+          {prochainsDeparts.length > 0 ? (
+            <ul class="mt-3 flex flex-col gap-2 text-[15px]">
+              {prochainsDeparts.map((d) => (
+                <li class="flex justify-between gap-3 rounded-xl bg-background px-3.5 py-3">
+                  <time datetime={d.debut.toISOString().slice(0, 10)} class="font-semibold text-text">
+                    {formatPeriode(d.debut, d.fin)}
+                  </time>
+                  {d.places !== undefined && (
+                    <span class:list={["text-text-muted", d.places === 0 && "font-semibold"]}>
+                      {formatPlaces(d.places)}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="mt-2 text-sm text-text-muted">
+              Pas de date programmée pour l'instant : proposez la vôtre.
+            </p>
+          )}
+        </div>
+
+        {prochainsDeparts.length > 0 ? (
+          <div class="flex flex-col gap-3">
+            <Button href={contactHref} class="w-full">Réserver une date</Button>
+            <Button href={`${contactHref}&groupe=1`} variant="ghost" class="w-full">
+              Proposer une date pour mon groupe
+            </Button>
+          </div>
+        ) : (
+          <Button href={`${contactHref}&groupe=1`} class="w-full">Proposer une date</Button>
         )}
 
-        {data.inclus.length > 0 && (
-          <ul class="flex list-disc flex-col gap-1.5 pl-5 text-sm text-text">
-            {data.inclus.map((item) => <li>{item}</li>)}
-          </ul>
-        )}
-
-        <Button href={`/contact?sortie=${sortie.id}`} class="w-full">
-          Réserver cette sortie
-        </Button>
-        <Button href="/contact" variant="ghost" class="w-full">
-          Poser une question
-        </Button>
-
-        <p class="border-t border-border pt-4 text-sm text-text-muted">
-          Encadrement par un accompagnateur en montagne stagiaire, sous
-          convention de stage.
-          <a href="/a-propos" class="font-semibold text-primary underline">Mon statut</a>
-        </p>
+        <ul class="flex list-disc flex-col gap-2 border-t border-border pl-5 pt-4 text-sm text-text-muted">
+          <li>
+            Accompagnateur en montagne stagiaire, sous convention de stage ·
+            <a href="/a-propos" class="font-semibold text-primary underline">mon statut</a>
+          </li>
+          {data.inclus.map((item) => <li>{item}</li>)}
+          {data.annulation && <li>{data.annulation}</li>}
+        </ul>
       </aside>
     </div>
   </Container>
+  
+  <!-- ========== SORTIES PROCHES ========== -->
+   {
+    proches.length > 0 && (
+      <section aria-labelledby="proches-titre" class="bg-white py-20">
+        <Container>
+          <h2 id="proches-titre" class="text-3xl font-bold leading-tight text-text">Dans le même esprit</h2>
+          <div class="mt-8 grid gap-6 md:grid-cols-2">
+            {proches.map((s) => <SortieCardCompacte sortie={s} headingLevel={3} />)}
+          </div>
+        </Container>
+      </section>
+    )
+   }
 </BaseLayout>
 
 <style>

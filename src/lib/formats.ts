@@ -83,3 +83,30 @@ export const formatPrix = (montant: number): string => euros.format(montant);
 
 /** 2100 → « 2 100 » */
 export const formatNombre = (n: number): string => nombres.format(n);
+
+/*
+ * Dates des départs. timeZone fixé : le site est généré au build, et la
+ * machine qui build (ton PC, un serveur d'intégration…) n'est pas forcément
+ * à l'heure de Paris. Sans ça, une date pourrait s'afficher la veille.
+ */
+const jourCourt = new Intl.DateTimeFormat("fr-FR", {
+  weekday: "short",
+  day: "numeric",
+  month: "long",
+  timeZone: "Europe/Paris",
+});
+
+const memeJour = (a: Date, b: Date): boolean =>
+  jourCourt.format(a) === jourCourt.format(b);
+
+/** « sam. 14 juin » ou « sam. 14 juin → dim. 15 juin » */
+export function formatPeriode(debut: Date, fin?: Date): string {
+  if (fin === undefined || memeJour(debut, fin)) return jourCourt.format(debut);
+  return `${jourCourt.format(debut)} → ${jourCourt.format(fin)}`;
+}
+
+/** 0 → « Complet », 1 → « 1 place », 5 → « 5 places » */
+export function formatPlaces(places: number): string {
+  if (places === 0) return "Complet";
+  return `${places} place${places > 1 ? "s" : ""}`;
+}

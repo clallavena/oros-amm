@@ -1,14 +1,17 @@
 ---
 import Container from "./Container.astro";
+import { NAV_LINKS } from "../lib/navigation";
+import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
 
 const year = new Date().getFullYear();
 
-const navLinks = [
-  { href: "/sorties", label: "Sorties" },
-  { href: "/a-propos", label: "À propos" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
+const navLinks = [...NAV_LINKS, { href: "/contact", label: "Contact" }];
+
+/*
+ * Numéro de déclaration d'éducateur sportif (carte professionnelle).
+ * Laisser à null tant qu'il n'est pas connu : la ligne ne s'affiche pas.
+ */
+const declarationNumero: string | null = null;
 ---
 
 <footer class="bg-primary text-white">
@@ -18,14 +21,17 @@ const navLinks = [
       <div>
         <p class="text-lg font-bold">Clément Allavena</p>
         <p class="mt-2 text-sm leading-relaxed text-white/70">
-          Accompagnateur en Montagne. Des sorties pour
+          Accompagnateur en montagne stagiaire en formation au DE. Des sorties pour
           découvrir la montagne à votre rythme.
         </p>
       </div>
 
       <!-- Navigation -->
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-widest text-on-primary-muted">
+      <nav aria-labelledby="footer-nav-titre">
+        <p
+          id="footer-nav-titre"
+          class="text-sm font-semibold uppercase tracking-widest text-on-primary-muted"
+        >
           Navigation
         </p>
         <ul class="mt-4 flex flex-col gap-2">
@@ -40,7 +46,7 @@ const navLinks = [
             </li>
           ))}
         </ul>
-      </div>
+      </nav>
 
       <!-- Contact -->
       <div>
@@ -49,8 +55,13 @@ const navLinks = [
         </p>
         <ul class="mt-4 flex flex-col gap-2 text-sm text-white/80">
           <li>
-            <a href="mailto:contact@oros-amm.fr" class="transition hover:text-white">
-              contact@oros-amm.fr
+            <a href={`mailto:${CONTACT_EMAIL}`} class="transition hover:text-white">
+              {CONTACT_EMAIL}
+            </a>
+          </li>
+          <li>
+            <a href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, '')}`} class="transition hover:text-white">
+              {PHONE_NUMBER}
             </a>
           </li>
           <li>Annecy, Haute-Savoie</li>
@@ -61,8 +72,10 @@ const navLinks = [
     <div
       class="mt-12 flex flex-col gap-4 border-t border-white/15 pt-8 text-xs text-on-primary-muted sm:flex-row sm:items-center sm:justify-between"
     >
-      <p>© {year} Clément Allavena — Accompagnateur en Moyenne Montagne.</p>
-      <p>Diplômé d'État AMM</p>
+      <p>© {year} Clément Allavena — Accompagnateur en montagne stagiaire.</p>
+      {declarationNumero && (
+        <p>Déclaration d'éducateur sportif n° {declarationNumero}</p>
+      )}
     </div>
   </Container>
 </footer>

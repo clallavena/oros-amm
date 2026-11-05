@@ -4,7 +4,7 @@ import Container from "../../components/Container.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("carnet");
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -23,17 +23,17 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout
-  title={`${post.data.title} — Blog`}
+  title={`${post.data.title} — Carnet`}
   description={post.data.description}
 >
   <!-- HEADER DE L'ARTICLE -->
   <section class="bg-primary pb-16 pt-40 md:pb-20 md:pt-48">
     <Container>
       <a
-        href="/blog"
+        href="/carnet"
         class="text-sm font-semibold text-white/70 transition hover:text-white"
       >
-        ← Tous les articles
+        ← Tout le carnet
       </a>
 
       <p class="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-white/70">

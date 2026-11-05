@@ -1,0 +1,85 @@
+---
+/*
+ * Carte compacte d'une sortie : image à gauche, texte à droite.
+ * Utilisée dans « Dans le même esprit » (design, planche 3b).
+ *
+ * Même modèle « block link » que SortieCard : un seul vrai lien, sur le
+ * titre, étendu à toute la carte par son pseudo-élément ::after.
+ */
+import { Image } from "astro:assets";
+import { sortieHref, type Sortie } from "../lib/sorties";
+import { FORMAT_LABEL, NIVEAU_LABEL, formatNombre } from "../lib/formats";
+
+interface Props {
+  sortie: Sortie;
+  /** Niveau du titre selon la page : h3 sous un h2 de section. */
+  headingLevel?: 2 | 3;
+}
+
+const { sortie, headingLevel = 3 } = Astro.props;
+const { data } = sortie;
+const Heading = headingLevel === 2 ? "h2" : "h3";
+
+/*
+ * Les lignes de texte sont faites de morceaux optionnels. On construit un
+ * tableau, on retire les morceaux vides, puis on joint avec « · » : pas de
+ * « Journée ·  · Massif X » quand la durée manque.
+ *
+ * `x is string` est un prédicat de type : il dit à TypeScript qu'après le
+ * filter, le tableau ne contient plus que des string (avec filter(Boolean),
+ * TypeScript garderait le type string | false | undefined).
+ */
+const estRenseigne = (x: string | false | undefined): x is string => Boolean(x);
+
+/** « Itinérance · 3 j · Massif des Bauges » */
+const meta = [
+  FORMAT_LABEL[data.format],
+  data.duree,
+  data.lieu && `Massif ${data.lieu.massif}`,
+]
+  .filter(estRenseigne)
+  .join(" · ");
+
+/** « +900 m · Soutenu » */
+const effort = [
+  data.deniveleM !== undefined && `+${formatNombre(data.deniveleM)} m`,
+  NIVEAU_LABEL[data.niveau],
+]
+  .filter(estRenseigne)
+  .join(" · ");
+---
+
+<article
+  class="group relative grid grid-cols-[112px_1fr] items-center gap-4 rounded-2xl p-2 transition hover:bg-background sm:grid-cols-[180px_1fr] sm:gap-5 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2"
+>
+  <!--
+    Affichée à 180 px (112 px sur mobile) : widths 180 et 360 couvrent les
+    écrans classiques et les écrans haute densité (2 pixels réels par pixel CSS).
+  -->
+  <Image
+    src={data.couverture.src}
+    alt={data.couverture.alt}
+    widths={[180, 360]}
+    sizes="(min-width: 640px) 180px, 112px"
+    class="h-24 w-full rounded-2xl object-cover sm:h-[130px]"
+  />
+
+  <div class="flex min-w-0 flex-col gap-1.5">
+    <!--
+      Ordre du code : titre d'abord, pour qu'un lecteur d'écran l'annonce en
+      premier. Ordre visuel : la ligne méta remonte au-dessus (order-first).
+    -->
+    <Heading class="text-lg font-bold leading-snug text-text sm:text-xl">
+      <a
+        href={sortieHref(sortie)}
+        class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-hover:text-primary"
+      >
+        {data.title}
+      </a>
+    </Heading>
+
+    <p class="order-first text-[13px] font-semibold text-primary">{meta}</p>
+
+    {effort && <p class="text-sm text-text-muted">{effort}</p>}
+  </div>
+</article>

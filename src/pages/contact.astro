@@ -1,10 +1,37 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
 import SectionTitle from "../components/SectionTitle.astro";
 import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
 import { getSorties } from "../lib/sorties";
-import { CONTACT_EMAIL, CONTACT_FORM_ENDPOINT, PHONE_NUMBER } from "../lib/site";
+import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { actions, isInputError } from "astro:actions";
+
+const resultat = Astro.getActionResult(actions.contact);
+const erreurs = isInputError(resultat?.error) ? resultat.error.fields : {};
+
+/*
+ * État de l'envoi, tiré de ce que renvoie le handler de l'Action ({ ok: true }).
+ * resultat vaut undefined tant que rien n'a été envoyé : ?. évite l'erreur.
+ */
+const isSent = resultat?.data?.ok === true;
+const aDesErreursDeSaisie = Object.keys(erreurs).length > 0;
+/* Erreur qui ne vient pas de la saisie (serveur, e-mail non parti…) : on le dit. */
+const erreurServeur = resultat?.error !== undefined && !aDesErreursDeSaisie;
+
+/*
+ * Le <title> est la première chose qu'annonce un lecteur d'écran au chargement :
+ * après un rechargement, c'est lui qui signale le résultat de l'envoi
+ * (principe recommandé par GOV.UK pour les erreurs).
+ */
+const titreBase = "Contact — Clément Allavena, Accompagnateur en montagne stagiaire";
+const titrePage = isSent
+  ? `Message envoyé — ${titreBase}`
+  : resultat?.error
+    ? `Erreur : ${titreBase}`
+    : titreBase;
 
 /*
  * Liste des sorties, groupées par univers, générée depuis la collection :
@@ -18,8 +45,6 @@ const groupesDeSorties = UNIVERS.map((u) => ({
   sorties: sorties.filter((s) => s.data.univers === u),
 })).filter((g) => g.sorties.length > 0);
 
-const actif = CONTACT_FORM_ENDPOINT !== null;
-
 /* Classes communes à tous les champs. Le focus est bien visible (WCAG 2.4.7). */
 const champ =
   "mt-2 w-full rounded-xl border border-border-strong bg-white px-4 py-3 text-base text-text transition focus:border-primary focus:outline-2 focus:outline-offset-2 focus:outline-focus";
@@ -27,7 +52,7 @@ const etiquette = "text-sm font-semibold text-text";
 ---
 
 <BaseLayout
-  title="Contact — Clément Allavena, Accompagnateur en montagne stagiaire"
+  title={titrePage}
   description="Une question, une idée de sortie ou envie de réserver ? Contactez Clément Allavena, accompagnateur en montagne stagiaire."
 >
   <!-- HEADER DE PAGE -->
@@ -36,7 +61,9 @@ const etiquette = "text-sm font-semibold text-text";
       <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
         Contact
       </p>
-      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+      <h1
+        class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl"
+      >
         Parlons de votre prochaine sortie
       </h1>
       <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
@@ -50,22 +77,17 @@ const etiquette = "text-sm font-semibold text-text";
   <section class="bg-background py-24 md:py-32">
     <Container>
       <div class="grid gap-12 md:grid-cols-3 md:gap-16">
-        <!--
-          Formulaire. Sans JavaScript, il est envoyé normalement à Formspree,
-          qui affiche sa propre page de confirmation. Avec JavaScript (script en
-          bas), l'envoi se fait sans quitter la page et le résultat s'affiche
-          dans la zone de statut.
-        -->
         <form
           id="contact-form"
-          action={CONTACT_FORM_ENDPOINT ?? undefined}
+          action={actions.contact + "#contact-form"}
           method="POST"
           aria-describedby="contact-obligatoire"
           class="md:col-span-2 grid gap-6 rounded-3xl bg-surface p-8 shadow-sm md:p-10"
+          novalidate
         >
           <p id="contact-obligatoire" class="text-sm text-text-muted">
-            Les champs marqués d'un <span aria-hidden="true">*</span> astérisque
-            sont obligatoires.
+            Les champs marqués d'un <span aria-hidden="true">*</span> astérisque sont
+            obligatoires.
           </p>
 
           <div class="grid gap-6 sm:grid-cols-2">
@@ -73,44 +95,97 @@ const etiquette = "text-sm font-semibold text-text";
               <label for="nom" class={etiquette}>
                 Nom <span aria-hidden="true">*</span>
               </label>
-              <input type="text" id="nom" name="nom" autocomplete="name" required class={champ} />
+              <input
+                type="text"
+                id="nom"
+                name="nom"
+                autocomplete="name"
+                required
+                aria-invalid={erreurs.nom ? "true" : undefined}
+                aria-describedby={erreurs.nom ? "nom-error" : undefined}
+                class={champ}
+              />
+              {
+                erreurs.nom && (
+                  <p id="nom-error" class="text-sm text-danger">
+                    {erreurs.nom[0]}
+                  </p>
+                )
+              }
             </div>
 
             <div>
               <label for="email" class={etiquette}>
                 E-mail <span aria-hidden="true">*</span>
               </label>
-              <input type="email" id="email" name="email" autocomplete="email" required class={champ} />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                required
+                aria-invalid={erreurs.email ? "true" : undefined}
+                aria-describedby={erreurs.email ? "email-error" : undefined}
+                class={champ}
+              />
+              {
+                erreurs.email && (
+                  <p id="email-error" class="text-sm text-danger">
+                    {erreurs.email[0]}
+                  </p>
+                )
+              }
             </div>
           </div>
 
           <div class="grid gap-6 sm:grid-cols-2">
             <div>
               <label for="telephone" class={etiquette}>Téléphone</label>
-              <input type="tel" id="telephone" name="telephone" autocomplete="tel" class={champ} />
+              <input
+                type="tel"
+                id="telephone"
+                name="telephone"
+                autocomplete="tel"
+                class={champ}
+              />
             </div>
 
             <div>
-              <label for="personnes" class={etiquette}>Nombre de personnes</label>
-              <input type="number" id="personnes" name="personnes" min="1" inputmode="numeric" class={champ} />
+              <label for="personnes" class={etiquette}
+                >Nombre de personnes</label
+              >
+              <input
+                type="number"
+                id="personnes"
+                name="personnes"
+                min="1"
+                inputmode="numeric"
+                class={champ}
+              />
             </div>
           </div>
 
           <div class="grid gap-6 sm:grid-cols-2">
             <div>
-              <label for="sortie" class={etiquette}>Votre demande concerne</label>
+              <label for="sortie" class={etiquette}
+                >Votre demande concerne</label
+              >
               <select id="sortie" name="sortie" class={champ}>
                 <option value="autre">Je ne sais pas encore</option>
-                {groupesDeSorties.map((groupe) => (
-                  <optgroup label={groupe.label}>
-                    {groupe.sorties.map((s) => (
-                      <option value={s.id}>{s.data.title}</option>
-                    ))}
-                  </optgroup>
-                ))}
+                {
+                  groupesDeSorties.map((groupe) => (
+                    <optgroup label={groupe.label}>
+                      {groupe.sorties.map((s) => (
+                        <option value={s.id}>{s.data.title}</option>
+                      ))}
+                    </optgroup>
+                  ))
+                }
                 <optgroup label="Groupes">
                   <option value="groupe-scolaires">Sortie scolaire</option>
-                  <option value="groupe-entreprises">Entreprise ou séminaire</option>
+                  <option value="groupe-entreprises"
+                    >Entreprise ou séminaire</option
+                  >
                 </optgroup>
               </select>
             </div>
@@ -131,41 +206,72 @@ const etiquette = "text-sm font-semibold text-text";
             <label for="message" class={etiquette}>
               Votre message <span aria-hidden="true">*</span>
             </label>
-            <textarea id="message" name="message" rows="6" required class={`${champ} resize-y`}></textarea>
+            <textarea
+              id="message"
+              name="message"
+              rows="6"
+              required
+              aria-invalid={erreurs.message ? "true" : undefined}
+              aria-describedby={erreurs.message ? "message-error" : undefined}
+              class={`${champ} resize-y`}
+              maxlength="5000"></textarea>
+            {
+              erreurs.message && (
+                <p id="message-error" class="text-sm text-danger">
+                  {erreurs.message[0]}
+                </p>
+              )
+            }
           </div>
 
-          <!--
-            Piège à robots (« honeypot ») de Formspree : invisible pour les
-            humains, souvent rempli par les robots. Un envoi qui le contient est
-            rejeté comme spam. display:none le retire aussi des lecteurs d'écran.
-          -->
-          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" />
+          <input
+            type="text"
+            name="honeypot"
+            tabindex="-1"
+            autocomplete="off"
+            class="hidden"
+          />
 
           <!-- Mention d'information RGPD, premier niveau (modèle CNIL). -->
           <p class="text-xs leading-relaxed text-text-muted">
-            Les informations saisies servent uniquement à répondre à votre
-            demande. Elles me sont transmises par le service Formspree, hébergé
-            aux États-Unis, qui les conserve 30 jours. Vous pouvez demander
-            leur consultation ou leur suppression à
-            <a href={`mailto:${CONTACT_EMAIL}`} class="font-semibold text-primary underline">{CONTACT_EMAIL}</a>.
+            Vos informations sont utilisées par Clément Allavena uniquement pour répondre à votre demande. Elles sont transmises par e-mail via le service Brevo,
+            hébergé dans l’Union européenne, et conservées au plus trois ans après notre dernier échange. Pour en savoir plus ou exercer vos droits
+            (accès, rectification, suppression) :
+            &nbsp<a
+              href={`mailto:${CONTACT_EMAIL}`}
+              class="font-semibold text-primary underline">{CONTACT_EMAIL}</a
+            >.
           </p>
 
           <div class="flex flex-wrap items-center gap-4">
             <button
               type="submit"
-              disabled={!actif}
               class="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               Envoyer le message
             </button>
 
-            <!-- Zone de statut : annoncée par les lecteurs d'écran à chaque changement. -->
-            <p id="contact-statut" role="status" class="text-sm font-semibold">
-              {!actif && (
-                <span class="text-text-muted">
-                  Le formulaire n'est pas encore actif : écrivez-moi à <a href={`mailto:${CONTACT_EMAIL}`} class="text-primary underline">{CONTACT_EMAIL}</a>.
-                  <br />
-                  Ou appelez-moi au <a href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, '')}`} class="text-primary underline">{PHONE_NUMBER}</a>.
+            <!--
+              id : cible de l'ancre ajoutée à l'action du formulaire. Après
+              l'envoi, le navigateur fait défiler la page jusqu'ici au lieu de
+              revenir en haut.
+            -->
+            <p
+              id="contact-statut"
+              class="scroll-mt-28 text-sm font-semibold"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {isSent && (
+                <span class="text-success">Message envoyé ! Je vous réponds sous 48h.</span>
+              )}
+              {aDesErreursDeSaisie && (
+                <span class="text-danger">Le message n'est pas parti : corrigez les champs signalés.</span>
+              )}
+              {erreurServeur && (
+                <span class="text-danger">
+                  L'envoi a échoué. Réessayez, ou écrivez-moi à
+                  <a href={`mailto:${CONTACT_EMAIL}`} class="underline">{CONTACT_EMAIL}</a>.
                 </span>
               )}
             </p>
@@ -175,15 +281,24 @@ const etiquette = "text-sm font-semibold text-text";
         <!-- Infos pratiques -->
         <div class="flex flex-col gap-8">
           <div>
-            <SectionTitle eyebrow="Coordonnées" title="Me contacter directement" />
+            <SectionTitle
+              eyebrow="Coordonnées"
+              title="Me contacter directement"
+            />
             <ul class="mt-5 flex flex-col gap-3 text-text-muted">
               <li>
-                <a href={`mailto:${CONTACT_EMAIL}`} class="font-medium text-primary">
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  class="font-medium text-primary"
+                >
                   {CONTACT_EMAIL}
                 </a>
               </li>
               <li>
-                <a href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, '')}`} class="font-medium text-primary">
+                <a
+                  href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`}
+                  class="font-medium text-primary"
+                >
                   {PHONE_NUMBER}
                 </a>
               </li>
@@ -194,8 +309,8 @@ const etiquette = "text-sm font-semibold text-text";
           <div class="rounded-2xl border border-border-strong bg-surface p-6">
             <h3 class="font-bold text-text">Zone d'intervention</h3>
             <p class="mt-2 leading-relaxed text-text-muted">
-              Massif des Bornes-Aravis, massif des Bauges et alentours d'Annecy. D'autres
-              secteurs peuvent être envisagés selon la demande.
+              Massif des Bornes-Aravis, massif des Bauges et alentours d'Annecy.
+              D'autres secteurs peuvent être envisagés selon la demande.
             </p>
           </div>
         </div>
@@ -206,9 +321,8 @@ const etiquette = "text-sm font-semibold text-text";
 
 <script>
   const form = document.querySelector<HTMLFormElement>("#contact-form");
-  const statut = document.querySelector<HTMLParagraphElement>("#contact-statut");
 
-  if (form && statut) {
+  if (form) {
     /* ---------- Pré-remplissage depuis l'URL ---------- */
     // Ex. : /contact?sortie=balade-decouverte&groupe=1 (boutons des fiches et de /groupes)
     const params = new URLSearchParams(window.location.search);
@@ -217,62 +331,18 @@ const etiquette = "text-sm font-semibold text-text";
     const sortie = params.get("sortie");
     // On ne sélectionne que si l'option existe : une URL modifiée à la main
     // ou un lien vers une sortie supprimée ne casse rien.
-    if (select && sortie && Array.from(select.options).some((o) => o.value === sortie)) {
+    if (
+      select &&
+      sortie &&
+      Array.from(select.options).some((o) => o.value === sortie)
+    ) {
       select.value = sortie;
     }
 
     const message = form.querySelector<HTMLTextAreaElement>("#message");
     if (message && params.get("groupe") === "1" && message.value === "") {
-      message.value = "Bonjour, je souhaiterais proposer une date pour un groupe.\n\n";
+      message.value =
+        "Bonjour, je souhaiterais proposer une date pour un groupe.\n\n";
     }
-
-    /* ---------- Envoi sans quitter la page ---------- */
-    const bouton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-
-    const afficher = (texte: string, type: "succes" | "erreur") => {
-      statut.textContent = texte;
-      statut.classList.toggle("text-primary", type === "succes");
-      statut.classList.toggle("text-danger", type === "erreur");
-    };
-
-    form.addEventListener("submit", async (event) => {
-      // getAttribute et non form.action : sans attribut, form.action renvoie
-      // l'adresse de la page courante au lieu de null.
-      const endpoint = form.getAttribute("action");
-      if (!endpoint) return;
-
-      event.preventDefault();
-      if (bouton) {
-        bouton.disabled = true;
-        bouton.textContent = "Envoi en cours…";
-      }
-
-      try {
-        const reponse = await fetch(endpoint, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { Accept: "application/json" }, // Formspree répond en JSON au lieu d'une page
-        });
-
-        if (reponse.ok) {
-          form.reset();
-          afficher("Merci, votre message est bien parti. Je vous réponds sous 48h.", "succes");
-        } else {
-          // Formspree renvoie { errors: [{ message }] } en cas de refus.
-          const corps = await reponse.json().catch(() => ({}));
-          const details = Array.isArray(corps.errors)
-            ? corps.errors.map((e: { message: string }) => e.message).join(" ")
-            : "";
-          afficher(`L'envoi a échoué. ${details}`.trim(), "erreur");
-        }
-      } catch {
-        afficher("L'envoi a échoué (problème de connexion). Réessayez ou écrivez-moi par e-mail.", "erreur");
-      } finally {
-        if (bouton) {
-          bouton.disabled = false;
-          bouton.textContent = "Envoyer le message";
-        }
-      }
-    });
   }
 </script>

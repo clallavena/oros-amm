@@ -1,9 +1,11 @@
 // @ts-check
-import { defineConfig, fontProviders } from 'astro/config';
+import { defineConfig, envField, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
 import react from '@astrojs/react';
+
+import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,13 +24,18 @@ export default defineConfig({
     styles: ["normal", "italic"],
     fallbacks: ["sans-serif"],
   }],
-  // Le blog s'appelle désormais « Carnet » : les anciennes adresses restent valides.
-  redirects: {
-    "/blog": "/carnet",
-    "/blog/[slug]": "/carnet/[slug]",
-  },
   vite: {
     plugins: [tailwindcss()]
   },
-  integrations: [react()]
-});
+
+  integrations: [react()],
+
+  adapter: node({
+    mode: "standalone"
+  }),
+  env: {
+    schema: {
+      BREVO_API_KEY: envField.string({context: "server", access: "secret"}),
+    },
+  },
+});

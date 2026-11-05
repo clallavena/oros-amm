@@ -24,6 +24,7 @@
   --color-stone-500: oklch(52% 0.03 162); /* neutre légèrement vert pour le texte secondaire */
   --color-lime-400: oklch(85.4% 0.15 112);
   --color-clay-500: oklch(52% 0.15 35);
+  --color-meadow-600: oklch(46% 0.12 150); /* #0f6a31 : 6,7:1 sur blanc, ≥ 6,3:1 sur les fonds des 3 thèmes */
 
   --color-white: #fff;
   --color-black: #000;
@@ -48,6 +49,7 @@
   --color-border-strong: var(--color-forest-400);
 
   --color-danger: var(--color-clay-500);
+  --color-success: var(--color-meadow-600);
 
   /* Anneau de focus double (WCAG technique C40) : contour foncé + liseré blanc.
      Le foncé contraste sur fond clair, le blanc sur fond vert. */
@@ -89,7 +91,7 @@
 
 /* ---------- Rôles par thème ---------- */
 /* On ne redéfinit que les rôles : les composants n'ont pas à changer.
-   Ne changent jamais : surface, danger, focus (couleurs d'état).
+   Ne changent jamais : surface, danger, success, focus (couleurs d'état).
 
    Les sélecteurs [data-theme] ne sont pas limités à :root : un thème peut
    s'appliquer à une page entière (<html data-theme>, via BaseLayout) OU à un

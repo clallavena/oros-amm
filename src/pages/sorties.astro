@@ -40,7 +40,7 @@ const formats = FORMATS.map((f) => ({
 }));
 
 /* 3 derniers récits du Carnet. */
-const recits = (await getCollection("blog"))
+const recits = (await getCollection("carnet"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 

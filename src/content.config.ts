@@ -6,8 +6,9 @@ import { glob } from "astro/loaders";
 import { UNIVERS } from "./lib/univers";
 import { FORMATS, NIVEAUX } from "./lib/formats";
 
-const blog = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
+/* Carnet (ex-blog) : récits et conseils. Dossier : src/content/carnet/ */
+const carnet = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/carnet" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -144,4 +145,4 @@ const sorties = defineCollection({
   },
 });
 
-export const collections = { blog, sorties };
+export const collections = { carnet, sorties };

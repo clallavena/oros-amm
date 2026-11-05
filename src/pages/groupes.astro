@@ -96,7 +96,8 @@ const publics = [
             </ul>
 
             <div class="mt-auto pt-2">
-              <Button href="/contact">{pub.cta}</Button>
+              <!-- Pré-sélectionne « Sortie scolaire » ou « Entreprise » dans le formulaire. -->
+              <Button href={`/contact?sortie=groupe-${pub.id}`}>{pub.cta}</Button>
             </div>
           </article>
         ))}

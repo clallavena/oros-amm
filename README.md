@@ -16,6 +16,7 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
 ## Sommaire
 
 - [Stack technique](#stack-technique)
+- [Design system](#design-system)
 - [Architecture](#architecture)
 - [Structure du dépôt](#structure-du-dépôt)
 - [Choix de conception](#choix-de-conception)
@@ -36,6 +37,14 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
 | E-mail | API transactionnelle [Brevo](https://www.brevo.com) |
 | Exécution | Adaptateur [`@astrojs/node`](https://docs.astro.build/en/guides/integrations-guide/node/) en mode `standalone` |
 | Polices | Epilogue, Inter — via l'API Fonts d'Astro (Fontsource) |
+
+---
+
+## Design System
+
+Le design system du projet respecte les recommandations WCAG 2.X de l'académie W3C.
+
+![Design System](/docs/design-system.svg)
 
 ---
 

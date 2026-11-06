@@ -9,6 +9,7 @@ import Container from "../components/Container.astro";
 import Button from "../components/Button.astro";
 import UniversCard from "../components/UniversCard.astro";
 import StatutEncadrement from "../components/StatutEncadrement.astro";
+import { TITRE_MAJ } from "../lib/statut";
 import { getCollection } from "astro:content";
 import { UNIVERS, UNIVERS_INFO, type Univers } from "../lib/univers";
 import { FORMATS, FORMAT_INFO, FORMAT_LABEL, NIVEAU_LABEL, formatPrix } from "../lib/formats";
@@ -53,7 +54,7 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
 ---
 
 <BaseLayout
-  title="Sorties — Clément Allavena, Accompagnateur en montagne stagiaire"
+  title={`Sorties — Clément Allavena, ${TITRE_MAJ}`}
   description="Randonnée au fil des saisons, raquettes sous la neige ou nuit en refuge : choisissez un univers, puis la formule qui vous ressemble."
 >
   <!-- ========== HERO ========== -->

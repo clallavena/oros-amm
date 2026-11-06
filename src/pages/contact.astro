@@ -7,6 +7,7 @@ import SectionTitle from "../components/SectionTitle.astro";
 import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
 import { getSorties } from "../lib/sorties";
 import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { TITRE, TITRE_MAJ } from "../lib/statut";
 import { actions, isInputError } from "astro:actions";
 
 const resultat = Astro.getActionResult(actions.contact);
@@ -26,7 +27,7 @@ const erreurServeur = resultat?.error !== undefined && !aDesErreursDeSaisie;
  * après un rechargement, c'est lui qui signale le résultat de l'envoi
  * (principe recommandé par GOV.UK pour les erreurs).
  */
-const titreBase = "Contact — Clément Allavena, Accompagnateur en montagne stagiaire";
+const titreBase = `Contact — Clément Allavena, ${TITRE_MAJ}`;
 const titrePage = isSent
   ? `Message envoyé — ${titreBase}`
   : resultat?.error
@@ -53,7 +54,7 @@ const etiquette = "text-sm font-semibold text-text";
 
 <BaseLayout
   title={titrePage}
-  description="Une question, une idée de sortie ou envie de réserver ? Contactez Clément Allavena, accompagnateur en montagne stagiaire."
+  description={`Une question, une idée de sortie ou envie de réserver ? Contactez Clément Allavena, ${TITRE}.`}
 >
   <!-- HEADER DE PAGE -->
   <section class="bg-hero pb-20 pt-40 md:pb-28 md:pt-48">

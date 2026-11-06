@@ -1,5 +1,6 @@
 ---
 import { NAV_LINKS, CONTACT_LINK, isActive } from "../lib/navigation";
+import { TITRE_MAJ } from "../lib/statut";
 
 const { pathname } = Astro.url;
 ---
@@ -42,7 +43,7 @@ const { pathname } = Astro.url;
             id="logo-subtitle"
             class="mt-1 text-xs text-white/75 transition-colors duration-300"
           >
-            Accompagnateur en montagne stagiaire
+            {TITRE_MAJ}
           </p>
         </div>
       </a>

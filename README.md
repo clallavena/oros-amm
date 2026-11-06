@@ -21,7 +21,6 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
 - [Choix de conception](#choix-de-conception)
 - [Démarrer en local](#démarrer-en-local)
 - [Ajouter du contenu](#ajouter-du-contenu)
-- [Feuille de route](#feuille-de-route)
 
 ---
 
@@ -235,16 +234,6 @@ Le schéma complet, avec les champs optionnels (programme, départs, galerie, in
 ### Un article du carnet
 
 Créer un fichier dans `src/content/carnet/` avec `title`, `description`, `pubDate` et, si besoin, `tags`.
-
----
-
-## Feuille de route
-
-- [ ] Nom définitif du site et nom de domaine
-- [ ] Hébergement chez un hébergeur français ou européen
-- [ ] Photos stockées hors du dépôt, récupérées au build
-- [ ] Optimisation SEO (données structurées, sitemap)
-- [ ] Version anglaise
 
 ---
 

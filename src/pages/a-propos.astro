@@ -63,7 +63,7 @@ interface Etape {
 const etapes: Etape[] = [
   {
     annee: "1999",
-    titre: "Née au coeur des volcans d'Auvergne",
+    titre: "Né au cœur des volcans d'Auvergne",
     texte: "Premiers pas sur les volcans. Premiers souvenirs de randonnée.",
     etat: "passee",
   },
@@ -75,8 +75,8 @@ const etapes: Etape[] = [
   },
   {
     annee: "Septembre 2026",
-    titre: "UF1 et EPMSP validée",
-    texte: "Devenant ainsi educateur sportif stagiaire, je peux encadrer des sorties en montagne.",
+    titre: "UF1 et EPMSP validées",
+    texte: "Devenant ainsi éducateur sportif stagiaire, je peux encadrer des sorties en montagne.",
     etat: "passee",
   },
   {
@@ -127,7 +127,14 @@ const PRESENTATION_MODALITE: Record<Modalite, { icone: string; classe: string }>
 
 /* ---------- FAQ ---------- */
 
-const questions = [
+interface Question {
+  question: string;
+  reponse: string;
+  /** Lien affiché sous la réponse (une chaîne ne peut pas contenir de lien cliquable). */
+  lien?: { href: string; label: string };
+}
+
+const questions: Question[] = [
   {
     question: "Qu'est-ce qu'un accompagnateur stagiaire ?",
     reponse:
@@ -145,8 +152,12 @@ const questions = [
   {
     question: "Comment vérifier votre statut ?",
     reponse:
-      `Toutes les informations sont publiques, et vous pouvez vérifier mon statut et celui d'autre accompagnateurs sur le site du Ministère des Sports : [https://recherche-educateur.sports.gouv.fr/accueil](https://recherche-educateur.sports.gouv.fr/accueil) `,
-  }
+      "Toutes les informations sont publiques : vous pouvez vérifier mon statut, et celui des autres accompagnateurs, sur le site du ministère des Sports.",
+    lien: {
+      href: "https://recherche-educateur.sports.gouv.fr/accueil",
+      label: "Rechercher un éducateur sportif",
+    },
+  },
 ];
 
 /* Classes partagées par les en-têtes de section (mêmes valeurs que le hub /sorties). */
@@ -170,7 +181,7 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
             La montagne, une passion à partager
           </h1>
           <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 md:text-xl">
-            Je suis Clément Allavena, {TITRE}. Ingénieur Informatique de métier j'ai souhaité accompagner
+            Je suis Clément Allavena, {TITRE}. Ingénieur informatique de métier, j'ai souhaité accompagner
             celles et ceux qui veulent découvrir la montagne à leur rythme,
             qu'ils soient débutants ou habitués des sentiers.
           </p>
@@ -233,26 +244,36 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
           <!-- h2 stylé comme un surtitre : la section garde un titre dans le plan de la page. -->
           <h2 id="histoire-titre" class={surtitre}>Pourquoi la montagne</h2>
           <blockquote class="mt-5 font-[family-name:var(--font-epilogue)] text-[clamp(26px,3vw,36px)] font-bold leading-tight text-primary-hover">
-            « Aller là où le regard se pose.»
+            « Aller là où le regard se pose. »
           </blockquote>
         </div>
         <div class="flex max-w-[680px] flex-[1.4_1_480px] flex-col gap-4.5 text-lg leading-relaxed">
-          <p>"Quand la montagne vous a pris le coeur, tout vient d'elle et tout vous y ramène." <i>Franz Schrader - Pyrénéeiste</i></p>
+          <figure class="text-base">
+            <blockquote>
+              <p>« Quand la montagne vous a pris le cœur, tout vient d'elle et tout vous y ramène. »</p>
+            </blockquote>
+            <figcaption class="mt-1 text-sm text-text-muted">Franz Schrader, pyrénéiste</figcaption>
+          </figure>
           <p>C'est ainsi que mon amour de la montagne a pris un réel sens, dans les Pyrénées lors de mes études.
-            Je la pratiquais déjà et l'idée de devenir accompagnateur été déjà présente. J'ai toujours aimé transmettre et apprendre de ce milieu.
+            Je la pratiquais déjà et l'idée de devenir accompagnateur était déjà présente. J'ai toujours aimé transmettre et apprendre de ce milieu.
             Depuis j'ai tout fait pour me rapprocher de ce rêve, et aujourd'hui je suis en formation au diplôme d'État d'accompagnateur en montagne.
           </p>
-          <p>Ingénieur Informatique de métier, je sais ce qu'implique un métier de bureau et je connais également le sentiment d'évasion que procure la montagne.
+          <p>Ingénieur informatique de métier, je sais ce qu'implique un métier de bureau et je connais également le sentiment d'évasion que procure la montagne.
             La liberté, le calme, la sérénité, la beauté des paysages, la nature et les rencontres sont autant de raisons qui me poussent à partager ma passion.
           </p>
           <p>
             Mon approche : <b>prendre le temps</b>. Le temps d'observer et de contempler la montagne.
-            Dans notre société actuelle, on ne prends parfois plus le temps de prendre le temps. Surtout dans les métiers sédentaires que je connais bien.
-            Je propose une vision de la montagne <b>contemplative</b>, ou j'essaie de vous transmettre ma vision du temps et de la beauté de l'impermanence dans la nature.
-            Mon but à moi est simple, éveiller votre <b>curiosité</b> et <b>stimuler</b> l'enfant qui est en nous.
+            Dans notre société actuelle, on ne prend parfois plus le temps de prendre le temps. Surtout dans les métiers sédentaires que je connais bien.
+            Je propose une vision de la montagne <b>contemplative</b>, où j'essaie de vous transmettre ma vision du temps et de la beauté de l'impermanence dans la nature.
+            Mon but à moi est simple : éveiller votre <b>curiosité</b> et <b>stimuler</b> l'enfant qui est en nous.
           </p>
-          <p><i>"Toutes les grandes personnes ont d’abord été des enfants. Mais peu d’entre elles s’en souviennent." - Antoine de Saint-Exupéry</i></p>
-          <p><i>Photographe amateur, toutes les photos que vous pouvez voir ici sont prises lors de mes sorties en montagne.</i></p>
+          <figure class="text-base">
+            <blockquote>
+              <p>« Toutes les grandes personnes ont d’abord été des enfants. Mais peu d’entre elles s’en souviennent. »</p>
+            </blockquote>
+            <figcaption class="mt-1 text-sm text-text-muted">Antoine de Saint-Exupéry, <cite>Le Petit Prince</cite></figcaption>
+          </figure>
+          <p class="text-base italic text-text-muted">Photographe amateur, toutes les photos de ce site sont issues de mes sorties en montagne.</p>
         </div>
       </div>
     </Container>
@@ -361,7 +382,20 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </summary>
-            <p class="pb-5 leading-relaxed text-text-muted">{q.reponse}</p>
+            <p class="pb-5 leading-relaxed text-text-muted">
+              {q.reponse}
+              {q.lien && (
+                <>
+                  {" "}
+                  <a
+                    href={q.lien.href}
+                    class="font-semibold text-primary underline underline-offset-4 hover:text-primary-hover"
+                  >
+                    {q.lien.label}
+                  </a>
+                </>
+              )}
+            </p>
           </details>
         ))}
       </div>

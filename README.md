@@ -106,7 +106,7 @@ Le flux se lit de gauche à droite :
 | `/sorties/[univers]/[slug]` | statique | Fiche détaillée d'une sortie |
 | `/groupes` | statique | Offre pour les groupes |
 | `/carnet`, `/carnet/[slug]` | statique | Récits et conseils |
-| `/a-propos` | statique | Présentation |
+| `/qui-je-suis` | statique | Présentation |
 | `/contact` | **serveur** | Formulaire de contact |
 
 ---

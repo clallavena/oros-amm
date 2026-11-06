@@ -1,12 +1,14 @@
 import re, math, sys
 
-css = open(sys.argv[1]).read()
+css = open(sys.argv[1], encoding="utf-8").read()
 out = sys.argv[2]
 
 # ---------- lecture des primitives OKLCH ----------
 prims = {}
+ORIG = {}  # valeur telle qu'écrite dans global.css, ex. "oklch(42.3% 0.065 162)"
 for name, L, C, H in re.findall(r"--color-([\w-]+):\s*oklch\(([\d.]+)%\s+([\d.]+)\s+([\d.]+)\)", css):
     prims[name] = (float(L) / 100, float(C), float(H))
+    ORIG[name] = f"oklch({L}% {C} {H})"
 
 def oklch_to_rgb(L, C, H):
     a = C * math.cos(math.radians(H)); b = C * math.sin(math.radians(H))
@@ -83,7 +85,7 @@ y = 0
 add(f'<rect x="0" y="0" width="{W}" height="150" fill="{F["hero"]}"/>')
 # silhouette de crêtes, discrète
 add(f'<path d="M0 150 L140 92 L210 120 L330 58 L420 104 L520 76 L640 122 L760 70 L860 108 L980 52 L1080 98 L1200 80 L1200 150 Z" fill="{F["hover"]}" opacity="0.55"/>')
-t(48, 58, "SYSTÈME DE DESIGN", 12, F["secondary"], 600, extra='letter-spacing="2.4"')
+t(48, 58, "Design System", 12, F["secondary"], 600, extra='letter-spacing="2.4"')
 t(48, 100, "Oros", 44, "#ffffff", 700, HEAD, extra='letter-spacing="-0.5"')
 t(160, 100, "— jetons, thèmes &amp; composants", 22, F["onmuted"], 600, HEAD)
 t(48, 128, "Tailwind CSS 4 · @theme · couleurs OKLCH · source : src/styles/global.css", 13, F["onmuted"])
@@ -92,6 +94,7 @@ t(48, 128, "Tailwind CSS 4 · @theme · couleurs OKLCH · source : src/styles/gl
 y = 196
 label(48, y, "01 · Primitives")
 t(48, y + 30, "Échelle forêt — teinte fixe 162°, seule la clarté L varie", 22, F["text"], 700, HEAD)
+t(1152, y + 30, "hex sRGB (converti) · oklch(L C H) d'origine", 12, F["muted"], 400, MONO, "end")
 steps = [50, 100, 200, 300, 400, 500, 600, 700, 800]
 sw, gap, x0, top = 112, 12, 48, y + 52
 for i, st in enumerate(steps):
@@ -103,9 +106,11 @@ for i, st in enumerate(steps):
     if st == 500: t(x + sw - 12, top + 26, "primary", 11, F["secondary"], 600, anchor="end")
     t(x + 12, top + 74, f"L {L:.1f}%", 11, fg, 400, MONO)
     t(x, top + 106, hx, 12, F["text"], 400, MONO)
+    L_, C_, H_ = ORIG[k][6:-1].split()  # "oklch(98% 0.012 162)" -> "98%", "0.012", "162"
+    t(x, top + 122, f"{L_} {C_} {H_}", 10.5, F["muted"], 400, MONO)
 
 # accents & états
-y2 = top + 140
+y2 = top + 156
 t(48, y2, "Accents &amp; états", 15, F["text"], 600, HEAD)
 acc = [("lime-400", "secondary"), ("stone-500", "text-muted"), ("meadow-600", "success"),
        ("clay-500", "danger"), ("forest-700", "focus")]
@@ -114,9 +119,10 @@ for i, (k, role) in enumerate(acc):
     add(f'<rect x="{x}" y="{y2 + 16}" width="44" height="44" rx="22" fill="{HEX[k]}"/>')
     t(x + 56, y2 + 34, role, 14, F["text"], 600)
     t(x + 56, y2 + 52, f"{k} · {HEX[k]}", 12, F["muted"], 400, MONO)
+    t(x + 56, y2 + 68, ORIG[k], 11, F["muted"], 400, MONO)
 
 # ================= 2. THÈMES =================
-y = y2 + 112
+y = y2 + 128
 label(48, y, "02 · Thèmes d'univers")
 t(48, y + 30, "Même clarté L par cran : seuls la teinte et le chroma changent", 22, F["text"], 700, HEAD)
 t(48, y + 54, "Les composants ne lisent que des rôles (primary, secondary, text…), redéfinis par [data-theme].", 14, F["muted"])
@@ -151,10 +157,10 @@ t(48, y + 30, "Epilogue pour les titres, Inter pour le texte", 22, F["text"], 70
 ty = y + 64
 add(f'<rect x="48" y="{ty}" width="1104" height="232" rx="16" fill="#ffffff" stroke="{F["border"]}"/>')
 rows = [
-    ("eyebrow", "Inter 600 · 14 · capitales · tracking-widest", "PROCHAINES SORTIES", 14, F["primary"], 600, BODY, 'letter-spacing="2.8"'),
-    ("h2", "Epilogue 700 · 36–30 · tracking-tight", "La montagne, à hauteur d'émerveillement", 32, F["text"], 700, HEAD, 'letter-spacing="-0.6"'),
-    ("h3", "Epilogue 600 · 20", "Balade découverte en forêt", 20, F["text"], 600, HEAD, ""),
-    ("body-lg", "Inter 400 · 18 · leading-relaxed", "Prendre le temps d'observer, d'écouter et de comprendre le milieu.", 18, F["muted"], 400, BODY, ""),
+    ("eyebrow", "Inter 600 · 14 · capitales · tracking-widest", "LOREM IPSUM", 14, F["primary"], 600, BODY, 'letter-spacing="2.8"'),
+    ("h2", "Epilogue 700 · 36–30 · tracking-tight", "Lorem ipsum dolor sit amet", 32, F["text"], 700, HEAD, 'letter-spacing="-0.6"'),
+    ("h3", "Epilogue 600 · 20", "Lorem ipsum dolor sit amet", 20, F["text"], 600, HEAD, ""),
+    ("body-lg", "Inter 400 · 18 · leading-relaxed", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus et dui justo. ", 18, F["muted"], 400, BODY, ""),
 ]
 for i, (tag, spec, sample, size, fill, wgt, fam, ex) in enumerate(rows):
     ry = ty + 44 + i * 48
@@ -199,11 +205,11 @@ H = by + 196 + 48
 t(W / 2, H - 16, "Généré depuis src/styles/global.css — valeurs hex converties depuis OKLCH (sRGB), ratios WCAG 2.x calculés.", 11, F["muted"], 400, BODY, "middle")
 
 svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" '
-       f'aria-labelledby="ds-title ds-desc">\n<title id="ds-title">Système de design Oros</title>\n'
+       f'aria-labelledby="ds-title ds-desc">\n<title id="ds-title">Design System Oros</title>\n'
        f'<desc id="ds-desc">Échelle de couleurs forêt, accents et états, trois thèmes d\'univers (Forêt, Neige, Crépuscule), '
        f'typographie Epilogue et Inter, composants Button et Card.</desc>\n'
        f'<rect width="{W}" height="{H}" fill="{F["bg"]}"/>\n' + "\n".join(s) + "\n</svg>\n")
-open(out, "w").write(svg)
+open(out, "w", encoding="utf-8").write(svg)
 for nom, key, scale, _, accent, muted, hero in THEMES:
     R = roles(scale, accent, muted, hero)
     print(nom, "text/bg %.2f" % ratio(R["text"], R["bg"]), "muted/bg %.2f" % ratio(R["muted"], R["bg"]),

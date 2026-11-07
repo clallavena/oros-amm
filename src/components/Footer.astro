@@ -1,0 +1,82 @@
+---
+import Container from "./Container.astro";
+import { NAV_LINKS } from "../lib/navigation";
+import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { TITRE_MAJ } from "../lib/statut";
+
+const year = new Date().getFullYear();
+
+const navLinks = [...NAV_LINKS, { href: "/contact", label: "Contact" }];
+
+/*
+ * Numéro de déclaration d'éducateur sportif (carte professionnelle).
+ * Laisser à null tant qu'il n'est pas connu : la ligne ne s'affiche pas.
+ */
+const declarationNumero: string | null = null;
+---
+
+<footer class="bg-primary text-white">
+  <Container class="py-16">
+    <div class="grid gap-12 md:grid-cols-3">
+      <!-- Identité -->
+      <div>
+        <p class="text-lg font-bold">Clément Allavena</p>
+        <p class="mt-2 text-sm leading-relaxed text-white/70">
+          {TITRE_MAJ} en formation au DE. Des sorties pour
+          découvrir la montagne à votre rythme.
+        </p>
+      </div>
+
+      <!-- Navigation -->
+      <nav aria-labelledby="footer-nav-titre">
+        <p
+          id="footer-nav-titre"
+          class="text-sm font-semibold uppercase tracking-widest text-on-primary-muted"
+        >
+          Navigation
+        </p>
+        <ul class="mt-4 flex flex-col gap-2">
+          {navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="text-sm text-white/80 transition hover:text-white"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-widest text-on-primary-muted">
+          Contact
+        </p>
+        <ul class="mt-4 flex flex-col gap-2 text-sm text-white/80">
+          <li>
+            <a href={`mailto:${CONTACT_EMAIL}`} class="transition hover:text-white">
+              {CONTACT_EMAIL}
+            </a>
+          </li>
+          <li>
+            <a href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, '')}`} class="transition hover:text-white">
+              {PHONE_NUMBER}
+            </a>
+          </li>
+          <li>Annecy, Haute-Savoie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-4 border-t border-white/15 pt-8 text-xs text-on-primary-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Clément Allavena — {TITRE_MAJ}.</p>
+      {declarationNumero && (
+        <p>Déclaration d'éducateur sportif n° {declarationNumero}</p>
+      )}
+    </div>
+  </Container>
+</footer>

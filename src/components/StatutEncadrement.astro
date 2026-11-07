@@ -1,0 +1,56 @@
+---
+/*
+ * Bloc « Qui vous encadre » : le statut de stagiaire expliqué clairement.
+ * Réutilisable (hub /sorties aujourd'hui, Qui je suis ou fiches plus tard).
+ * Les données viennent de lib/statut.ts.
+ */
+
+import { GARANTIES } from "../lib/statut";
+---
+
+<section aria-labelledby="statut-titre">
+  <div class="flex flex-wrap items-start gap-x-12 gap-y-8 rounded-3xl bg-primary-light/25 p-8 md:p-10">
+    <div class="flex flex-[1_1_320px] flex-col gap-3.5">
+      <p class="text-sm font-semibold uppercase tracking-widest text-primary">
+        Qui vous encadre
+      </p>
+      <h2 id="statut-titre" class="text-3xl font-bold leading-tight tracking-tight text-text">
+        Accompagnateur stagiaire, encadrement en règle
+      </h2>
+      <p class="leading-relaxed text-text">
+        Je suis en formation au diplôme d'État d'accompagnateur en
+        montagne. Pendant ce cursus, la loi m'autorise à encadrer dans un cadre
+        précis : je préfère vous l'expliquer clairement.
+      </p>
+      <a
+        href="/qui-je-suis"
+        class="inline-flex min-h-11 items-center self-start font-semibold text-primary underline-offset-4 hover:underline"
+      >
+        Mon parcours et mon statut →
+      </a>
+    </div>
+
+    <ul class="grid flex-[2_1_480px] gap-4 sm:grid-cols-3">
+      {GARANTIES.map((g) => (
+        <li class="flex flex-col gap-2 rounded-2xl bg-surface p-5">
+          <svg
+            aria-hidden="true"
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-primary"
+          >
+            <path d={g.icone} />
+          </svg>
+          <b class="font-bold text-text">{g.titre}</b>
+          <span class="text-[15px] leading-relaxed text-text-muted">{g.texte}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

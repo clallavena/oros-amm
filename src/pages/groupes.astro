@@ -1,0 +1,125 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import Button from "../components/Button.astro";
+import { TITRE_MAJ } from "../lib/statut";
+
+/*
+ * les textes entres crochets sont à modifier quand j'aurais les infos
+ */
+const publics = [
+  {
+    id: "scolaires",
+    title: "Scolaires",
+    description:
+      "Sorties pédagogiques et classes de découverte, du primaire au lycée : lecture de paysage, faune, flore, orientation, en lien avec le projet de la classe.",
+    points: [
+      "Programme adapté au cycle et au projet de l'enseignant",
+      "[Effectif max. et taux d'encadrement]",
+      "Devis, justificatifs de qualification et d'assurance pour le dossier de sortie",
+    ],
+    cta: "Préparer une sortie scolaire",
+    // Icône « toque de diplômé »
+    iconPath: "M2 8l10-5 10 5-10 5zM6 10v5c3 2.5 9 2.5 12 0v-5M22 8v6",
+  },
+  {
+    id: "entreprises",
+    title: "Entreprises & séminaires",
+    description:
+      "Une journée au vert ou un temps fort de séminaire : marcher ensemble, sortir du cadre, revenir avec des souvenirs communs.",
+    points: [
+      "Demi-journée, journée ou soirée [à confirmer]",
+      "Itinéraire adapté à tous les niveaux de l'équipe",
+      "Devis sous [délai]",
+    ],
+    cta: "Demander un devis",
+    // Icône « groupe de personnes »
+    iconPath:
+      "M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19.5 9a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5",
+  },
+];
+---
+
+<BaseLayout
+  title={`Groupes — Clément Allavena, ${TITRE_MAJ}`}
+  description="Sorties en montagne pour les scolaires et les entreprises : un programme construit ensemble, sur devis."
+>
+  <!-- HEADER DE PAGE -->
+  <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+    <Container>
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+        Groupes
+      </p>
+      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+        Une classe, une entreprise ? On construit le programme ensemble.
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+        Pas de catalogue ici : vous me parlez de votre groupe et de vos
+        objectifs, je vous propose une sortie et un devis.
+      </p>
+    </Container>
+  </section>
+
+  <!-- PUBLICS -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      <div class="grid gap-6 md:grid-cols-2">
+        {publics.map((pub) => (
+          <article
+            id={pub.id}
+            aria-labelledby={`${pub.id}-titre`}
+            class="flex scroll-mt-28 flex-col gap-4 rounded-3xl border border-border bg-surface p-8 md:p-9"
+          >
+            <svg
+              aria-hidden="true"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-primary"
+            >
+              <path d={pub.iconPath} />
+            </svg>
+
+            <h2 id={`${pub.id}-titre`} class="text-2xl font-bold text-text">
+              {pub.title}
+            </h2>
+
+            <p class="leading-relaxed text-text-muted">{pub.description}</p>
+
+            <ul class="flex list-disc flex-col gap-2 pl-5 text-[15px] text-text">
+              {pub.points.map((point) => <li>{point}</li>)}
+            </ul>
+
+            <div class="mt-auto pt-2">
+              <!-- Pré-sélectionne « Sortie scolaire » ou « Entreprise » dans le formulaire. -->
+              <Button href={`/contact?sortie=groupe-${pub.id}`}>{pub.cta}</Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-white py-24 md:py-28">
+    <Container>
+      <div class="mx-auto max-w-2xl text-center">
+        <SectionTitle
+          align="center"
+          eyebrow="Un autre projet ?"
+          title="Club, association, famille élargie…"
+          description="Décrivez-moi votre groupe, vos dates et ce que vous aimeriez vivre : on voit ensemble ce qui est possible."
+        />
+        <div class="mt-8 flex justify-center">
+          <Button href="/contact">Me contacter</Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

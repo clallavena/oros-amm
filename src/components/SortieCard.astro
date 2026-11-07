@@ -1,0 +1,75 @@
+---
+/*
+ * Carte d'une sortie, cliquable en entier.
+ *
+ * Modèle « block link » (Heydon Pickering, Inclusive Components – Cards) :
+ * un SEUL vrai lien, sur le titre, dont le pseudo-élément ::after s'étend
+ * sur toute la carte. Un lecteur d'écran n'annonce que le titre comme nom
+ * du lien, au lieu de lire tout le contenu de la carte.
+ */
+import { Image } from "astro:assets";
+import { sortieHref, type Sortie } from "../lib/sorties";
+import { FORMAT_LABEL, NIVEAU_LABEL, formatPrix } from "../lib/formats";
+
+interface Props {
+  sortie: Sortie;
+  /** Niveau du titre selon la page : h2 sous un h1, h3 sous un h2. */
+  headingLevel?: 2 | 3;
+}
+
+const { sortie, headingLevel = 3 } = Astro.props;
+const { data } = sortie;
+const Heading = headingLevel === 2 ? "h2" : "h3";
+---
+
+<article
+  class="group relative flex flex-col overflow-hidden rounded-2xl bg-surface shadow-sm transition hover:shadow-lg motion-safe:hover:-translate-y-1 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2"
+>
+  <div class="aspect-4/3 overflow-hidden bg-primary-light">
+    <Image
+      src={data.couverture.src}
+      alt={data.couverture.alt}
+      widths={[400, 800]}
+      sizes="(min-width: 768px) 33vw, 100vw"
+      class="h-full w-full object-cover transition duration-500 motion-safe:group-hover:scale-105"
+    />
+  </div>
+
+  <div class="flex flex-1 flex-col p-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="rounded-full bg-primary-light/30 px-3 py-1 text-xs font-semibold text-primary">
+        {FORMAT_LABEL[data.format]}
+      </span>
+      <span class="text-xs font-medium text-text-muted">
+        {NIVEAU_LABEL[data.niveau]}
+      </span>
+    </div>
+
+    <Heading class="mt-4 text-xl font-bold text-text">
+      <a
+        href={sortieHref(sortie)}
+        class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+      >
+        {data.title}
+      </a>
+    </Heading>
+
+    <p class="mt-3 leading-relaxed text-text-muted">{data.description}</p>
+
+    <p class="mt-3 text-xs font-medium italic text-text-muted">
+      {data.groupe.max
+        ? `De ${data.groupe.min} à ${data.groupe.max} personnes`
+        : `À partir de ${data.groupe.min} personnes`}
+    </p>
+
+    <div class="mt-auto flex items-baseline justify-between border-t border-border pt-4">
+      <span class="text-xs font-medium text-text-muted">Dès, par personne</span>
+      <span class="text-xl font-medium text-primary">{formatPrix(data.prix.des)}</span>
+    </div>
+
+    <!-- Indication visuelle seulement : le lien est déjà sur le titre. -->
+    <span aria-hidden="true" class="mt-5 font-semibold text-primary">
+      Voir la sortie →
+    </span>
+  </div>
+</article>

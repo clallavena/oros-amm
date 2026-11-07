@@ -1,32 +1,11 @@
 ---
 /*
  * Bloc « Qui vous encadre » : le statut de stagiaire expliqué clairement.
- * Réutilisable (hub /sorties aujourd'hui, À propos ou fiches plus tard).
+ * Réutilisable (hub /sorties aujourd'hui, Qui je suis ou fiches plus tard).
+ * Les données viennent de lib/statut.ts.
  */
 
-const garanties = [
-  {
-    titre: "En formation au DE",
-    texte:
-      "Educateur sportif stagiaire, mon statut est vérifiable sur le site du ministère des sports.",
-    // toque de diplômé
-    icone: "M2 8l10-5 10 5-10 5zM6 10v5c3 2.5 9 2.5 12 0v-5",
-  },
-  {
-    titre: "Sous convention de stage",
-    texte:
-      "J'encadre dans le cadre de ma convention, suivi par un conseiller de stage diplômé.",
-    // document validé
-    icone: "M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 14l3 3 5-6",
-  },
-  {
-    titre: "Assuré",
-    texte:
-      "Responsabilité civile professionnelle d'accompagnateur stagiaire [TODO: assureur à completer].",
-    // bouclier
-    icone: "M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z",
-  },
-];
+import { GARANTIES } from "../lib/statut";
 ---
 
 <section aria-labelledby="statut-titre">
@@ -44,7 +23,7 @@ const garanties = [
         précis : je préfère vous l'expliquer clairement.
       </p>
       <a
-        href="/a-propos"
+        href="/qui-je-suis"
         class="inline-flex min-h-11 items-center self-start font-semibold text-primary underline-offset-4 hover:underline"
       >
         Mon parcours et mon statut →
@@ -52,7 +31,7 @@ const garanties = [
     </div>
 
     <ul class="grid flex-[2_1_480px] gap-4 sm:grid-cols-3">
-      {garanties.map((g) => (
+      {GARANTIES.map((g) => (
         <li class="flex flex-col gap-2 rounded-2xl bg-surface p-5">
           <svg
             aria-hidden="true"

@@ -9,6 +9,7 @@ import Button from "../../../components/Button.astro";
 import { Image } from "astro:assets";
 import { render } from "astro:content";
 import { UNIVERS_INFO } from "../../../lib/univers";
+import { TITRE_MAJ } from "../../../lib/statut";
 import { getSorties, getSortiesProches, type Sortie } from "../../../lib/sorties";
 import {
   FORMAT_LABEL,
@@ -318,8 +319,8 @@ const proches = await getSortiesProches(sortie);
 
         <ul class="flex list-disc flex-col gap-2 border-t border-border pl-5 pt-4 text-sm text-text-muted">
           <li>
-            Accompagnateur en montagne stagiaire, sous convention de stage ·
-            <a href="/a-propos" class="font-semibold text-primary underline">mon statut</a>
+            {TITRE_MAJ}, sous convention de stage ·
+            <a href="/qui-je-suis" class="font-semibold text-primary underline">mon statut</a>
           </li>
           {data.inclus.map((item) => <li>{item}</li>)}
           {data.annulation && <li>{data.annulation}</li>}

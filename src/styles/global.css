@@ -161,7 +161,15 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Les ancres (#statut…) s'arrêtent sous le header fixe (h-20 = 5rem) avec une marge. */
+  scroll-padding-top: 6rem;
+}
+
+/* Défilement animé seulement si l'utilisateur n'a pas demandé moins d'animations (WCAG 2.3.3). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

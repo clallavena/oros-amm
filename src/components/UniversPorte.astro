@@ -1,0 +1,75 @@
+---
+/*
+ * « Porte d'entrée » d'un univers sur l'accueil.
+ *
+ * - data-theme sur <li> : la porte prend les couleurs de son univers.
+ * - Modèle « block link » (comme SortieCard) : un seul vrai lien, sur le
+ *   titre, étendu à toute la porte par son ::after.
+ */
+import { UNIVERS_INFO, type Univers } from "../lib/univers";
+import { formatPrix } from "../lib/formats";
+import type { ResumeSorties } from "../lib/sorties";
+
+interface Props {
+  univers: Univers;
+  resume: ResumeSorties;
+}
+
+const { univers, resume } = Astro.props;
+const info = UNIVERS_INFO[univers];
+
+/* Ce qu'on peut promettre aujourd'hui, calculé depuis le contenu publié. */
+const disponibilite =
+  resume.prixDes !== undefined ? `Dès ${formatPrix(resume.prixDes)}` : "Sorties en préparation";
+---
+
+<li
+  data-theme={info.theme}
+  class="group relative grid grid-cols-[3rem_1fr_auto] items-center gap-4 p-4 text-text transition has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-inset md:flex md:flex-col md:items-stretch md:gap-3.5 md:rounded-3xl md:border md:border-border md:bg-surface md:p-7 md:shadow-xl md:shadow-black/10 md:hover:shadow-2xl md:motion-safe:hover:-translate-y-1"
+>
+  <span
+    aria-hidden="true"
+    class="flex size-12 items-center justify-center rounded-2xl bg-primary-light/25 text-primary md:size-13"
+  >
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d={info.icone} />
+    </svg>
+  </span>
+
+  <div class="flex min-w-0 flex-col gap-0.5 md:gap-2">
+    <!-- Ordre du code : titre d'abord (annoncé en premier). Visuellement, le surtitre remonte. -->
+    <h3 class="text-lg font-bold leading-tight md:text-2xl">
+      <a
+        href={`/sorties/${univers}`}
+        class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+      >
+        {info.label}
+      </a>
+    </h3>
+    <p class="order-first hidden text-[13px] font-semibold text-primary md:block">
+      {info.surtitre}
+    </p>
+    <p class="hidden leading-relaxed text-text-muted md:block">{info.accroche}</p>
+    <!-- Mobile : une seule ligne d'information sous le titre. -->
+    <p class="text-sm text-text-muted md:hidden">{disponibilite}</p>
+  </div>
+
+  <span aria-hidden="true" class="text-xl text-primary md:hidden">›</span>
+
+  <p class="mt-auto hidden items-center justify-between border-t border-border pt-4 text-[15px] md:flex">
+    <span class="font-semibold">{disponibilite}</span>
+    <span
+      aria-hidden="true"
+      class="text-xl text-primary transition-transform motion-safe:group-hover:translate-x-1"
+    >→</span>
+  </p>
+</li>

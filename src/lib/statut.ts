@@ -1,15 +1,5 @@
 /**
  * Statut d'accompagnateur en montagne stagiaire : source unique.
- *
- * Les règles d'encadrement viennent de l'arrêté du 19 décembre 2023
- * (formation au DE d'accompagnateur en moyenne montagne).
- * TODO : à confirmer avec le conseiller de stage.
- *
- * Ce fichier ne contient que des données. L'icône et la couleur d'une
- * modalité dépendent du thème : elles restent dans les composants
- * (même séparation que Theme / THEME_COLOR dans univers.ts).
- */
-
 /* ---------- Titre affiché ---------- */
 
 /** Titre réglementaire, en minuscules : à utiliser en milieu de phrase. */
@@ -60,6 +50,8 @@ export const ENCADREMENT: LigneEncadrement[] = [
 export interface Garantie {
   titre: string;
   texte: string;
+  /** Version courte du texte, pour les affichages compacts (accueil). */
+  court: string;
   /** Pictogramme : attribut `d` d'un <path> SVG 24×24 en trait. */
   icone: string;
 }
@@ -67,6 +59,7 @@ export interface Garantie {
 export const GARANTIES: Garantie[] = [
   {
     titre: "En formation au DE",
+    court: "Statut vérifiable auprès du ministère des Sports",
     texte:
       "Educateur sportif stagiaire, mon statut est vérifiable sur le site du ministère des sports.",
     // toque de diplômé
@@ -74,6 +67,7 @@ export const GARANTIES: Garantie[] = [
   },
   {
     titre: "Sous convention de stage",
+    court: "Suivi par un conseiller de stage diplômé",
     texte:
       "J'encadre dans le cadre de ma convention, suivi par un conseiller de stage diplômé.",
     // document validé
@@ -81,6 +75,7 @@ export const GARANTIES: Garantie[] = [
   },
   {
     titre: "Assuré",
+    court: "Responsabilité civile professionnelle",
     texte:
       "Responsabilité civile professionnelle d'accompagnateur stagiaire [TODO: assureur à completer].",
     // bouclier

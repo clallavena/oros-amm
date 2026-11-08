@@ -1,0 +1,349 @@
+---
+export const prerender = false;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
+import { getSorties } from "../lib/sorties";
+import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { TITRE, TITRE_MAJ } from "../lib/statut";
+import { actions, isInputError } from "astro:actions";
+
+const resultat = Astro.getActionResult(actions.contact);
+const erreurs = isInputError(resultat?.error) ? resultat.error.fields : {};
+
+/*
+ * État de l'envoi, tiré de ce que renvoie le handler de l'Action ({ ok: true }).
+ * resultat vaut undefined tant que rien n'a été envoyé : ?. évite l'erreur.
+ */
+const isSent = resultat?.data?.ok === true;
+const aDesErreursDeSaisie = Object.keys(erreurs).length > 0;
+/* Erreur qui ne vient pas de la saisie (serveur, e-mail non parti…) : on le dit. */
+const erreurServeur = resultat?.error !== undefined && !aDesErreursDeSaisie;
+
+/*
+ * Le <title> est la première chose qu'annonce un lecteur d'écran au chargement :
+ * après un rechargement, c'est lui qui signale le résultat de l'envoi
+ * (principe recommandé par GOV.UK pour les erreurs).
+ */
+const titreBase = `Contact — Clément Allavena, ${TITRE_MAJ}`;
+const titrePage = isSent
+  ? `Message envoyé — ${titreBase}`
+  : resultat?.error
+    ? `Erreur : ${titreBase}`
+    : titreBase;
+
+/*
+ * Liste des sorties, groupées par univers, générée depuis la collection :
+ * une nouvelle sortie apparaît ici sans toucher au formulaire.
+ * Les valeurs (sortie.id) sont celles que la fiche envoie dans l'URL :
+ * /contact?sortie=balade-decouverte
+ */
+const sorties = await getSorties();
+const groupesDeSorties = UNIVERS.map((u) => ({
+  label: UNIVERS_INFO[u].label,
+  sorties: sorties.filter((s) => s.data.univers === u),
+})).filter((g) => g.sorties.length > 0);
+
+/* Classes communes à tous les champs. Le focus est bien visible (WCAG 2.4.7). */
+const champ =
+  "mt-2 w-full rounded-xl border border-border-strong bg-white px-4 py-3 text-base text-text transition focus:border-primary focus:outline-2 focus:outline-offset-2 focus:outline-focus";
+const etiquette = "text-sm font-semibold text-text";
+---
+
+<BaseLayout
+  title={titrePage}
+  description={`Une question, une idée de sortie ou envie de réserver ? Contactez Clément Allavena, ${TITRE}.`}
+>
+  <!-- HEADER DE PAGE -->
+  <section class="bg-hero pb-20 pt-40 md:pb-28 md:pt-48">
+    <Container>
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+        Contact
+      </p>
+      <h1
+        class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl"
+      >
+        Parlons de votre prochaine sortie
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+        Une question, une envie d'itinéraire ou besoin de conseils ?
+        Écrivez-moi, je réponds sous 48h.
+      </p>
+    </Container>
+  </section>
+
+  <!-- FORMULAIRE + INFOS -->
+  <section class="bg-background py-24 md:py-32">
+    <Container>
+      <div class="grid gap-12 md:grid-cols-3 md:gap-16">
+        <form
+          id="contact-form"
+          action={actions.contact + "#contact-form"}
+          method="POST"
+          aria-describedby="contact-obligatoire"
+          class="md:col-span-2 grid gap-6 rounded-3xl bg-surface p-8 shadow-sm md:p-10"
+          novalidate
+        >
+          <p id="contact-obligatoire" class="text-sm text-text-muted">
+            Les champs marqués d'un <span aria-hidden="true">*</span> astérisque sont
+            obligatoires.
+          </p>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="nom" class={etiquette}>
+                Nom <span aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="nom"
+                name="nom"
+                autocomplete="name"
+                required
+                aria-invalid={erreurs.nom ? "true" : undefined}
+                aria-describedby={erreurs.nom ? "nom-error" : undefined}
+                class={champ}
+              />
+              {
+                erreurs.nom && (
+                  <p id="nom-error" class="text-sm text-danger">
+                    {erreurs.nom[0]}
+                  </p>
+                )
+              }
+            </div>
+
+            <div>
+              <label for="email" class={etiquette}>
+                E-mail <span aria-hidden="true">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                required
+                aria-invalid={erreurs.email ? "true" : undefined}
+                aria-describedby={erreurs.email ? "email-error" : undefined}
+                class={champ}
+              />
+              {
+                erreurs.email && (
+                  <p id="email-error" class="text-sm text-danger">
+                    {erreurs.email[0]}
+                  </p>
+                )
+              }
+            </div>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="telephone" class={etiquette}>Téléphone</label>
+              <input
+                type="tel"
+                id="telephone"
+                name="telephone"
+                autocomplete="tel"
+                class={champ}
+              />
+            </div>
+
+            <div>
+              <label for="personnes" class={etiquette}
+                >Nombre de personnes</label
+              >
+              <input
+                type="number"
+                id="personnes"
+                name="personnes"
+                min="1"
+                inputmode="numeric"
+                class={champ}
+              />
+            </div>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label for="sortie" class={etiquette}
+                >Votre demande concerne</label
+              >
+              <select id="sortie" name="sortie" class={champ}>
+                <option value="autre">Je ne sais pas encore</option>
+                {
+                  groupesDeSorties.map((groupe) => (
+                    <optgroup label={groupe.label}>
+                      {groupe.sorties.map((s) => (
+                        <option value={s.id}>{s.data.title}</option>
+                      ))}
+                    </optgroup>
+                  ))
+                }
+                <optgroup label="Groupes">
+                  <option value="groupe-scolaires">Sortie scolaire</option>
+                  <option value="groupe-entreprises"
+                    >Entreprise ou séminaire</option
+                  >
+                </optgroup>
+              </select>
+            </div>
+
+            <div>
+              <label for="dates" class={etiquette}>Dates souhaitées</label>
+              <input
+                type="text"
+                id="dates"
+                name="dates"
+                placeholder="ex. : un samedi de juin"
+                class={champ}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="message" class={etiquette}>
+              Votre message <span aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="6"
+              required
+              aria-invalid={erreurs.message ? "true" : undefined}
+              aria-describedby={erreurs.message ? "message-error" : undefined}
+              class={`${champ} resize-y`}
+              maxlength="5000"></textarea>
+            {
+              erreurs.message && (
+                <p id="message-error" class="text-sm text-danger">
+                  {erreurs.message[0]}
+                </p>
+              )
+            }
+          </div>
+
+          <input
+            type="text"
+            name="honeypot"
+            tabindex="-1"
+            autocomplete="off"
+            class="hidden"
+          />
+
+          <!-- Mention d'information RGPD, premier niveau (modèle CNIL). -->
+          <p class="text-xs leading-relaxed text-text-muted">
+            Vos informations sont utilisées par Clément Allavena uniquement pour répondre à votre demande. Elles sont transmises par e-mail via le service Brevo,
+            hébergé dans l’Union européenne, et conservées au plus trois ans après notre dernier échange. Pour en savoir plus ou exercer vos droits
+            (accès, rectification, suppression) :
+            &nbsp<a
+              href={`mailto:${CONTACT_EMAIL}`}
+              class="font-semibold text-primary underline">{CONTACT_EMAIL}</a
+            >.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button
+              type="submit"
+              class="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
+              Envoyer le message
+            </button>
+
+            <!--
+              id : cible de l'ancre ajoutée à l'action du formulaire. Après
+              l'envoi, le navigateur fait défiler la page jusqu'ici au lieu de
+              revenir en haut.
+            -->
+            <p
+              id="contact-statut"
+              class="scroll-mt-28 text-sm font-semibold"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {isSent && (
+                <span class="text-success">Message envoyé ! Je vous réponds sous 48h.</span>
+              )}
+              {aDesErreursDeSaisie && (
+                <span class="text-danger">Le message n'est pas parti : corrigez les champs signalés.</span>
+              )}
+              {erreurServeur && (
+                <span class="text-danger">
+                  L'envoi a échoué. Réessayez, ou écrivez-moi à
+                  <a href={`mailto:${CONTACT_EMAIL}`} class="underline">{CONTACT_EMAIL}</a>.
+                </span>
+              )}
+            </p>
+          </div>
+        </form>
+
+        <!-- Infos pratiques -->
+        <div class="flex flex-col gap-8">
+          <div>
+            <SectionTitle
+              eyebrow="Coordonnées"
+              title="Me contacter directement"
+            />
+            <ul class="mt-5 flex flex-col gap-3 text-text-muted">
+              <li>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  class="font-medium text-primary"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`}
+                  class="font-medium text-primary"
+                >
+                  {PHONE_NUMBER}
+                </a>
+              </li>
+              <li>Annecy, Haute-Savoie</li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border border-border-strong bg-surface p-6">
+            <h3 class="font-bold text-text">Zone d'intervention</h3>
+            <p class="mt-2 leading-relaxed text-text-muted">
+              Massif des Bornes-Aravis, massif des Bauges et alentours d'Annecy.
+              D'autres secteurs peuvent être envisagés selon la demande.
+            </p>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#contact-form");
+
+  if (form) {
+    /* ---------- Pré-remplissage depuis l'URL ---------- */
+    // Ex. : /contact?sortie=balade-decouverte&groupe=1 (boutons des fiches et de /groupes)
+    const params = new URLSearchParams(window.location.search);
+
+    const select = form.querySelector<HTMLSelectElement>("#sortie");
+    const sortie = params.get("sortie");
+    // On ne sélectionne que si l'option existe : une URL modifiée à la main
+    // ou un lien vers une sortie supprimée ne casse rien.
+    if (
+      select &&
+      sortie &&
+      Array.from(select.options).some((o) => o.value === sortie)
+    ) {
+      select.value = sortie;
+    }
+
+    const message = form.querySelector<HTMLTextAreaElement>("#message");
+    if (message && params.get("groupe") === "1" && message.value === "") {
+      message.value =
+        "Bonjour, je souhaiterais proposer une date pour un groupe.\n\n";
+    }
+  }
+</script>

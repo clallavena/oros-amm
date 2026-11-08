@@ -1,0 +1,49 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+import { Font } from "astro:assets";
+import { THEME_COLOR, type Theme } from "../lib/univers";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Ambiance visuelle de la page. Par défaut, la marque (forest). */
+  theme?: Theme;
+}
+
+const {
+  title = "Accompagnateur en Montagne",
+  description = "Découvrez la montagne autrement.",
+  theme = "forest",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" data-theme={theme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+
+    <meta name="theme-color" content={THEME_COLOR[theme]} />
+    <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-epilogue"/>
+    <Font cssVariable="--font-inter"/>
+  </head>
+
+  <body class="bg-background text-text antialiased">
+    <Header />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

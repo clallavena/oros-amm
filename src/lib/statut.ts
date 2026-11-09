@@ -8,6 +8,8 @@ export const TITRE = "accompagnateur en montagne stagiaire";
 /** Même titre avec une majuscule : début de phrase, titres de page, sous-titres. */
 export const TITRE_MAJ = TITRE.charAt(0).toUpperCase() + TITRE.slice(1);
 
+export const NUMERO_DECLARATION = "EDU000000460428";
+
 /* ---------- Modalités d'encadrement ---------- */
 
 /** Ce que mon statut me permet aujourd'hui pour un type de sortie. */

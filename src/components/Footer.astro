@@ -2,17 +2,17 @@
 import Container from "./Container.astro";
 import { NAV_LINKS } from "../lib/navigation";
 import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
-import { TITRE_MAJ } from "../lib/statut";
+import { NUMERO_DECLARATION, TITRE_MAJ } from "../lib/statut";
 
 const year = new Date().getFullYear();
 
-const navLinks = [...NAV_LINKS, { href: "/contact", label: "Contact" }];
+const navLinks = [...NAV_LINKS, { href: "/contact", label: "Contact" }, { href: "/mentions-legales", label: "Mentions légales" }];
 
 /*
  * Numéro de déclaration d'éducateur sportif (carte professionnelle).
- * Laisser à null tant qu'il n'est pas connu : la ligne ne s'affiche pas.
+ *
  */
-const declarationNumero: string | null = null;
+const declarationNumero = NUMERO_DECLARATION;
 ---
 
 <footer class="bg-primary text-white">
@@ -75,7 +75,11 @@ const declarationNumero: string | null = null;
     >
       <p>© {year} Clément Allavena — {TITRE_MAJ}.</p>
       {declarationNumero && (
-        <p>Déclaration d'éducateur sportif n° {declarationNumero}</p>
+        <p>Déclaration d'éducateur sportif n° 
+          <a href={"https://recherche-educateur.sports.gouv.fr/IdentifiantStagiaire/d9fd7b12-58ec-41ba-9041-4a18d65a7856"}
+            target="_blank" rel="noopener noreferrer" class="underline hover:no-underline">{declarationNumero}
+          </a>
+        </p>
       )}
     </div>
   </Container>

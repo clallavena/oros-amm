@@ -1,0 +1,82 @@
+---
+import Container from "../components/Container.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { WEBSITE_EDITOR, WEBSITE_HOST } from "../lib/legal";
+import { TITRE_MAJ } from "../lib/statut";
+
+const lienEmail = `mailto:${WEBSITE_EDITOR.email}`;
+---
+
+<BaseLayout
+    title={`Mentions légales — Clément Allavena, ${TITRE_MAJ}`}
+    description="Mentions légales du site web."
+>
+    <!-- HEADER DE PAGE : fond foncé, le header du site est en blanc en haut de page. -->
+    <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+        <Container>
+            <h1 class="text-4xl font-bold tracking-tight text-white md:text-6xl">
+                Mentions légales
+            </h1>
+        </Container>
+    </section>
+
+    <!-- CONTENU -->
+    <section class="bg-white py-20 md:py-28">
+        <Container>
+            <article class="post-content mx-auto max-w-2xl">
+                <h2>Éditeur du site</h2>
+                <p>
+                    Le site [nom du site] est édité par {WEBSITE_EDITOR.name}, Ingénieur
+                    en informatique et Accompagnateur en montagne, au statut légal d'{
+                        WEBSITE_EDITOR.legalStatus
+                    }.
+                </p>
+                <p>
+                    Pour toute question ou demande, vous pouvez contacter l'éditeur, qui
+                    est également le directeur de la publication, à l'adresse
+                    suivante&nbsp;: <a href={lienEmail}>{WEBSITE_EDITOR.email}</a>.
+                </p>
+                <p>
+                    Vous pouvez également retrouver l'éditeur sur son profil
+                    LinkedIn&nbsp;: <a
+                        href={WEBSITE_EDITOR.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer">Clément Allavena</a
+                    >.
+                </p>
+
+                <h2>Hébergement du site</h2>
+                <p>
+                    Le site est hébergé par {WEBSITE_HOST.companyName}, dont le siège
+                    social est situé au {WEBSITE_HOST.companyAddress}.
+                    Téléphone&nbsp;: {WEBSITE_HOST.companyPhoneNumber}.
+                </p>
+
+                <h2>Protection des données personnelles</h2>
+                <p>
+                    Conformément au Règlement Général sur la Protection des Données
+                    (RGPD) et à la loi Informatique et Libertés du 6 janvier 1978
+                    modifiée, vous disposez des droits suivants concernant vos données
+                    personnelles&nbsp;:
+                </p>
+                <ul>
+                    <li>droit d'accès, de rectification et de suppression&nbsp;;</li>
+                    <li>droit à la portabilité de vos données&nbsp;;</li>
+                    <li>droit d'opposition et de limitation du traitement.</li>
+                </ul>
+                <p>
+                    Le responsable du traitement des données est {WEBSITE_EDITOR.name}.
+                    Les données collectées via les formulaires de contact sont utilisées
+                    uniquement pour répondre à vos demandes et transitent par un service
+                    extérieur de mailing hébergé par <a href="https://www.brevo.com/fr/">Brevo</a>, société basée en
+                    Europe et répondant au RGPD.
+                </p>
+                <p>
+                    Pour exercer vos droits ou pour toute question relative à vos données
+                    personnelles, contactez-moi à&nbsp;: <a href={lienEmail}>{WEBSITE_EDITOR.email}</a>. Vous pouvez également
+                    adresser une réclamation à la <a href="https://www.cnil.fr">CNIL</a>.
+                </p>
+            </article>
+        </Container>
+    </section>
+</BaseLayout>

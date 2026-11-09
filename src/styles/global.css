@@ -182,3 +182,36 @@ body {
     font-family: var(--font-epilogue);
   }
 }
+
+/* Texte long : articles du carnet et pages légales. */
+.post-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.post-content p {
+  margin-top: 1.25rem;
+  line-height: 1.75;
+  color: var(--color-text-muted);
+}
+
+.post-content ul {
+  margin-top: 1.25rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+  color: var(--color-text-muted);
+}
+
+.post-content li {
+  margin-top: 0.5rem;
+  line-height: 1.75;
+}
+
+.post-content a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}

@@ -1,0 +1,51 @@
+name: Deploy website on alwaysdata
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Configure SSH
+        if: github.event_name == 'push'
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Rsync files to alwaysdata server
+        if: github.event_name == 'push'
+        run: |
+          rsync -az --delete dist node_modules package.json package-lock.json oros-mountain@ssh-oros-mountain.alwaysdata.net:oros-app/
+      - name: Restart site
+        if: github.event_name == 'push'
+        env:
+          TOKEN: ${{ secrets.ALWAYSDATA_API_TOKEN }}
+          SITE_ID: ${{ vars.ALWAYSDATA_SITE_ID }}
+        run: |
+          curl --fail -sS -X POST --user "$TOKEN account=oros-mountain:" \
+            "https://api.alwaysdata.com/v1/site/$SITE_ID/restart/"

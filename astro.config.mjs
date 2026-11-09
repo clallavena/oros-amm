@@ -35,7 +35,13 @@ export default defineConfig({
   }),
   env: {
     schema: {
-      BREVO_API_KEY: envField.string({context: "server", access: "secret"}),
+      BREVO_API_KEY: envField.string({ context: "server", access: "secret" }),
     },
+  },
+  security: {
+    allowedDomains: [
+      { hostname: 'orosens.fr', protocol: 'https' },
+      { hostname: 'www.orosens.fr', protocol: 'https' },
+    ],
   },
 });

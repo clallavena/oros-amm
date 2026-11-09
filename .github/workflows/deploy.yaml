@@ -45,7 +45,7 @@ jobs:
         if: github.event_name == 'push'
         env:
           TOKEN: ${{ secrets.ALWAYSDATA_API_TOKEN }}
-          SITE_ID: ${{ vars.ALWAYSDATA_SITE_ID }}
+          SITE_ID: ${{ secrets.ALWAYSDATA_SITE_ID }}
         run: |
           curl --fail -sS -X POST --user "$TOKEN account=oros-mountain:" \
             "https://api.alwaysdata.com/v1/site/$SITE_ID/restart/"

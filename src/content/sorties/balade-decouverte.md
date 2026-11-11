@@ -1,6 +1,6 @@
 ---
 title: "Balade découverte"
-description: "Une sortie courte et accessible pour prendre l'air, observer le paysage et s'initier à la randonnée en montagne."
+description: "Une sortie courte et accessible pour prendre l'air et observer le paysage."
 univers: randonnee
 format: demi-journee
 niveau: facile
@@ -10,7 +10,7 @@ prix:
   des: 35
   jusqua: 50
 couverture:
-  src: ../../images/randonnee.jpg
+  src: ../../images/bauges2.jpg
   alt: "Randonnée sur un sentier de montagne"
 ordre: 1
 # À compléter quand on a les infos (tous optionnels) :
@@ -40,6 +40,8 @@ ordre: 1
 #     places: 0
 ---
 
-Une sortie courte et accessible pour prendre l'air, observer le paysage et s'initier à la randonnée en montagne.
+Une sortie à la demi-journée permettant de découvrir le milieu montagnard et les cadeaux que la montagne nous offre.
 
-<!-- À réécrire : 2 à 3 phrases qui donnent envie (le lieu, ce qu'on y ressent, ce qu'on en retient). -->
+La sortie s'adapte au groupe, j'aime prendre le temps de connaitre vos envie et vos attentes sur la randonnée et je sais m'adapter en conséquence.
+
+Vous repartirez avec la satisfaction d'avoir découvert un milieu autrement !

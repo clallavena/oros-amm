@@ -1,8 +1,12 @@
 ---
 import { NAV_LINKS, CONTACT_LINK, isActive } from "../lib/navigation";
 import { TITRE_MAJ } from "../lib/statut";
+import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
+import { PHONE_NUMBER } from "../lib/site";
 
 const { pathname } = Astro.url;
+
+const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
 ---
 
 <header
@@ -12,26 +16,32 @@ const { pathname } = Astro.url;
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
 
     <nav
-      class="flex h-20 items-center justify-between"
+      class="flex h-20 items-center justify-between gap-4"
       aria-label="Navigation principale"
     >
 
       <!-- LOGO -->
+      <!--
+        Pas d'aria-label : le nom accessible du lien reprend le texte visible
+        (WCAG 2.5.3, « Label in Name »), complété par « accueil » pour les
+        lecteurs d'écran.
+      -->
       <a
         href="/"
-        class="flex items-center gap-3"
-        aria-label="Retour à l'accueil"
+        class="flex min-w-0 items-center gap-3"
       >
         <div
           id="logo-mark"
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-colors duration-300"
+          aria-hidden="true"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-sm transition-colors duration-300"
         >
           <span class="text-lg font-bold">
             A
           </span>
         </div>
 
-        <div class="hidden sm:block">
+        <!-- Visible dès le mobile ; le sous-titre peut passer à la ligne sur les petits écrans. -->
+        <div class="min-w-0">
           <p
             id="logo-name"
             class="text-sm font-bold leading-none text-white transition-colors duration-300"
@@ -41,10 +51,11 @@ const { pathname } = Astro.url;
 
           <p
             id="logo-subtitle"
-            class="mt-1 text-xs text-white/75 transition-colors duration-300"
+            class="mt-1 text-[11px] leading-tight text-white/75 transition-colors duration-300 sm:text-xs"
           >
             {TITRE_MAJ}
           </p>
+          <span class="sr-only">, accueil</span>
         </div>
       </a>
 
@@ -85,8 +96,9 @@ const { pathname } = Astro.url;
       <button
         id="mobile-menu-button"
         type="button"
-        class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary shadow-sm md:hidden"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-sm md:hidden"
         aria-label="Ouvrir le menu"
+        aria-haspopup="dialog"
         aria-expanded="false"
         aria-controls="mobile-menu"
       >
@@ -111,44 +123,146 @@ const { pathname } = Astro.url;
     </nav>
 
 
-    <!-- MENU MOBILE -->
-    <div
-      id="mobile-menu"
-      class="hidden rounded-2xl bg-white p-4 shadow-xl md:hidden"
+  </div>
+</header>
+
+<!--
+  MENU MOBILE (design, planche « A · Mobile, menu ouvert »)
+
+  <dialog> ouvert avec showModal() : le navigateur gère nativement ce qu'on
+  devrait sinon coder à la main (WAI-ARIA APG, motif « Dialog (Modal) ») :
+  - le reste de la page devient inerte (ni clic, ni Tab, ni lecteur d'écran) ;
+  - Échap ferme le menu ;
+  - à la fermeture, le focus revient sur le bouton qui l'a ouvert.
+  Fermé, un <dialog> est en display:none : d'où open:flex et pas flex.
+-->
+<dialog
+  id="mobile-menu"
+  aria-label="Menu"
+  class="m-0 h-dvh max-h-none w-full max-w-none flex-col bg-surface p-0 text-text open:flex md:hidden motion-safe:transition motion-safe:duration-200 starting:open:-translate-y-2 starting:open:opacity-0"
+>
+  <!-- Même hauteur et mêmes marges que le header : rien ne « saute » à l'ouverture. -->
+  <div class="flex h-20 shrink-0 items-center justify-between gap-4 border-b border-border px-6">
+    <a href="/" class="flex min-w-0 items-center gap-3">
+      <span
+        aria-hidden="true"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-white"
+      >
+        A
+      </span>
+      <span class="min-w-0">
+        <span class="block text-sm font-bold leading-none text-text">Clément Allavena</span>
+        <span class="mt-1 block text-[11px] leading-tight text-text-muted">{TITRE_MAJ}</span>
+        <span class="sr-only">, accueil</span>
+      </span>
+    </a>
+
+    <!-- autofocus : à l'ouverture, le focus va sur « Fermer » (sortie toujours à portée). -->
+    <button
+      id="mobile-menu-close"
+      type="button"
+      autofocus
+      aria-label="Fermer le menu"
+      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-light/25 text-primary transition hover:bg-primary-light/40"
     >
+      <svg
+        aria-hidden="true"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+  </div>
 
-      <div class="flex flex-col gap-1">
-
-        {NAV_LINKS.map((link) => {
-          const active = isActive(pathname, link.href);
-          return (
+  <!-- overflow-y-auto : sur un petit écran en paysage, la liste défile au lieu d'être coupée. -->
+  <nav aria-label="Menu principal" class="flex-1 overflow-y-auto px-6 py-3">
+    <ul>
+      {NAV_LINKS.map((link) => {
+        const active = isActive(pathname, link.href);
+        return (
+          <li class="border-b border-border">
             <a
               href={link.href}
               aria-current={active ? "page" : undefined}
               class:list={[
-                "rounded-xl px-4 py-3 text-sm text-text transition hover:bg-background",
-                active ? "bg-background font-semibold" : "font-medium",
+                "flex min-h-15 items-center justify-between font-[family-name:var(--font-epilogue)] text-[1.375rem] font-bold transition hover:text-primary",
+                active ? "text-primary underline decoration-2 underline-offset-[6px]" : "text-text",
               ]}
             >
               {link.label}
+              <span aria-hidden="true" class="text-primary">›</span>
             </a>
-          );
-        })}
 
-        <a
-          href={CONTACT_LINK.href}
-          aria-current={isActive(pathname, CONTACT_LINK.href) ? "page" : undefined}
-          class="mt-2 rounded-xl bg-primary px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-primary-hover"
-        >
-          {CONTACT_LINK.label}
-        </a>
+            {/* Sous « Sorties » : accès direct aux univers, chacun avec sa pastille de couleur. */}
+            {link.href === "/sorties" && (
+              <ul class="flex flex-col gap-1 pb-3.5">
+                {UNIVERS.map((u) => {
+                  const href = `/sorties/${u}`;
+                  const universActif = isActive(pathname, href);
+                  return (
+                    <li>
+                      <a
+                        href={href}
+                        aria-current={universActif ? "page" : undefined}
+                        class:list={[
+                          "flex min-h-11 items-center gap-3 font-semibold transition hover:text-primary",
+                          universActif && "text-primary underline underline-offset-4",
+                        ]}
+                      >
+                        <span
+                          aria-hidden="true"
+                          data-theme={UNIVERS_INFO[u].theme}
+                          class="size-2.5 shrink-0 rounded-full bg-primary"
+                        ></span>
+                        {UNIVERS_INFO[u].label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
 
-      </div>
-
-    </div>
-
+  <!-- Actions de contact toujours visibles en bas, dans la zone du pouce. -->
+  <div class="flex shrink-0 flex-col gap-2.5 bg-background px-6 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-4">
+    <a
+      href={CONTACT_LINK.href}
+      aria-current={isActive(pathname, CONTACT_LINK.href) ? "page" : undefined}
+      class="flex min-h-13 items-center justify-center rounded-full bg-primary font-bold text-white transition hover:bg-primary-hover"
+    >
+      {CONTACT_LINK.label}
+    </a>
+    <a
+      href={telHref}
+      class="flex min-h-12 items-center justify-center gap-2 rounded-full border border-border-strong font-semibold text-primary transition hover:bg-primary-light/20"
+    >
+      <svg
+        aria-hidden="true"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
+      </svg>
+      Appeler le {PHONE_NUMBER}
+    </a>
   </div>
-</header>
+</dialog>
 
 
 <script>
@@ -206,23 +320,36 @@ const { pathname } = Astro.url;
 
   // MENU MOBILE
 
-  const mobileButton = document.querySelector(
-    "#mobile-menu-button"
-  );
+  const mobileButton = document.querySelector<HTMLButtonElement>("#mobile-menu-button");
+  const mobileMenu = document.querySelector<HTMLDialogElement>("#mobile-menu");
+  const mobileClose = document.querySelector<HTMLButtonElement>("#mobile-menu-close");
 
-  const mobileMenu = document.querySelector(
-    "#mobile-menu"
-  );
+  if (mobileButton && mobileMenu) {
+    const openMenu = () => {
+      mobileMenu.showModal();
+      mobileButton.setAttribute("aria-expanded", "true");
+      // showModal() ne bloque pas le défilement de la page derrière.
+      document.documentElement.classList.add("overflow-hidden");
+    };
 
-  mobileButton?.addEventListener("click", () => {
-    const isOpen =
-      mobileButton.getAttribute("aria-expanded") === "true";
+    mobileButton.addEventListener("click", openMenu);
+    mobileClose?.addEventListener("click", () => mobileMenu.close());
 
-    mobileButton.setAttribute(
-      "aria-expanded",
-      String(!isOpen)
-    );
+    // « close » est émis quelle que soit la façon de fermer : bouton, Échap…
+    mobileMenu.addEventListener("close", () => {
+      mobileButton.setAttribute("aria-expanded", "false");
+      document.documentElement.classList.remove("overflow-hidden");
+    });
 
-    mobileMenu?.classList.toggle("hidden");
-  });
+    // Un lien vers une ancre de la page courante ne recharge pas : on ferme.
+    mobileMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => mobileMenu.close());
+    });
+
+    // Si l'écran s'élargit (rotation, fenêtre redimensionnée), la nav desktop
+    // prend le relais : on ferme le menu pour ne pas laisser la page inerte.
+    window.matchMedia("(min-width: 48rem)").addEventListener("change", (e) => {
+      if (e.matches && mobileMenu.open) mobileMenu.close();
+    });
+  }
 </script>

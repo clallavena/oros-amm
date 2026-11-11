@@ -7,8 +7,11 @@ import react from '@astrojs/react';
 
 import node from "@astrojs/node";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://www.orosens.fr',
   fonts: [{
     provider: fontProviders.fontsource(),
     name: "Epilogue",
@@ -28,7 +31,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [react()],
+  integrations: [react(), sitemap()],
 
   adapter: node({
     mode: "standalone"

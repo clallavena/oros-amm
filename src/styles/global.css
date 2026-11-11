@@ -16,15 +16,18 @@
   --color-forest-200: oklch(89.1% 0.051 162);
   --color-forest-300: oklch(78% 0.07 162);
   --color-forest-400: oklch(61.9% 0.079 162);
-  --color-forest-500: oklch(42.3% 0.065 162); /* #285943 */
+  --color-forest-500: oklch(42.3% 0.065 162);
+  /* #285943 */
   --color-forest-600: oklch(32.9% 0.049 162);
   --color-forest-700: oklch(23.8% 0.034 162);
   --color-forest-800: oklch(17.9% 0.019 162);
 
-  --color-stone-500: oklch(52% 0.03 162); /* neutre légèrement vert pour le texte secondaire */
+  --color-stone-500: oklch(52% 0.03 162);
+  /* neutre légèrement vert pour le texte secondaire */
   --color-lime-400: oklch(85.4% 0.15 112);
   --color-clay-500: oklch(52% 0.15 35);
-  --color-meadow-600: oklch(46% 0.12 150); /* #0f6a31 : 6,7:1 sur blanc, ≥ 6,3:1 sur les fonds des 3 thèmes */
+  --color-meadow-600: oklch(46% 0.12 150);
+  /* #0f6a31 : 6,7:1 sur blanc, ≥ 6,3:1 sur les fonds des 3 thèmes */
 
   --color-white: #fff;
   --color-black: #000;
@@ -54,6 +57,18 @@
   /* Anneau de focus double (WCAG technique C40) : contour foncé + liseré blanc.
      Le foncé contraste sur fond clair, le blanc sur fond vert. */
   --color-focus: var(--color-forest-700);
+
+  /* Animation */
+  /* Apparition douce : fondu + légère montée. « both » garde l'élément
+     caché pendant son délai, puis visible une fois l'animation finie. */
+  --animate-apparition: apparition 3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+  @keyframes apparition {
+    from {
+      opacity: 0;
+      translate: 0 0.75rem;
+    }
+  }
 }
 
 /* ---------- Primitives des univers ---------- */
@@ -68,12 +83,14 @@
   --color-glacier-200: oklch(89.1% 0.055 248);
   --color-glacier-300: oklch(78% 0.092 248);
   --color-glacier-400: oklch(61.9% 0.103 248);
-  --color-glacier-500: oklch(42.3% 0.085 248); /* #23517a */
+  --color-glacier-500: oklch(42.3% 0.085 248);
+  /* #23517a */
   --color-glacier-600: oklch(32.9% 0.064 248);
   --color-glacier-700: oklch(23.8% 0.044 248);
   --color-glacier-800: oklch(17.9% 0.025 248);
   --color-glacier-stone-500: oklch(52% 0.03 248);
-  --color-ice-300: oklch(88.1% 0.075 210); /* #9ce6f3, accent CTA */
+  --color-ice-300: oklch(88.1% 0.075 210);
+  /* #9ce6f3, accent CTA */
 
   /* Dusk (univers Crépuscule) : teinte 340°, chroma ×1,77 par rapport à la forêt. */
   --color-dusk-50: oklch(98% 0.013 340);
@@ -81,12 +98,14 @@
   --color-dusk-200: oklch(89.1% 0.076 340);
   --color-dusk-300: oklch(78% 0.124 340);
   --color-dusk-400: oklch(61.9% 0.14 340);
-  --color-dusk-500: oklch(42.3% 0.115 340); /* #753061 */
+  --color-dusk-500: oklch(42.3% 0.115 340);
+  /* #753061 */
   --color-dusk-600: oklch(32.9% 0.087 340);
   --color-dusk-700: oklch(23.8% 0.06 340);
   --color-dusk-800: oklch(17.9% 0.034 340);
   --color-dusk-stone-500: oklch(52% 0.03 340);
-  --color-apricot-400: oklch(80% 0.12 55); /* #f9a870, accent CTA */
+  --color-apricot-400: oklch(80% 0.12 55);
+  /* #f9a870, accent CTA */
 }
 
 /* ---------- Rôles par thème ---------- */
@@ -144,7 +163,8 @@
 [data-theme="sunset"] {
   --color-primary: var(--color-dusk-500);
   --color-primary-hover: var(--color-dusk-600);
-  --color-hero: var(--color-dusk-600); /* crépuscule : en-tête plus sombre */
+  --color-hero: var(--color-dusk-600);
+  /* crépuscule : en-tête plus sombre */
   --color-primary-light: var(--color-dusk-300);
   --color-on-primary-muted: var(--color-dusk-200);
 
@@ -178,7 +198,13 @@ body {
 }
 
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-epilogue);
   }
 }

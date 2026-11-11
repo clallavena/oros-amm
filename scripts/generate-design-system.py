@@ -210,6 +210,95 @@ svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBo
        f'typographie Epilogue et Inter, composants Button et Card.</desc>\n'
        f'<rect width="{W}" height="{H}" fill="{F["bg"]}"/>\n' + "\n".join(s) + "\n</svg>\n")
 open(out, "w", encoding="utf-8").write(svg)
+
+# ================= VARIABLES FIGMA (format DTCG) =================
+# Spécification : https://www.designtokens.org/tr/drafts/format/ (W3C Design Tokens CG)
+# Deux collections, à importer dans cet ordre dans le panneau Variables de Figma :
+#   1. Primitives : toutes les couleurs brutes (forest/500, lime/400…), un seul mode ;
+#   2. Rôles : primary, text… un fichier par mode (forest, snow, sunset),
+#      chaque rôle étant un alias vers une primitive, comme var(--color-…) dans le CSS.
+import json, os
+
+# Nom EXACT de la collection des primitives dans Figma : les alias des rôles la retrouvent par ce nom.
+PRIMITIVES_COLLECTION = "Primitives"
+
+figma_dir = sys.argv[3] if len(sys.argv) > 3 else os.path.join(os.path.dirname(out) or ".", "figma")
+os.makedirs(figma_dir, exist_ok=True)
+
+def block(selector_regex):
+    """Contenu entre accolades du premier bloc dont l'en-tête correspond à la regex."""
+    m = re.search(selector_regex + r"\s*\{", css)
+    if not m:
+        return ""
+    depth, i = 1, m.end()
+    while depth:
+        depth += {"{": 1, "}": -1}.get(css[i], 0)
+        i += 1
+    return css[m.end():i - 1]
+
+def aliases(body):
+    """--color-ROLE: var(--color-PRIM)  ->  {ROLE: PRIM}"""
+    return dict(re.findall(r"--color-([\w-]+):\s*var\(--color-([\w-]+)\)", body))
+
+def split_name(name):
+    """forest-500 -> ("forest", "500") ; glacier-stone-500 -> ("glacier-stone", "500") ; white -> (None, "white")"""
+    group, _, step = name.rpartition("-")
+    return (group, step) if step.isdigit() else (None, name)
+
+def color_value(hx):
+    """Valeur couleur DTCG en sRGB : Figma ne travaille qu'en sRGB / Display P3, pas en OKLCH."""
+    comps = [round(int(hx[i:i + 2], 16) / 255, 4) for i in (1, 3, 5)]
+    return {"colorSpace": "srgb", "components": comps, "alpha": 1, "hex": hx}
+
+# --- primitives : oklch() lues plus haut + couleurs hex (white, black) ---
+for name, hx in re.findall(r"--color-([\w-]+):\s*(#[0-9a-fA-F]{3,6})\s*;", css):
+    hx = hx.lower()
+    if len(hx) == 4:
+        hx = "#" + "".join(c * 2 for c in hx[1:])
+    HEX[name] = hx
+    ORIG.setdefault(name, hx)
+
+primitives = {}
+for name in HEX:
+    if name not in ORIG:
+        continue
+    group, step = split_name(name)
+    token = {"$type": "color", "$value": color_value(HEX[name]),
+             "$description": f"Source : {ORIG[name]} (global.css)",
+             "$extensions": {"com.figma": {"codeSyntax": {"WEB": f"var(--color-{name})"}}}}
+    (primitives.setdefault(group, {}) if group else primitives)[step] = token
+
+def figma_name(prim):
+    """forest-500 -> "forest/500" : nom de la variable dans Figma (les groupes JSON deviennent des « / »)."""
+    group, step = split_name(prim)
+    return f"{group}/{step}" if group else step
+
+def role_token(role, prim):
+    """Alias vers une primitive d'une AUTRE collection.
+    La référence DTCG "{forest.500}" n'est résolue par Figma qu'à l'intérieur du fichier importé
+    (erreur token-with-invalid-reference sinon). Pour viser une autre collection, Figma lit
+    $extensions.com.figma.aliasData ; $value porte la couleur résolue, ce qui donne au moins
+    la bonne couleur si l'alias n'est pas retrouvé."""
+    return {"$type": "color", "$value": color_value(HEX[prim]),
+            "$extensions": {"com.figma.aliasData": {"targetVariableName": figma_name(prim),
+                                                     "targetVariableSetName": PRIMITIVES_COLLECTION},
+                            "com.figma": {"codeSyntax": {"WEB": f"var(--color-{role})"}}}}
+
+# --- rôles : défauts de @theme, surchargés par chaque [data-theme] ---
+defaults = aliases(block(r"@theme"))
+themes = {key: aliases(block(rf'\[data-theme="{key}"\]'))
+          for key in re.findall(r'\[data-theme="([\w-]+)"\]\s*\{', css)}
+
+files = {"primitives.tokens.json": primitives}
+for key, overrides in themes.items():
+    mode = {**defaults, **overrides}  # surface, danger, success, focus restent ceux de @theme
+    files[f"roles.{key}.tokens.json"] = {role: role_token(role, prim) for role, prim in mode.items()}
+
+for fname, data in files.items():
+    with open(os.path.join(figma_dir, fname), "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+print(f"Variables Figma : {len(files)} fichiers dans {figma_dir}")
 for nom, key, scale, _, accent, muted, hero in THEMES:
     R = roles(scale, accent, muted, hero)
     print(nom, "text/bg %.2f" % ratio(R["text"], R["bg"]), "muted/bg %.2f" % ratio(R["muted"], R["bg"]),

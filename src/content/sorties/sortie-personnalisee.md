@@ -11,7 +11,7 @@ prix:
   des: 90
   jusqua: 150
 couverture:
-  src: ../../images/sortie.jpg
+  src: ../../images/pyrenees.jpg
   alt: "Sortie accompagnée en montagne"
 ordre: 3
 ---

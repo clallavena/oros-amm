@@ -61,7 +61,7 @@
   /* Animation */
   /* Apparition douce : fondu + légère montée. « both » garde l'élément
      caché pendant son délai, puis visible une fois l'animation finie. */
-  --animate-apparition: apparition 3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-apparition: apparition 3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 
   @keyframes apparition {
     from {

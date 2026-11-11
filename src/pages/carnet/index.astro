@@ -22,13 +22,13 @@ const formatDate = (date: Date) =>
   <!-- HEADER DE PAGE -->
   <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
     <Container>
-      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
+      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/70 motion-safe:animate-apparition">
         Carnet
       </p>
-      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+      <h1 class="mt-4 max-w-2xl text-4xl font-bold tracking-tight text-white motion-safe:animate-apparition motion-safe:[animation-delay:80ms] md:text-6xl">
         Carnets de montagne
       </h1>
-      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80 motion-safe:animate-apparition motion-safe:[animation-delay:160ms]">
         Conseils pratiques, observations de terrain et récits de
         sorties.
       </p>
@@ -45,7 +45,7 @@ const formatDate = (date: Date) =>
           {posts.map((post) => (
             <a
               href={`/carnet/${post.id}`}
-              class="group block rounded-2xl bg-surface p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              class="group block rounded-2xl bg-surface p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg motion-safe:animate-apparition motion-safe:[animation-delay:220ms]"
             >
               <p class="text-xs font-semibold uppercase tracking-widest text-primary">
                 {formatDate(post.data.pubDate)}

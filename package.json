@@ -1,7 +1,7 @@
 {
   "name": "oros-amm",
   "type": "module",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "engines": {
     "node": ">=24.22.0"
   },

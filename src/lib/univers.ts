@@ -58,7 +58,7 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
     label: "Randonnée & découverte",
     labelCourt: "Rando",
     theme: "forest",
-    surtitre: "Sentiers & découverte",
+    surtitre: "Sentiers & natures",
     accroche:
       "Marcher pour comprendre : faune, flore, paysages et vie du milieu montagnard.",
     cta: "Voir les sorties rando",
@@ -70,7 +70,7 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
     theme: "snow",
     surtitre: "Neige & raquettes",
     accroche:
-      "Forêts enneigées, traces d'animaux et silence feutré, sans technique de ski. En binôme avec un accompagnateur diplômé.",
+      "Forêts enneigées, traces d'animaux et silence feutré : la montagne se découvre autrement l'hiver.",
     cta: "Voir les sorties hiver",
     icone: "M12 2V18M12 22V18M12 18L15 21M12 18L9 21M15 3L12 6L9 3M3.34 7L6.8 9M6.8 9L17.2 15M6.8 9L5.71 4.9M6.8 9L2.71 10.1M17.2 15L20.66 17M17.2 15L21.29 13.9M17.2 15L18.29 19.1M20.66 7L17.2 9M17.2 9L6.8 15M17.2 9L18.29 4.9M17.2 9L21.29 10.1M6.8 15L3.34 17M6.8 15L2.71 13.9M6.8 15L5.71 19.1", // flocon (svg repo)
   },

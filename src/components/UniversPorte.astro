@@ -13,9 +13,11 @@ import type { ResumeSorties } from "../lib/sorties";
 interface Props {
   univers: Univers;
   resume: ResumeSorties;
+  /** Position dans la liste : sert à décaler l'animation d'apparition. */
+  ordre?: number;
 }
 
-const { univers, resume } = Astro.props;
+const { univers, resume, ordre = 0 } = Astro.props;
 const info = UNIVERS_INFO[univers];
 
 /* Ce qu'on peut promettre aujourd'hui, calculé depuis le contenu publié. */
@@ -25,7 +27,8 @@ const disponibilite =
 
 <li
   data-theme={info.theme}
-  class="group relative grid grid-cols-[3rem_1fr_auto] items-center gap-4 p-4 text-text transition has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-inset md:flex md:flex-col md:items-stretch md:gap-3.5 md:rounded-3xl md:border md:border-border md:bg-surface md:p-7 md:shadow-xl md:shadow-black/10 md:hover:shadow-2xl md:motion-safe:hover:-translate-y-1"
+  style={`animation-delay: ${150 + ordre * 100}ms`}
+  class="group relative grid grid-cols-[3rem_1fr_auto] items-center gap-4 p-4 text-text transition has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-inset motion-safe:animate-apparition md:flex md:flex-col md:items-stretch md:gap-3.5 md:rounded-3xl md:border md:border-border md:bg-surface md:p-7 md:shadow-xl md:shadow-black/10 md:hover:shadow-2xl md:motion-safe:hover:-translate-y-1"
 >
   <span
     aria-hidden="true"

@@ -59,7 +59,6 @@ interface Etape {
   etat: EtatEtape;
 }
 
-// TODO : vérifier l'intitulé de la 2e étape par rapport au cursus réel (EPMSP).
 const etapes: Etape[] = [
   {
     annee: "1999",
@@ -88,22 +87,40 @@ const etapes: Etape[] = [
   {
     annee: "Aujourd'hui",
     titre: "Stage en situation",
-    texte: "J'encadre sous convention de stage, suivi par un accompagnateur diplômé.",
+    texte: "J'encadre sous convention de stage, suivi par un accompagnateur diplômé. Je vous emmene en randonnée à la journée, en demi-journée ou en itinérance sur plusieurs jours en refuge.",
     etat: "en-cours",
   },
   {
-    annee: "2027",
+    annee: "Janvier 2027",
+    titre: "Encadrement en raquettes",
+    texte: "Après validation de l'UF2, je pourrai encadrer des sorties en raquettes, en co-encadrement.",
+    etat: "a-venir",
+  },
+  {
+    annee: "Octobre 2027",
     titre: "Diplôme d'État",
     texte: "Le bivouac et l'itinérance en raquettes rejoindront alors les sorties.",
     etat: "a-venir",
   },
 ];
 
-/* Trait au-dessus de chaque étape : plein, accent, ou pointillé pour l'avenir. */
-const TRAIT_ETAPE: Record<EtatEtape, string> = {
-  passee: "border-t-3 border-primary",
-  "en-cours": "border-t-3 border-secondary",
-  "a-venir": "border-t-3 border-dashed border-primary-light",
+/*
+ * Frise verticale, sur tous les écrans : elle accepte n'importe quel nombre
+ * d'étapes sans passer à la ligne, et elle suit le sens du défilement.
+ * L'état ne repose jamais sur la couleur seule (WCAG 1.4.1) : plein,
+ * agrandi + badge « Aujourd'hui », ou pointillé pour l'avenir.
+ */
+const POINT_ETAPE: Record<EtatEtape, string> = {
+  passee: "mt-1.5 size-3.5 bg-primary",
+  "en-cours": "mt-0.5 size-5 bg-secondary ring-4 ring-primary-light/30",
+  "a-venir": "mt-1.5 size-3.5 border-3 border-dashed border-primary-light",
+};
+
+/* Trait vertical qui mène à l'étape suivante : plein vers le passé, pointillé vers l'avenir. */
+const LIGNE_ETAPE: Record<EtatEtape, string> = {
+  passee: "w-[3px] bg-primary",
+  "en-cours": "border-l-3 border-dashed border-primary-light",
+  "a-venir": "border-l-3 border-dashed border-primary-light",
 };
 
 /* ---------- Statut : présentation des modalités ---------- */
@@ -144,7 +161,7 @@ const questions: Question[] = [
   {
     question: "Qu'est-ce qu'un accompagnateur stagiaire ?",
     reponse:
-      "C'est un accompagnateur en formation au diplôme d'État. Il a réussi l'examen probatoire et les premières unités de formation. Le cursus dure en moyenne trois ans et alterne formation et stage sur le terrain : c'est ce stage que vous vivez avec moi.",
+      "C'est un accompagnateur en formation au diplôme d'État. Il a réussi l'examen probatoire et les premières unités de formation. Le cursus dure en moyenne trois ans et alterne formation et stage sur le terrain : c'est ce stage que vous vivez avec moi. C'est l'équivalent d'un Aspirant Guide de Haute Montagne (AGHM) pour le diplôme de Guide.",
   },
   {
     question: "Qui suit mon travail ?",
@@ -176,34 +193,55 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
   description={`${TITRE_MAJ}, en formation au diplôme d'État d'accompagnateur en moyenne montagne, je partage ma passion pour la montagne à travers des sorties accompagnées.`}
 >
   <!-- ========== HERO : intro + repères + portrait ========== -->
-  <section class="bg-primary pb-20 pt-40 text-white md:pb-24 md:pt-48">
+  <!--
+    Grille à trois blocs pour changer l'ordre selon l'écran sans dupliquer :
+    - mobile : titre → photo → présentation (le visage arrive dès le premier écran) ;
+    - md et plus : texte à gauche (titre au-dessus, présentation au-dessous), photo à droite.
+    L'ordre du code reste l'ordre de lecture d'un lecteur d'écran.
+  -->
+  <section class="bg-primary pb-12 pt-28 text-white md:pb-24 md:pt-48">
     <Container>
-      <div class="flex flex-wrap items-center gap-14">
-        <div class="min-w-0 flex-[1_1_520px]">
-          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/75">
+      <div class="grid gap-y-6 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:items-center md:gap-x-14 md:gap-y-0">
+        <div class="md:col-start-1 md:row-start-1 md:self-end">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/75 motion-safe:animate-apparition md:text-sm">
             Qui je suis
           </p>
-          <h1 class="mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+          <h1 class="mt-3 max-w-2xl text-[2.25rem] font-bold leading-[1.08] tracking-tight motion-safe:animate-apparition motion-safe:[animation-delay:80ms] md:mt-4 md:text-6xl md:leading-[1.05]">
             La montagne, une passion à partager
           </h1>
-          <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 md:text-xl">
+        </div>
+
+        <div class="overflow-hidden rounded-[22px] md:col-start-2 md:row-span-2 md:row-start-1 md:rounded-[28px]">
+          <Image
+            src={profilImage}
+            alt="Clément Allavena sur le terrain, en montagne"
+            widths={[400, 800, 1040]}
+            sizes="(min-width: 768px) 40vw, 100vw"
+            class="aspect-4/3 w-full object-cover object-[center_30%] motion-safe:animate-apparition md:aspect-4/5"
+            loading="eager"
+          />
+        </div>
+
+        <div class="md:col-start-1 md:row-start-2 md:self-start">
+          <p class="max-w-xl text-[17px] leading-relaxed text-white/85 motion-safe:animate-apparition motion-safe:[animation-delay:160ms] md:mt-6 md:text-xl">
             Je suis Clément Allavena, {TITRE}. Ingénieur informatique de métier, j'ai souhaité accompagner
             celles et ceux qui veulent découvrir la montagne à leur rythme,
             qu'ils soient débutants ou habitués des sentiers.
           </p>
 
-          <dl class="mt-9 grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-5 border-t border-white/25 pt-6 text-[15px]">
-            <div>
+          <!-- Mobile : une ligne par repère, libellé à gauche. md et plus : colonnes. -->
+          <dl class="mt-6 border-t border-white/25 text-[15px] motion-safe:animate-apparition motion-safe:[animation-delay:240ms] md:mt-9 md:grid md:grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] md:gap-5 md:pt-6">
+            <div class="grid grid-cols-[7rem_1fr] gap-3 border-b border-white/15 py-3 md:block md:border-0 md:py-0">
               <dt class="text-white/75">Basé à</dt>
-              <dd class="mt-1 font-semibold">Annecy, Haute-Savoie</dd>
+              <dd class="font-semibold md:mt-1">Annecy, Haute-Savoie</dd>
             </div>
-            <div>
+            <div class="grid grid-cols-[7rem_1fr] gap-3 border-b border-white/15 py-3 md:block md:border-0 md:py-0">
               <dt class="text-white/75">Mes massifs de prédilection</dt>
-              <dd class="mt-1 font-semibold">Massif des Bauges, Massif des Bornes-Aravis</dd>
+              <dd class="font-semibold md:mt-1">Massif des Bauges, Massif des Bornes-Aravis</dd>
             </div>
-            <div>
+            <div class="grid grid-cols-[7rem_1fr] gap-3 py-3 md:block md:py-0">
               <dt class="text-white/75">Statut</dt>
-              <dd class="mt-1 font-semibold">
+              <dd class="font-semibold md:mt-1">
                 <a href="#statut" class="text-white underline underline-offset-4 hover:text-secondary">
                   Stagiaire, diplôme d'État en cours
                 </a>
@@ -211,28 +249,20 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
             </div>
           </dl>
         </div>
-
-        <div class="flex-[1_1_360px] overflow-hidden rounded-[28px]">
-          <Image
-            src={profilImage}
-            alt="Clément Allavena sur le terrain, en montagne"
-            class="aspect-4/5 w-full object-cover"
-            loading="eager"
-          />
-        </div>
       </div>
     </Container>
   </section>
 
   <!-- ========== SOMMAIRE ========== -->
+  <!-- Mobile : grille 2 × 2, les quatre entrées restent visibles (pas de défilement horizontal). -->
   <nav aria-label="Sur cette page" class="border-b border-border bg-surface">
     <Container>
-      <ul class="flex flex-wrap gap-x-7 gap-y-2">
+      <ul class="grid grid-cols-2 gap-2 py-3 md:flex md:flex-wrap md:gap-x-7 md:gap-y-2 md:py-0">
         {sommaire.map((s) => (
           <li>
             <a
               href={`#${s.id}`}
-              class="inline-flex min-h-14 items-center text-[15px] font-semibold text-primary underline-offset-4 hover:underline"
+              class="flex min-h-12 items-center rounded-2xl bg-background px-3.5 text-sm font-semibold leading-snug text-primary underline-offset-4 hover:underline md:inline-flex md:min-h-14 md:rounded-none md:bg-transparent md:px-0 md:text-[15px]"
             >
               {s.label}
             </a>
@@ -243,22 +273,23 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
   </nav>
 
   <!-- ========== POURQUOI LA MONTAGNE ========== -->
-  <section id="histoire" aria-labelledby="histoire-titre" class="py-24 md:py-28">
+  <section id="histoire" aria-labelledby="histoire-titre" class="py-14 md:py-28">
     <Container>
-      <div class="flex flex-wrap gap-14">
+      <div class="flex flex-wrap gap-x-14 gap-y-6">
         <div class="flex-[1_1_380px]">
           <!-- h2 stylé comme un surtitre : la section garde un titre dans le plan de la page. -->
           <h2 id="histoire-titre" class={surtitre}>Pourquoi la montagne</h2>
-          <blockquote class="mt-5 font-[family-name:var(--font-epilogue)] text-[clamp(26px,3vw,36px)] font-bold leading-tight text-primary-hover">
+          <blockquote class="mt-3.5 font-[family-name:var(--font-epilogue)] text-[clamp(26px,3vw,36px)] md:mt-5 font-bold leading-tight text-primary-hover">
             « Aller là où le regard se pose. »
           </blockquote>
         </div>
-        <div class="flex max-w-[680px] flex-[1.4_1_480px] flex-col gap-4.5 text-lg leading-relaxed">
-          <figure class="text-base">
+        <!-- Texte intégral : sur mobile, paragraphes en 17 px et citations détachées en encadrés. -->
+        <div class="flex max-w-[680px] flex-[1.4_1_480px] flex-col gap-4 text-[17px] leading-relaxed md:gap-4.5 md:text-lg">
+          <figure class="rounded-2xl bg-surface p-4 text-[15px] md:rounded-none md:bg-transparent md:p-0 md:text-base">
             <blockquote>
               <p>« Quand la montagne vous a pris le cœur, tout vient d'elle et tout vous y ramène. »</p>
             </blockquote>
-            <figcaption class="mt-1 text-sm text-text-muted">Franz Schrader, pyrénéiste</figcaption>
+            <figcaption class="mt-1.5 text-[13px] text-text-muted md:mt-1 md:text-sm">Franz Schrader, pyrénéiste</figcaption>
           </figure>
           <p>C'est ainsi que mon amour de la montagne a pris un réel sens, dans les Pyrénées lors de mes études.
             Je la pratiquais déjà et l'idée de devenir accompagnateur était déjà présente. J'ai toujours aimé transmettre et apprendre de ce milieu.
@@ -271,13 +302,13 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
             Mon approche : <b>prendre le temps</b>. Le temps d'observer et de contempler la montagne.
             Dans notre société actuelle, on ne prend parfois plus le temps de prendre le temps. Surtout dans les métiers sédentaires que je connais bien.
             Je propose une vision de la montagne <b>contemplative</b>, où j'essaie de vous transmettre ma vision du temps et de la beauté de l'impermanence dans la nature.
-            Mon but à moi est simple : éveiller votre <b>curiosité</b> et <b>stimuler</b> l'enfant qui est en nous.
+            Mon but à moi est simple : éveiller notre <b>curiosité</b> et <b>stimuler</b> l'enfant qui est en nous.
           </p>
-          <figure class="text-base">
+          <figure class="rounded-2xl bg-surface p-4 text-[15px] md:rounded-none md:bg-transparent md:p-0 md:text-base">
             <blockquote>
               <p>« Toutes les grandes personnes ont d’abord été des enfants. Mais peu d’entre elles s’en souviennent. »</p>
             </blockquote>
-            <figcaption class="mt-1 text-sm text-text-muted">Antoine de Saint-Exupéry, <cite>Le Petit Prince</cite></figcaption>
+            <figcaption class="mt-1.5 text-[13px] text-text-muted md:mt-1 md:text-sm">Antoine de Saint-Exupéry, <cite>Le Petit Prince</cite></figcaption>
           </figure>
           <p class="text-base italic text-text-muted">Photographe amateur, toutes les photos de ce site sont issues de mes sorties en montagne.</p>
         </div>
@@ -286,24 +317,25 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
   </section>
 
   <!-- ========== DÉMARCHE ========== -->
-  <section id="demarche" aria-labelledby="demarche-titre" class="bg-surface py-24 md:py-28">
+  <section id="demarche" aria-labelledby="demarche-titre" class="bg-surface py-14 md:py-28">
     <Container>
       <p class={surtitre}>Ma démarche</p>
       <h2 id="demarche-titre" class={titreSection}>Ce qui guide chaque sortie</h2>
 
-      <div class="mt-12 grid gap-6 md:grid-cols-3">
+      <!-- Mobile : une ligne par valeur (picto à gauche). md et plus : trois cartes. -->
+      <div data-valeurs class="mt-6 grid md:mt-12 md:grid-cols-3 md:gap-6">
         {valeurs.map((valeur) => (
-          <article class="flex flex-col gap-3 rounded-3xl border border-border bg-background p-8">
-            <span
+          <article data-valeur class="grid grid-cols-[3rem_1fr] gap-x-3.5 gap-y-1 border-t border-border py-4.5 last:border-b md:flex md:flex-col md:gap-3 md:rounded-3xl md:border md:bg-background md:p-8 md:last:border-b">
+            <span data-valeur-icone
               aria-hidden="true"
-              class="flex size-13 items-center justify-center rounded-2xl bg-forest-100 text-primary"
+              class="row-span-2 flex size-12 items-center justify-center rounded-2xl bg-forest-100 text-primary md:size-13"
             >
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d={valeur.icone} />
               </svg>
             </span>
-            <h3 class="text-xl font-bold text-text">{valeur.title}</h3>
-            <p class="leading-relaxed text-text-muted">{valeur.description}</p>
+            <h3 class="text-lg font-bold leading-snug text-text md:text-xl">{valeur.title}</h3>
+            <p class="text-[15px] leading-relaxed text-text-muted md:text-base">{valeur.description}</p>
           </article>
         ))}
       </div>
@@ -311,46 +343,89 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
   </section>
 
   <!-- ========== PARCOURS ========== -->
-  <section id="parcours" aria-labelledby="parcours-titre" class="py-24 md:py-28">
+  <!--
+    md et plus : titre à gauche (collant pendant le défilement), frise à droite.
+    Mobile : titre au-dessus, frise en dessous.
+  -->
+  <section id="parcours" aria-labelledby="parcours-titre" class="py-14 md:py-28">
     <Container>
-      <p class={surtitre}>Mon parcours</p>
-      <h2 id="parcours-titre" class={titreSection}>Du randonneur au professionnel</h2>
+      <div class="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-x-16">
+        <div class="md:sticky md:top-28">
+          <p class={surtitre}>Mon parcours</p>
+          <h2 id="parcours-titre" class={titreSection}>Du randonneur au professionnel</h2>
+        </div>
 
-      <ol class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-y-8">
-        {etapes.map((e) => (
-          <li
-            aria-current={e.etat === "en-cours" ? "step" : undefined}
-            class={`flex flex-col gap-2.5 pr-5 pt-6 ${TRAIT_ETAPE[e.etat]}`}
-          >
-            {e.etat === "en-cours" ? (
-              <span class="self-start rounded-full bg-secondary px-2.5 py-0.5 text-[13px] font-bold text-on-secondary">
-                {e.annee}
+        <ol data-frise class="mt-8 flex flex-col md:mt-0">
+          {etapes.map((e, i) => (
+            <li data-etape
+              aria-current={e.etat === "en-cours" ? "step" : undefined}
+              class="grid grid-cols-[1.25rem_1fr] gap-x-3.5 md:grid-cols-[1.5rem_1fr] md:gap-x-6"
+            >
+              <!-- Repère de la frise (décoratif : l'état est dit par le texte et aria-current). -->
+              <span aria-hidden="true" class="flex flex-col items-center">
+                <span data-etape-point class={`shrink-0 rounded-full ${POINT_ETAPE[e.etat]}`}></span>
+                {i < etapes.length - 1 && <span data-etape-ligne class={`flex-1 ${LIGNE_ETAPE[e.etat]}`}></span>}
               </span>
-            ) : (
-              <span class="text-sm font-semibold text-text-muted">{e.annee}</span>
-            )}
-            <b class="font-[family-name:var(--font-epilogue)] text-lg text-text">{e.titre}</b>
-            <span class="text-[15px] leading-relaxed text-text-muted">{e.texte}</span>
-          </li>
-        ))}
-      </ol>
+
+              <div data-etape-contenu class="flex flex-col gap-1 pb-6 md:gap-1.5 md:pb-9">
+                {e.etat === "en-cours" ? (
+                  <span class="self-start rounded-full bg-secondary px-2.5 py-0.5 text-[13px] font-bold text-on-secondary">
+                    {e.annee}
+                  </span>
+                ) : (
+                  <span class="text-[13px] font-semibold text-text-muted md:text-sm">{e.annee}</span>
+                )}
+                <b class="font-[family-name:var(--font-epilogue)] text-[17px] leading-snug text-text md:text-xl">{e.titre}</b>
+                <span class="max-w-prose text-[15px] leading-relaxed text-text-muted md:text-base">{e.texte}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
     </Container>
   </section>
 
   <!-- ========== STATUT ========== -->
-  <section id="statut" aria-labelledby="statut-titre" class="bg-surface py-24 md:py-28">
+  <section id="statut" aria-labelledby="statut-titre" class="bg-surface py-14 md:py-28">
     <Container>
       <p class={surtitre}>Le statut de stagiaire</p>
       <h2 id="statut-titre" class={titreSection}>
         Stagiaire, ça veut dire quoi pour votre sortie ?
       </h2>
-      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-text-muted">
+      <p class="mt-4 max-w-2xl text-base leading-relaxed text-text-muted md:mt-5 md:text-lg">
         Pendant ma formation, la loi m'autorise à encadrer dans un cadre
         précis. Voici exactement ce que je peux vous proposer aujourd'hui.
       </p>
 
-      <!-- Le défilement horizontal reste dans ce cadre sur petit écran. -->
-      <div class="mt-10 overflow-x-auto rounded-2xl border border-border">
+      <!--
+        Même donnée, deux présentations :
+        - mobile : une liste « sortie → modalité », lisible sans défilement horizontal (WCAG 1.4.10) ;
+        - md et plus : le tableau.
+        La version masquée est en display:none, donc absente pour les lecteurs d'écran : pas de doublon.
+      -->
+      <ul
+        aria-label="Sorties possibles selon mon statut de stagiaire"
+        class="mt-6 divide-y divide-border overflow-hidden rounded-2xl border border-border md:hidden"
+      >
+        {ENCADREMENT.map((ligne) => (
+          <li
+            class:list={[
+              "flex flex-col gap-1 px-4 py-3.5",
+              ligne.modalite === "apres-diplome" && "bg-background",
+            ]}
+          >
+            <span class="text-[15px] font-bold text-text">{ligne.sortie}</span>
+            <span class={`inline-flex items-center gap-2 text-[15px] font-semibold ${PRESENTATION_MODALITE[ligne.modalite].classe}`}>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0">
+                <path d={PRESENTATION_MODALITE[ligne.modalite].icone} />
+              </svg>
+              {MODALITE_LIBELLE[ligne.modalite]}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div class="mt-10 hidden overflow-x-auto rounded-2xl border border-border md:block">
         <table class="w-full min-w-[640px] border-collapse text-left">
           <caption class="sr-only">Sorties possibles selon mon statut de stagiaire</caption>
           <thead>
@@ -377,25 +452,27 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
         </table>
       </div>
 
-      <h3 class="mt-16 text-2xl font-bold text-text">Vos questions</h3>
+      <h3 class="mt-10 text-[1.375rem] font-bold text-text md:mt-16 md:text-2xl">Vos questions</h3>
       <!-- <details> natif : clavier et lecteurs d'écran sans JS, plusieurs réponses ouvertes à la fois. -->
-      <div class="mt-5 flex max-w-[880px] flex-col gap-3">
+      <div class="mt-4 flex max-w-[880px] flex-col gap-2.5 md:mt-5 md:gap-3">
         {questions.map((q, i) => (
-          <details open={i === 0} class="group rounded-2xl border border-border bg-background px-6">
-            <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-[17px] font-semibold text-text [&::-webkit-details-marker]:hidden">
+          <details open={i === 0} class="group rounded-2xl border border-border bg-background px-4 md:px-6">
+            <!-- min-h-14 : une question sur deux lignes reste facile à toucher. -->
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-2 text-base font-semibold leading-snug text-text md:gap-4 md:py-5 md:text-[17px] [&::-webkit-details-marker]:hidden">
               {q.question}
               <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary transition-transform group-open:rotate-180">
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </summary>
-            <p class="pb-5 leading-relaxed text-text-muted">
+            <p class="pb-4 text-[15px] leading-relaxed text-text-muted md:pb-5 md:text-base">
               {q.reponse}
               {q.lien && (
                 <>
                   {" "}
+                  <!-- Mobile : vrai bouton pleine largeur (action de vérification). md et plus : lien dans le texte. -->
                   <a
                     href={q.lien.href}
-                    class="font-semibold text-primary underline underline-offset-4 hover:text-primary-hover"
+                    class="mt-3 flex min-h-12 items-center justify-center rounded-full border border-primary font-semibold text-primary hover:bg-primary hover:text-white md:mt-0 md:inline md:min-h-0 md:rounded-none md:border-0 md:underline md:underline-offset-4 md:hover:bg-transparent md:hover:text-primary-hover"
                   >
                     {q.lien.label}
                   </a>
@@ -409,16 +486,17 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
   </section>
 
   <!-- ========== CTA ========== -->
-  <section class="bg-primary py-24 md:py-28">
+  <section class="bg-primary py-14 md:py-28">
     <Container>
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white md:text-4xl">
+        <h2 class="text-[1.75rem] font-bold tracking-tight text-white md:text-4xl">
           Envie de partir ensemble ?
         </h2>
-        <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/80">
+        <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/80 md:mt-4 md:text-lg">
           Découvrez les sorties proposées ou contactez-moi pour construire la vôtre.
         </p>
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <!-- Mobile : boutons empilés pleine largeur, dans la zone du pouce. -->
+        <div class="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 md:mt-8">
           <Button href="/sorties" variant="secondary" size="lg">Voir les sorties</Button>
           <a
             href="/contact"
@@ -431,3 +509,114 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
     </Container>
   </section>
 </BaseLayout>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const mm = gsap.matchMedia();
+
+  // Seulement si l'utilisateur n'a pas demandé moins d'animations.
+  // matchMedia annule tout automatiquement si la préférence change.
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    const frise = document.querySelector("[data-frise]");
+    if (!frise) return;
+
+    /* Animation Timeline */
+    // Une seule timeline, déclenchée par l'arrivée de la frise à l'écran.
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: frise,
+        start: "top 80%",
+        end: "bottom 30%",
+        once: true,
+        toggleActions: "play complete none none",
+      },
+      defaults: { ease: "power2.out" },
+    });
+
+    gsap.utils.toArray<HTMLElement>("[data-etape]").forEach((etape) => {
+      const point = etape.querySelector("[data-etape-point]");
+      const contenu = etape.querySelector("[data-etape-contenu]");
+      const ligne = etape.querySelector("[data-etape-ligne]");
+
+      // Sans position, chaque ajout se place à la fin de la timeline :
+      // les étapes s'enchaînent donc dans l'ordre.
+      tl.from(point, { scale: 0, duration: 0.3 })
+        .from(contenu, { opacity: 0, y: 16, duration: 0.4 }, "<0.1");
+
+      if (ligne) {
+        tl.from(
+          ligne,
+          { scaleY: 0, transformOrigin: "top center", duration: 0.35, ease: "none" },
+          "<0.15",
+        );
+      }
+    });
+
+      /* ---------- Valeurs : apparition au défilement ---------- */
+
+  const blocValeurs = document.querySelector("[data-valeurs]");
+
+    if (blocValeurs) {
+      gsap.from("[data-valeur]", {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.12, // les blocs arrivent l'un après l'autre
+        scrollTrigger: {
+          trigger: blocValeurs,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }
+
+  /* ---------- Valeurs : le picto s'agite au survol ou au toucher ---------- */
+
+  const icones = gsap.utils.toArray<HTMLElement>("[data-valeur-icone]");
+  const nettoyages: Array<() => void> = [];
+
+  icones.forEach((icone) => {
+      const carte = icone.closest<HTMLElement>("[data-valeur]");
+      if (!carte) return;
+
+      const agiter = () => {
+        // Pas de nouvelle secousse tant que la précédente n'est pas finie.
+        if (gsap.isTweening(icone)) return;
+        gsap.to(icone, {
+          keyframes: { rotation: [0, -8, 7, -4, 2, 0] },
+          duration: 0.6,
+          ease: "power1.inOut",
+        });
+      };
+
+      // Souris : quand le pointeur entre sur la carte.
+      const auSurvol = (e: PointerEvent) => {
+        if (e.pointerType === "mouse") agiter();
+      };
+      // Tactile ou stylet : au toucher.
+      const auToucher = (e: PointerEvent) => {
+        if (e.pointerType !== "mouse") agiter();
+      };
+
+      carte.addEventListener("pointerenter", auSurvol);
+      carte.addEventListener("pointerdown", auToucher);
+
+      nettoyages.push(() => {
+        carte.removeEventListener("pointerenter", auSurvol);
+        carte.removeEventListener("pointerdown", auToucher);
+      });
+    });
+      
+    // Si l'utilisateur active « réduire les animations » en cours de route,
+    // matchMedia annule les animations GSAP… et appelle cette fonction pour
+    // retirer nos écouteurs.
+    return () => nettoyages.forEach((retirer) => retirer());
+  });
+  
+
+</script>

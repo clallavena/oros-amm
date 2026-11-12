@@ -1,7 +1,7 @@
 ---
 import Container from "./Container.astro";
 import { NAV_LINKS } from "../lib/navigation";
-import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { CONTACT_EMAIL, NOM_SITE, NOM_SITE_HREF, PHONE_NUMBER } from "../lib/site";
 import { NUMERO_DECLARATION, TITRE_MAJ } from "../lib/statut";
 
 const year = new Date().getFullYear();
@@ -24,6 +24,18 @@ const declarationNumero = NUMERO_DECLARATION;
         <p class="mt-2 text-sm leading-relaxed text-white/70">
           {TITRE_MAJ} en formation au DE. Des sorties pour
           découvrir la montagne à votre rythme.
+        </p>
+        <!--
+          Signature : le nom du site expliqué en une phrase, sur toutes les
+          pages. Le lien mène à la version complète dans Qui je suis.
+        -->
+        <p class="mt-4 border-t border-white/15 pt-4 text-sm leading-relaxed text-white/85">
+          <b class="font-bold text-white">{NOM_SITE}</b> : <span lang="grc" class="font-serif">ὄρος</span>,
+          signifie "la montagne" en grec ancien, et le sens, celui du chemin, des choses, de nos ressentie
+          et de nos sens.&nbsp;
+          <a href={NOM_SITE_HREF} class="font-semibold text-secondary underline-offset-4 hover:underline">
+            D'où vient ce nom&nbsp;?
+          </a>
         </p>
       </div>
 

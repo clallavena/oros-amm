@@ -12,6 +12,7 @@ import {
 } from "../lib/statut";
 
 import profilImage from "../images/clallavena_profile1.jpg";
+import { NOM_SITE } from "../lib/site";
 
 /* ---------- Sommaire (ancres de la page) ---------- */
 
@@ -312,6 +313,78 @@ const titreSection = "mt-3 max-w-2xl text-3xl font-bold leading-tight tracking-t
           </figure>
           <p class="text-base italic text-text-muted">Photographe amateur, toutes les photos de ce site sont issues de mes sorties en montagne.</p>
         </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- ========== D'OÙ VIENT LE NOM ========== -->
+  <!--
+    Encart « dictionnaire ».
+    La forme d'une entrée de dictionnaire est immédiatement reconnue : mot,
+    prononciation, étymologie, sens numérotés. Le lecteur sait comment la lire
+    sans mode d'emploi.
+
+    Ordre du DOM = ordre de lecture mobile : titre, entrée, texte.
+    md et plus : l'entrée à gauche, le titre et le texte à droite (grille).
+    Cible du lien « D'où vient ce nom ? » du pied de page (#nom).
+  -->
+  <section id="nom" aria-labelledby="nom-titre" class="bg-primary-light/15 py-14 md:py-28">
+    <Container>
+      <div class="grid gap-5 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-center md:gap-x-11 md:gap-y-4">
+        <div class="md:col-start-2 md:row-start-1 md:self-end">
+          <h2 id="nom-titre" class={surtitre}>D'où vient le nom</h2>
+          <p class="mt-3 font-[family-name:var(--font-epilogue)] text-[1.5rem] font-bold leading-tight text-text md:text-[1.75rem]">
+            La montagne, et tous les sens du mot sens.
+          </p>
+        </div>
+
+        <figure class="rounded-[20px] border border-border bg-surface p-5.5 shadow-[0_10px_30px_rgba(9,20,15,0.06)] md:col-start-1 md:row-span-2 md:row-start-1 md:rounded-[22px] md:p-7.5">
+          <p>
+            <dfn class="font-[family-name:var(--font-epilogue)] text-[2.125rem] font-bold not-italic leading-none text-text md:text-[2.75rem]">{NOM_SITE}</dfn>
+          </p>
+          <p class="mt-2 text-[13px] text-text-muted md:mt-2.5 md:text-sm">
+            <!-- L'API ne se lit pas à voix haute : on donne une transcription simple aux lecteurs d'écran. -->
+            <span aria-hidden="true" class="font-serif">/o.ʁo.sɑ̃s/</span>
+            <span class="sr-only">se prononce « o-ro-sanss »</span>
+            · mot composé
+          </p>
+
+          <dl class="mt-3.5 flex flex-col gap-3 border-t border-primary-light/40 pt-3.5 md:mt-4.5 md:gap-3.5 md:pt-4.5">
+            <div class="md:grid md:grid-cols-[5.75rem_1fr] md:items-baseline md:gap-3.5">
+              <dt class="font-serif text-[1.1875rem] text-primary md:text-[1.375rem]">
+                <span lang="grc">ὄρος</span>
+                <span class="ml-1 font-sans text-xs text-text-muted md:hidden">grec ancien</span>
+              </dt>
+              <dd class="mt-0.5 md:mt-0">
+                <span class="hidden text-[13px] text-text-muted md:block">grec ancien</span>
+                <span class="font-serif text-base md:text-lg">La montagne.</span>
+              </dd>
+            </div>
+            <div class="md:grid md:grid-cols-[5.75rem_1fr] md:items-baseline md:gap-3.5">
+              <dt class="font-serif text-[1.1875rem] text-primary md:text-[1.375rem]">
+                sens
+                <span class="ml-1 font-sans text-xs text-text-muted md:hidden">français</span>
+              </dt>
+              <dd class="mt-0.5 md:mt-0">
+                <span class="hidden text-[13px] text-text-muted md:block">français</span>
+                <ol class="mt-1 flex list-decimal flex-col gap-1 pl-5 font-serif text-[15px] leading-snug md:text-base">
+                  <li>La direction, le chemin que l'on prend.</li>
+                  <li>La signification, ce qui compte.</li>
+                  <li>Le sens métaphysique: la raison d'être, la signification</li>
+                  <li>Nos sens : voir, écouter, sentir, toucher.</li>
+                </ol>
+              </dd>
+            </div>
+          </dl>
+        </figure>
+
+        <p class="text-base leading-relaxed text-text-muted md:col-start-2 md:row-start-2 md:self-start md:text-[17px]">
+          Je cherchais un nom qui dise à la fois où l'on va et comment on y va.
+          Oros, la montagne, bien sûr. Et le sens, dans tous ses sens : un chemin
+          qu'on choisit ensemble, ce qui compte vraiment quand on prend le
+          temps, et tout ce que nos sens perçoivent quand on s'arrête pour
+          observer.
+        </p>
       </div>
     </Container>
   </section>

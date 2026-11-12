@@ -6,10 +6,9 @@
  * carte seule (voir global.css) : « la couleur de chaque carte annonce
  * l'ambiance de la page qui suit » (design, planche Hub Sorties).
  */
-import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import Button from "./Button.astro";
-import { UNIVERS_INFO, type Univers } from "../lib/univers";
+import { UNIVERS_INFO, type HeroPhoto, type Univers } from "../lib/univers";
 import { FORMAT_LABEL, formatPrix } from "../lib/formats";
 import { THEMATIQUE_INFO } from "../lib/thematiques";
 import type { ResumeSorties } from "../lib/sorties";
@@ -18,7 +17,7 @@ interface Props {
   univers: Univers;
   resume: ResumeSorties;
   /** Photo de l'univers ; sans photo, un aplat avec le pictogramme. */
-  photo?: { src: ImageMetadata; alt: string };
+  photo?: HeroPhoto;
 }
 
 const { univers, resume, photo, ...attrs } = Astro.props;
@@ -33,7 +32,7 @@ const info = UNIVERS_INFO[univers];
 >
   {photo ? (
     <Image
-      src={photo.src}
+      src={photo.image}
       alt={photo.alt}
       widths={[400, 800]}
       sizes="(min-width: 1024px) 33vw, 100vw"

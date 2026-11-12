@@ -1,7 +1,8 @@
 ---
 /*
  * Page d'un univers : /sorties/randonnee, /sorties/hiver, /sorties/itinerance.
- * Design : planche « 2 · Univers Randonnée & découverte » (desktop et mobile).
+ * Design : planches « 2 · Univers Randonnée & découverte » et
+ * « 3 · Univers Itinérance & refuges » (desktop et mobile).
  *
  * Un seul gabarit pour les trois univers. Ce qui change d'un univers à
  * l'autre vient de deux sources :
@@ -19,14 +20,15 @@ import SortieCard from "../../../components/SortieCard.astro";
 import SortieCardCompacte from "../../../components/SortieCardCompacte.astro";
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import { getCollection } from "astro:content";
 
 import { UNIVERS, UNIVERS_INFO, type Univers } from "../../../lib/univers";
 import { THEMATIQUE_INFO } from "../../../lib/thematiques";
 import { getSorties, resumer, thematiquesAbordees } from "../../../lib/sorties";
-import { FORMAT_LABEL, formatPrix } from "../../../lib/formats";
+import { FORMAT_INFO, FORMAT_LABEL, formatPrix, type Format } from "../../../lib/formats";
 import { PHONE_NUMBER } from "../../../lib/site";
 
-import photoRandonnee from "../../../images/forest_montblanc.jpg";
+import { PHOTOS } from "../../../lib/univers";
 
 export function getStaticPaths() {
   return UNIVERS.map((univers) => ({
@@ -62,19 +64,16 @@ const sortiesFixes = sorties.filter((s) => s.data.format !== "sur-mesure");
 const resume = resumer(sorties);
 const resumeFixes = resumer(sortiesFixes);
 
-/*
- * Photo du hero. Sans photo, le hero garde l'aplat de couleur du thème
- * (bg-hero) : la page reste correcte en attendant les photos d'hiver et
- * d'itinérance.
- */
-const PHOTOS: Partial<Record<Univers, ImageMetadata>> = {
-  randonnee: photoRandonnee,
-};
 const photo = PHOTOS[univers];
 
-/* « Demi-journée ou journée » : formats publiés, en minuscules après le premier. */
+/*
+ * « Demi-journée ou journée » : formats publiés, en minuscules après le premier.
+ * L'itinérance s'annonce par sa durée (« 2 à 5 jours ») : sur la page
+ * « Itinérance & refuges », la pastille « Itinérance » répéterait le titre.
+ */
+const libelleBref = (f: Format) => (f === "itinerance" ? FORMAT_INFO.itinerance.duree : FORMAT_LABEL[f]);
 const formatsTexte = resumeFixes.formats
-  .map((f, i) => (i === 0 ? FORMAT_LABEL[f] : FORMAT_LABEL[f].toLowerCase()))
+  .map((f, i) => (i === 0 ? libelleBref(f) : libelleBref(f).toLowerCase()))
   .join(" ou ");
 
 /* Pastilles « En bref » : formats publiés + spécificités de l'univers + prix. */
@@ -113,6 +112,18 @@ const autres = UNIVERS.filter((u) => u !== univers).map((u) => {
   };
 });
 
+/* « Inclus / À prévoir » : textes éditoriaux de l'univers (lib/univers.ts). */
+const inclus = info.page.inclus ?? [];
+const aPrevoir = info.page.aPrevoir ?? [];
+const bientot = info.page.bientot;
+
+/* Récits du Carnet rattachés à cet univers (champ `univers` du récit), 3 au plus. */
+const recits = (await getCollection("carnet", ({ data }) => data.univers === univers))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
 const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
 
 /* Classes partagées (mêmes valeurs que le hub /sorties et l'accueil). */
@@ -133,7 +144,7 @@ const classeFiltre =
       <>
         <!-- Décorative : le texte du hero porte le message, d'où alt="". -->
         <Image
-          src={photo}
+          src={photo.image}
           alt=""
           widths={[640, 1280, 1920]}
           sizes="100vw"
@@ -193,13 +204,24 @@ const classeFiltre =
 
       <div class="mt-6 flex flex-col gap-3 motion-safe:animate-apparition motion-safe:[animation-delay:220ms] sm:flex-row sm:flex-wrap md:mt-8">
         <Button href="#formules" variant="secondary" size="lg">Voir les formules</Button>
-        <!-- Mobile : les thématiques suivent juste le hero, ce second bouton serait redondant. -->
-        {avecThematiques && (
+        <!--
+          Second bouton : avec des thématiques, il y mène (masqué sur mobile,
+          où elles suivent juste le hero). Sans thématiques (itinérance, hiver),
+          il propose directement de demander des dates.
+        -->
+        {avecThematiques ? (
           <a
             href="#thematiques"
             class="hidden min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:inline-flex"
           >
             Choisir un thème
+          </a>
+        ) : (
+          <a
+            href="/contact"
+            class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary"
+          >
+            Demander des dates
           </a>
         )}
       </div>
@@ -354,6 +376,117 @@ const classeFiltre =
       )}
     </Container>
   </section>
+
+  <!-- ========== BIENTÔT (ce que le statut ne permet pas encore) ========== -->
+  {bientot && (
+    <section aria-labelledby="bientot-titre" class="py-14 md:py-20">
+      <Container>
+        <!--
+          Aplat teinté, sans photo ni prix : on annonce une pratique à venir
+          sans la présenter comme réservable aujourd'hui. Pas de pointillés,
+          pour ne pas le confondre avec l'encart « Une idée, une envie… »
+          qui termine la liste juste au-dessus.
+        -->
+        <div class="flex flex-col gap-5 rounded-3xl bg-primary-light/25 p-6 md:flex-row md:items-center md:justify-between md:gap-10 md:p-10">
+          <div class="max-w-2xl">
+            <p class={surtitre}>Bientôt</p>
+            <h2 id="bientot-titre" class="mt-2 text-xl font-bold leading-snug text-text md:text-2xl">
+              {bientot.titre}
+            </h2>
+            <p class="mt-2 leading-relaxed text-text-muted">{bientot.texte}</p>
+          </div>
+          <Button href={`/contact?sortie=${bientot.id}`} variant="ghost" class="w-full shrink-0 md:w-auto">
+            Me prévenir
+          </Button>
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <!-- ========== INCLUS / À PRÉVOIR ========== -->
+  {(inclus.length > 0 || aPrevoir.length > 0) && (
+    <section aria-label="Inclus et à prévoir" class="bg-surface py-14 md:py-24">
+      <Container>
+        <!-- Deux listes côte à côte : on compare d'un coup d'œil ce qui est fourni et ce qu'on apporte. -->
+        <div class="grid gap-8 md:grid-cols-2 md:gap-14">
+          {inclus.length > 0 && (
+            <div>
+              <h2 class="text-[1.375rem] font-bold tracking-tight text-text md:text-3xl">Inclus</h2>
+              <ul class="mt-4 flex flex-col gap-3 md:mt-6">
+                {inclus.map((texte) => (
+                  <li class="flex gap-3 leading-relaxed text-text">
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary">
+                      <path d="M5 12l5 5L20 7" />
+                    </svg>
+                    {texte}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {aPrevoir.length > 0 && (
+            <div>
+              <h2 class="text-[1.375rem] font-bold tracking-tight text-text md:text-3xl">À prévoir</h2>
+              <ul class="mt-4 flex flex-col gap-3 md:mt-6">
+                {aPrevoir.map((texte) => (
+                  <li class="flex gap-3 leading-relaxed text-text">
+                    <!-- Picto différent de « Inclus » : la forme distingue les listes, pas la couleur seule (WCAG 1.4.1). -->
+                    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary">
+                      <path d="M6 8h12l-1 12H7zM9 8V6a3 3 0 0 1 6 0v2" />
+                    </svg>
+                    {texte}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <!-- ========== RÉCITS DU CARNET ========== -->
+  {recits.length > 0 && (
+    <section aria-labelledby="recits-titre" class="py-14 md:py-24">
+      <Container>
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class={surtitre}>Déjà vécu</p>
+            <h2 id="recits-titre" class={titreSection}>{info.page.recits}</h2>
+          </div>
+          <!-- Desktop : en face du titre. Mobile : après la liste. -->
+          <a href="/carnet" class="hidden min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:inline-flex">
+            Tout le carnet →
+          </a>
+        </div>
+
+        <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-3 md:gap-6">
+          {recits.map((recit) => (
+            <li class="group relative flex flex-col gap-3 rounded-2xl bg-surface p-5 transition hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2 md:p-7">
+              {recit.data.tags?.[0] && (
+                <span class="self-start rounded-full bg-primary-light/30 px-3 py-1 text-[13px] font-semibold text-primary">
+                  {recit.data.tags[0]}
+                </span>
+              )}
+              <h3 class="text-lg font-bold leading-snug text-text md:text-xl">
+                <!-- Lien étendu à toute la carte (block link, comme SortieCard). -->
+                <a href={`/carnet/${recit.id}`} class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-hover:text-primary">
+                  {recit.data.title}
+                </a>
+              </h3>
+              <p class="text-sm text-text-muted">
+                <time datetime={recit.data.pubDate.toISOString()}>{formatDate(recit.data.pubDate)}</time>
+              </p>
+            </li>
+          ))}
+        </ul>
+
+        <a href="/carnet" class="mt-3 inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:hidden">
+          Tout le carnet →
+        </a>
+      </Container>
+    </section>
+  )}
 
   <!-- ========== AUTRES UNIVERS ========== -->
   <section aria-labelledby="autres-titre" class="py-12 md:py-20">

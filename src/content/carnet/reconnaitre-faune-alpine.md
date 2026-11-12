@@ -3,6 +3,7 @@ title: "Quatre espèces à observer lors d'une sortie en Haute-Savoie"
 description: "Chamois, marmottes, bouquetins et gypaètes barbus : apprendre à les reconnaître sur le terrain."
 pubDate: 2026-06-03
 tags: ["nature", "faune"]
+univers: randonnee
 ---
 
 Une des choses que je préfère transmettre pendant une sortie, c'est le réflexe d'observation. Voici quatre espèces qu'on croise régulièrement sur les sentiers aux alentours d'Annecy.

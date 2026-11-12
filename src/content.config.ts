@@ -15,6 +15,11 @@ const carnet = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).optional(),
+    /**
+     * Univers dont parle le récit : il apparaît alors dans la section
+     * « Récits » de /sorties/<univers>. Absent = conseil général.
+     */
+    univers: z.enum(UNIVERS).optional(),
   }),
 });
 

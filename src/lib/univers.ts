@@ -12,8 +12,23 @@
  */
 
 /* ---------- Thèmes ---------- */
+import photoRandonnee from "../images/forest_montblanc.jpg";
+import sunsetImage from "../images/sunset2.jpg";
+import snowImage from "../images/raquette.jpg";
 
 export const THEMES = ["forest", "snow", "sunset"] as const;
+
+export interface HeroPhoto {
+  image: ImageMetadata,
+  alt: string,
+};
+
+/* Images HERO pour les univers */
+export const PHOTOS: Record<Univers, HeroPhoto> = {
+  randonnee: { image: photoRandonnee, alt: "Randonnée sur un sentier de montagne" },
+  hiver: { image: snowImage, alt: "Randonnée raquette sur un sentier enneigé"},
+  itinerance: { image: sunsetImage, alt: "Ligne d'horizon au crépuscule" },
+};
 
 export type Theme = (typeof THEMES)[number];
 
@@ -61,6 +76,27 @@ export interface UniversInfo {
     formules: string;
     /** Titre de l'appel à l'action en bas de page. */
     appel: string;
+    /** Titre de la section des récits du Carnet liés à l'univers. */
+    recits: string;
+    /**
+     * « Inclus » et « À prévoir » communs aux sorties de l'univers.
+     * La section n'apparaît que si au moins une des deux listes est renseignée.
+     * Chaque fiche garde son propre `inclus` pour le détail.
+     */
+    inclus?: string[];
+    aPrevoir?: string[];
+    /**
+     * Encart « Bientôt » : une pratique de l'univers que le statut de
+     * stagiaire ne permet pas encore d'encadrer (voir ENCADREMENT dans
+     * statut.ts). Le bouton mène à /contact?sortie=<id>, où une option
+     * « Être prévenu » est pré-sélectionnée.
+     */
+    bientot?: {
+      /** Valeur envoyée par le formulaire de contact : sans accents ni espaces. */
+      id: string;
+      titre: string;
+      texte: string;
+    };
   };
 }
 
@@ -84,6 +120,7 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
       enBref: ["Tous niveaux"],
       formules: "Une balade ou une vraie journée d'immersion",
       appel: "Et si on partait observer ?",
+      recits: "Récits de randonnée",
     },
     icone: "M12 22v-3M17 14 l3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z", // sapin
   },
@@ -102,6 +139,7 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
       enBref: ["Selon l'enneigement", "En binôme avec un accompagnateur diplômé"],
       formules: "Une matinée ou une journée dans la neige",
       appel: "Envie de marcher dans la neige ?",
+      recits: "Récits d'hiver",
     },
     icone: "M12 2V18M12 22V18M12 18L15 21M12 18L9 21M15 3L12 6L9 3M3.34 7L6.8 9M6.8 9L17.2 15M6.8 9L5.71 4.9M6.8 9L2.71 10.1M17.2 15L20.66 17M17.2 15L21.29 13.9M17.2 15L18.29 19.1M20.66 7L17.2 9M17.2 9L6.8 15M17.2 9L18.29 4.9M17.2 9L21.29 10.1M6.8 15L3.34 17M6.8 15L2.71 13.9M6.8 15L5.71 19.1", // flocon (svg repo)
   },
@@ -120,6 +158,25 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
       enBref: ["Refuges et gîtes gardés"],
       formules: "Une nuit pour découvrir, plusieurs jours pour voyager",
       appel: "Prêt à dormir là-haut ?",
+      recits: "Récits d'itinérance",
+      // TODO : confirmer ce qui est inclus (réservation, demi-pension…).
+      inclus: [
+        "Encadrement par un accompagnateur en montagne stagiaire, sous convention de stage",
+        "Préparation de l'itinéraire et suivi météo",
+        "[À confirmer : réservation des refuges]",
+        "[À confirmer : demi-pension au refuge]",
+      ],
+      aPrevoir: [
+        "Sac à dos de [30 à 40 L] et drap-sac pour le refuge",
+        "Chaussures de randonnée déjà portées",
+        "Vêtements chauds pour le soir, même en été",
+      ],
+      bientot: {
+        id: "bientot-bivouac",
+        titre: "Le bivouac sous tente",
+        texte:
+          "Je le proposerai une fois mon diplôme obtenu : pendant la formation, les nuits en bivouac ne font pas partie de mes prérogatives. Écrivez-moi, je vous préviendrai.",
+      },
     },
     icone: "m14 10 3-3 3 3M14 5 l3-3 3 3 M17 14H7l-5 8h20Z M17 14V2 M8 14v8 M9 14 l5 8 M2 4 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0", // tente / refuge
   },

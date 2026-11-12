@@ -6,6 +6,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { UNIVERS, type Univers } from "./univers";
 import { FORMATS, type Format } from "./formats";
+import { THEMATIQUES, type Thematique } from "./thematiques";
 
 export type Sortie = CollectionEntry<"sorties">;
 
@@ -25,6 +26,15 @@ export async function getSorties(univers?: Univers): Promise<Sortie[]> {
   );
 }
 
+/**
+ * Thématiques qu'une sortie permet d'aborder.
+ * Une sortie sur mesure se construit autour de l'envie du client : elle les
+ * aborde toutes, sans qu'il faille les recopier dans son frontmatter (et une
+ * thématique ajoutée plus tard dans THEMATIQUES y sera incluse d'office).
+ */
+export const thematiquesAbordees = (sortie: Sortie): Thematique[] =>
+  sortie.data.format === "sur-mesure" ? [...THEMATIQUES] : sortie.data.thematiques;
+
 /** URL de la fiche : /sorties/<univers>/<nom-du-fichier> */
 export const sortieHref = (sortie: Sortie): string =>
   `/sorties/${sortie.data.univers}/${sortie.id}`;
@@ -38,8 +48,8 @@ export interface ResumeSorties {
   univers: Univers[];
   /** Plus petit prix « dès » ; undefined s'il n'y a aucune sortie. */
   prixDes?: number;
-  /** Thèmes abordés, sans doublon. */
-  themes: string[];
+  /** Thématiques abordées, dans l'ordre de THEMATIQUES. */
+  thematiques: Thematique[];
 }
 
 /**
@@ -56,7 +66,8 @@ export function resumer(sorties: Sortie[]): ResumeSorties {
       sorties.length > 0
         ? Math.min(...sorties.map((s) => s.data.prix.des))
         : undefined,
-    themes: [...new Set(sorties.flatMap((s) => s.data.themes))],
+    // Via thematiquesAbordees : une sortie sur mesure apporte toutes les thématiques.
+    thematiques: THEMATIQUES.filter((t) => sorties.some((s) => thematiquesAbordees(s).includes(t))),
   };
 }
 

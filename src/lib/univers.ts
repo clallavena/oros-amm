@@ -47,6 +47,21 @@ export interface UniversInfo {
   cta: string;
   /** Pictogramme : attribut `d` d'un <path> SVG 24×24 en trait (design). */
   icone: string;
+  /** Textes de la page /sorties/<univers> (design, planches 2 à 4). */
+  page: {
+    /** Phrase d'accroche du hero, sous le nom de l'univers. */
+    titre: string;
+    intro: string;
+    /**
+     * Pastilles « En bref » propres à l'univers. Les formats et le prix
+     * « dès » sont ajoutés automatiquement depuis le contenu publié.
+     */
+    enBref: string[];
+    /** Titre de la section des formules. */
+    formules: string;
+    /** Titre de l'appel à l'action en bas de page. */
+    appel: string;
+  };
 }
 
 /*
@@ -62,6 +77,14 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
     accroche:
       "Marcher pour comprendre : faune, flore, paysages et vie du milieu montagnard.",
     cta: "Voir les sorties rando",
+    page: {
+      titre: "Marcher pour comprendre la montagne.",
+      intro:
+        "Une trace dans la boue, une fleur qu'on ne remarquait pas, un alpage qui raconte une histoire : ici, la marche sert à observer.",
+      enBref: ["Tous niveaux"],
+      formules: "Une balade ou une vraie journée d'immersion",
+      appel: "Et si on partait observer ?",
+    },
     icone: "M12 22v-3M17 14 l3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z", // sapin
   },
   hiver: {
@@ -72,6 +95,14 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
     accroche:
       "Forêts enneigées, traces d'animaux et silence feutré : la montagne se découvre autrement l'hiver.",
     cta: "Voir les sorties hiver",
+    page: {
+      titre: "La montagne en silence.",
+      intro:
+        "Des sorties en raquettes pour marcher dans la poudreuse, lire les traces d'animaux et profiter de l'hiver sans savoir skier.",
+      enBref: ["Selon l'enneigement", "En binôme avec un accompagnateur diplômé"],
+      formules: "Une matinée ou une journée dans la neige",
+      appel: "Envie de marcher dans la neige ?",
+    },
     icone: "M12 2V18M12 22V18M12 18L15 21M12 18L9 21M15 3L12 6L9 3M3.34 7L6.8 9M6.8 9L17.2 15M6.8 9L5.71 4.9M6.8 9L2.71 10.1M17.2 15L20.66 17M17.2 15L21.29 13.9M17.2 15L18.29 19.1M20.66 7L17.2 9M17.2 9L6.8 15M17.2 9L18.29 4.9M17.2 9L21.29 10.1M6.8 15L3.34 17M6.8 15L2.71 13.9M6.8 15L5.71 19.1", // flocon (svg repo)
   },
   itinerance: {
@@ -82,6 +113,14 @@ export const UNIVERS_INFO: Record<Univers, UniversInfo> = {
     accroche:
       "Plusieurs jours de marche, de refuge en refuge, et le lever du jour là-haut.",
     cta: "Voir les itinérances",
+    page: {
+      titre: "Passer la nuit là-haut.",
+      intro:
+        "Monter quand la foule redescend, poser le sac au refuge, regarder la lumière changer sur les sommets. Puis repartir au matin, plus loin.",
+      enBref: ["Refuges et gîtes gardés"],
+      formules: "Une nuit pour découvrir, plusieurs jours pour voyager",
+      appel: "Prêt à dormir là-haut ?",
+    },
     icone: "m14 10 3-3 3 3M14 5 l3-3 3 3 M17 14H7l-5 8h20Z M17 14V2 M8 14v8 M9 14 l5 8 M2 4 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0", // tente / refuge
   },
 };

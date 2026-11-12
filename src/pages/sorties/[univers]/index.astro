@@ -1,6 +1,14 @@
 ---
 /*
  * Page d'un univers : /sorties/randonnee, /sorties/hiver, /sorties/itinerance.
+ * Design : planche « 2 · Univers Randonnée & découverte » (desktop et mobile).
+ *
+ * Un seul gabarit pour les trois univers. Ce qui change d'un univers à
+ * l'autre vient de deux sources :
+ * - les textes éditoriaux : UNIVERS_INFO[univers].page (lib/univers.ts) ;
+ * - tout le reste est calculé depuis le contenu publié (formats, prix,
+ *   thématiques, sur-mesure) : ajouter un .md met la page à jour.
+ *
  * Les pages sont générées depuis la liste UNIVERS, pas depuis le contenu :
  * un univers sans sortie a quand même sa page (avec un message « bientôt »).
  */
@@ -8,8 +16,17 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Container from "../../../components/Container.astro";
 import Button from "../../../components/Button.astro";
 import SortieCard from "../../../components/SortieCard.astro";
+import SortieCardCompacte from "../../../components/SortieCardCompacte.astro";
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
 import { UNIVERS, UNIVERS_INFO, type Univers } from "../../../lib/univers";
-import { getSorties } from "../../../lib/sorties";
+import { THEMATIQUE_INFO } from "../../../lib/thematiques";
+import { getSorties, resumer, thematiquesAbordees } from "../../../lib/sorties";
+import { FORMAT_LABEL, formatPrix } from "../../../lib/formats";
+import { PHONE_NUMBER } from "../../../lib/site";
+
+import photoRandonnee from "../../../images/forest_montblanc.jpg";
 
 export function getStaticPaths() {
   return UNIVERS.map((univers) => ({
@@ -24,7 +41,85 @@ interface Props {
 
 const { univers } = Astro.props;
 const info = UNIVERS_INFO[univers];
-const sorties = await getSorties(univers);
+
+/* ---------- Données ---------- */
+
+const toutes = await getSorties();
+const sorties = toutes.filter((s) => s.data.univers === univers);
+
+/*
+ * Toutes les sorties de l'univers sont proposées, sur-mesure compris.
+ * Le sur-mesure aborde toutes les thématiques (thematiquesAbordees) : il reste
+ * visible quel que soit le filtre, pour qui veut construire sa sortie autour
+ * d'un thème.
+ *
+ * Les sorties « fixes » (hors sur-mesure) servent aux pastilles de formats
+ * du hero : « Demi-journée ou journée », sans « sur mesure ».
+ */
+const formules = sorties;
+const sortiesFixes = sorties.filter((s) => s.data.format !== "sur-mesure");
+
+const resume = resumer(sorties);
+const resumeFixes = resumer(sortiesFixes);
+
+/*
+ * Photo du hero. Sans photo, le hero garde l'aplat de couleur du thème
+ * (bg-hero) : la page reste correcte en attendant les photos d'hiver et
+ * d'itinérance.
+ */
+const PHOTOS: Partial<Record<Univers, ImageMetadata>> = {
+  randonnee: photoRandonnee,
+};
+const photo = PHOTOS[univers];
+
+/* « Demi-journée ou journée » : formats publiés, en minuscules après le premier. */
+const formatsTexte = resumeFixes.formats
+  .map((f, i) => (i === 0 ? FORMAT_LABEL[f] : FORMAT_LABEL[f].toLowerCase()))
+  .join(" ou ");
+
+/* Pastilles « En bref » : formats publiés + spécificités de l'univers + prix. */
+const estRenseigne = (x: string | false | undefined): x is string => Boolean(x);
+const enBref = [
+  formatsTexte,
+  ...info.page.enBref,
+  resume.prixDes !== undefined && `Dès ${formatPrix(resume.prixDes)}`,
+].filter(estRenseigne);
+
+/*
+ * Thématiques abordées dans l'univers, sur-mesure compris : s'il existe, il
+ * les apporte toutes, et chacune a donc au moins une formule. La section et
+ * le filtre n'apparaissent qu'à partir de deux thématiques.
+ */
+const thematiques = resume.thematiques.map((t) => ({
+  id: t,
+  ...THEMATIQUE_INFO[t],
+  nombre: formules.filter((s) => thematiquesAbordees(s).includes(t)).length,
+}));
+const avecThematiques = thematiques.length >= 2;
+
+const NOMBRES = ["Zéro", "Une", "Deux", "Trois", "Quatre", "Cinq", "Six", "Sept"];
+const titreThematiques = `${NOMBRES[thematiques.length] ?? thematiques.length} façons de lire la montagne`;
+
+/* Les deux autres univers, avec ce qu'on peut en dire aujourd'hui. */
+const autres = UNIVERS.filter((u) => u !== univers).map((u) => {
+  const r = resumer(toutes.filter((s) => s.data.univers === u));
+  return {
+    univers: u,
+    info: UNIVERS_INFO[u],
+    detail:
+      r.nombre > 0
+        ? r.formats.map((f, i) => (i === 0 ? FORMAT_LABEL[f] : FORMAT_LABEL[f].toLowerCase())).join(", ")
+        : "Sorties en préparation",
+  };
+});
+
+const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
+
+/* Classes partagées (mêmes valeurs que le hub /sorties et l'accueil). */
+const surtitre = "text-sm font-semibold uppercase tracking-widest text-primary";
+const titreSection = "mt-3 max-w-2xl text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl";
+const classeFiltre =
+  "min-h-11 cursor-pointer rounded-full border border-border-strong bg-surface px-4 text-sm font-semibold text-text transition hover:border-primary aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white";
 ---
 
 <BaseLayout
@@ -32,38 +127,154 @@ const sorties = await getSorties(univers);
   description={info.accroche}
   theme={info.theme}
 >
-  <!-- HEADER DE PAGE -->
-  <section class="bg-hero pb-20 pt-40 md:pb-28 md:pt-48">
-    <Container>
-      <nav aria-label="Fil d'Ariane" class="text-sm text-white/80">
+  <!-- ========== HERO ========== -->
+  <section class="relative flex min-h-[600px] flex-col overflow-hidden bg-hero text-white md:min-h-[680px]">
+    {photo && (
+      <>
+        <!-- Décorative : le texte du hero porte le message, d'où alt="". -->
+        <Image
+          src={photo}
+          alt=""
+          widths={[640, 1280, 1920]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-linear-to-t from-black/85 via-black/45 to-black/30"
+        ></div>
+      </>
+    )}
+
+    <Container class="relative z-10 mt-auto pb-10 pt-28 md:pb-24 md:pt-40">
+      <!--
+        Mobile : un simple lien vers la page parente (le fil d'Ariane n'a que
+        deux niveaux). md et plus : le fil d'Ariane complet.
+      -->
+      <a
+        href="/sorties"
+        class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-white md:hidden"
+      >
+        <span aria-hidden="true">‹</span> Sorties
+      </a>
+      <nav aria-label="Fil d'Ariane" class="hidden text-sm text-white/85 motion-safe:animate-apparition md:block">
         <ol class="flex flex-wrap gap-2">
-          <li><a href="/sorties" class="text-white underline-offset-4 hover:underline">Sorties</a></li>
+          <li><a href="/sorties" class="text-white underline underline-offset-4 hover:text-secondary">Sorties</a></li>
           <li aria-hidden="true">/</li>
           <li aria-current="page">{info.label}</li>
         </ol>
       </nav>
 
-      <h1 class="mt-6 max-w-2xl text-4xl font-bold tracking-tight text-white md:text-6xl">
-        {info.label}
+      <!-- Le nom de l'univers fait partie du h1 : c'est le titre de la page. -->
+      <h1 class="mt-1 max-w-3xl md:mt-6">
+        <span class="block text-xs font-semibold uppercase tracking-[0.2em] text-white/80 motion-safe:animate-apparition md:text-sm">
+          {info.label}
+        </span>
+        <span class="mt-3 block text-[2.5rem] font-bold leading-[1.04] tracking-tight motion-safe:animate-apparition motion-safe:[animation-delay:80ms] md:text-7xl md:leading-[1.02]">
+          {info.page.titre}
+        </span>
       </h1>
-      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/80">
-        {info.accroche}
+
+      <p class="mt-4 max-w-xl text-[17px] leading-relaxed text-white/90 motion-safe:animate-apparition motion-safe:[animation-delay:160ms] md:mt-6 md:text-xl">
+        {info.page.intro}
       </p>
+
+      {enBref.length > 0 && (
+        <ul aria-label="En bref" class="mt-5 flex flex-wrap gap-2 motion-safe:animate-apparition motion-safe:[animation-delay:220ms] md:mt-7 md:gap-2.5">
+          {enBref.map((texte) => (
+            <li class="rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-[13px] font-medium md:px-4 md:py-2 md:text-sm">
+              {texte}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div class="mt-6 flex flex-col gap-3 motion-safe:animate-apparition motion-safe:[animation-delay:220ms] sm:flex-row sm:flex-wrap md:mt-8">
+        <Button href="#formules" variant="secondary" size="lg">Voir les formules</Button>
+        <!-- Mobile : les thématiques suivent juste le hero, ce second bouton serait redondant. -->
+        {avecThematiques && (
+          <a
+            href="#thematiques"
+            class="hidden min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:inline-flex"
+          >
+            Choisir un thème
+          </a>
+        )}
+      </div>
     </Container>
   </section>
 
-  <!-- LISTE DES SORTIES -->
-  <section class="bg-background py-24 md:py-32">
-    <Container>
-      {sorties.length > 0 ? (
-        <div class="grid gap-6 md:grid-cols-3">
-          {sorties.map((sortie) => (
-            <SortieCard sortie={sortie} headingLevel={2} />
-          ))}
+  <!-- ========== THÉMATIQUES ========== -->
+  {avecThematiques && (
+    <section id="thematiques" aria-labelledby="thematiques-titre" class="py-14 md:py-28">
+      <Container>
+        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <div>
+            <p class={surtitre}>Découvrir</p>
+            <h2 id="thematiques-titre" class={titreSection}>{titreThematiques}</h2>
+          </div>
+          <p class="max-w-md leading-relaxed text-text-muted">
+            Chaque sortie a un fil conducteur. Choisissez celui qui vous attire.
+          </p>
         </div>
-      ) : (
-        <div class="mx-auto max-w-xl rounded-3xl border border-border bg-surface p-10 text-center">
-          <h2 class="text-2xl font-bold text-text">Les sorties arrivent bientôt</h2>
+
+        <!--
+          Mobile : une liste blanche, une ligne par thématique (picto à gauche).
+          md et plus : des cartes. Chaque thématique mène aux formules filtrées.
+          Sans JavaScript, le lien descend simplement aux formules.
+        -->
+        <ul data-thematiques-liste class="mt-6 overflow-hidden rounded-3xl border border-border bg-surface md:mt-12 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent lg:grid-cols-4">
+          {thematiques.map((t) => (
+            <li data-thematique class="group relative grid grid-cols-[2.75rem_1fr_auto] items-center gap-x-3.5 border-border p-4 not-first:border-t md:flex md:flex-col md:items-start md:gap-3 md:rounded-3xl md:border md:bg-surface md:p-7 md:transition-shadow md:hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-inset">
+              <span
+                data-thematique-icone
+                aria-hidden="true"
+                class="row-span-2 flex size-11 items-center justify-center rounded-2xl bg-primary-light/25 text-primary md:size-14"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="md:size-7">
+                  <path d={t.icone} />
+                </svg>
+              </span>
+
+              <h3 class="font-[family-name:var(--font-epilogue)] text-[17px] font-bold leading-snug text-text md:text-[1.375rem]">
+                <a
+                  href={`?thematique=${t.id}#formules`}
+                  data-choisir-thematique={t.id}
+                  class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+                >
+                  {t.label}
+                </a>
+              </h3>
+
+              <p class="col-start-2 text-sm leading-snug text-text-muted md:text-base md:leading-relaxed">
+                {t.description}
+              </p>
+
+              <span aria-hidden="true" class="col-start-3 row-span-2 row-start-1 text-xl text-primary md:hidden">›</span>
+              <span class="mt-auto hidden pt-2 text-sm font-semibold text-primary md:block">
+                {t.nombre} formule{t.nombre > 1 ? "s" : ""} →
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
+  )}
+
+  <!-- ========== FORMULES ========== -->
+  <section id="formules" aria-labelledby="formules-titre" class="bg-surface py-14 md:py-28">
+    <Container>
+      <p class={surtitre}>Les formules</p>
+      <!-- tabindex="-1" : le script y place le focus après un choix de thématique. -->
+      <h2 id="formules-titre" tabindex="-1" class={`${titreSection} focus:outline-none`}>
+        {info.page.formules}
+      </h2>
+
+      {sorties.length === 0 ? (
+        <div class="mx-auto mt-10 max-w-xl rounded-3xl border border-border bg-background p-8 text-center md:p-10">
+          <h3 class="text-2xl font-bold text-text">Les sorties arrivent bientôt</h3>
           <p class="mt-3 leading-relaxed text-text-muted">
             Cet univers est en préparation. Une envie précise ? Écrivez-moi,
             on peut en parler dès maintenant.
@@ -72,7 +283,306 @@ const sorties = await getSorties(univers);
             <Button href="/contact">Me contacter</Button>
           </div>
         </div>
+      ) : (
+        <>
+          <!--
+            Amélioration progressive : la barre est masquée (hidden) tant que
+            le script ne l'a pas activée. Sans JavaScript, toutes les formules
+            restent visibles et aucun bouton inutile n'est affiché.
+          -->
+          {avecThematiques && formules.length > 0 && (
+            <div data-filtre hidden class="mt-6 md:mt-9">
+              <div role="group" aria-label="Filtrer par thème" class="flex flex-wrap gap-2 md:gap-2.5">
+                <button type="button" data-filtre-valeur="" aria-pressed="true" class={classeFiltre}>
+                  Toutes
+                </button>
+                {thematiques.map((t) => (
+                  <button type="button" data-filtre-valeur={t.id} aria-pressed="false" class={classeFiltre}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+              <p data-filtre-compte aria-live="polite" class="mt-3 text-sm text-text-muted"></p>
+            </div>
+          )}
+
+          {formules.length > 0 && (
+            <>
+              <!-- Mobile : cartes compactes empilées. -->
+              <ul data-formules-liste="mobile" class="mt-5 flex flex-col gap-2 md:hidden">
+                {formules.map((s) => (
+                  <li data-formule={s.id} data-thematiques={thematiquesAbordees(s).join(" ")}>
+                    <SortieCardCompacte sortie={s} />
+                  </li>
+                ))}
+              </ul>
+
+              <!-- md et plus : cartes complètes. -->
+              <ul data-formules-liste="desktop" class="mt-8 hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-3">
+                {formules.map((s) => (
+                  <li class="grid" data-formule={s.id} data-thematiques={thematiquesAbordees(s).join(" ")}>
+                    <SortieCard sortie={s} />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          <!--
+            Encart de fin de liste : la porte de sortie pour une envie qui ne
+            figure pas dans les formules. Visible quel que soit le filtre.
+            Bordure en pointillés et fond clair : il se distingue des cartes de
+            sortie et ne leur fait pas concurrence.
+          -->
+          <aside
+            aria-labelledby="autre-envie-titre"
+            class="mt-6 flex flex-col gap-5 rounded-3xl border border-dashed border-border-strong bg-background p-6 sm:flex-row sm:items-center sm:justify-between md:mt-10 md:p-8"
+          >
+            <div class="max-w-2xl">
+              <h3 id="autre-envie-titre" class="text-lg font-bold leading-snug text-text md:text-xl">
+                Une idée, une envie qui n'est pas présente ici ?
+              </h3>
+              <p class="mt-1.5 leading-relaxed text-text-muted">
+                Contactez-moi directement : on l'imagine ensemble.
+              </p>
+            </div>
+            <Button href="/contact" variant="ghost" class="w-full shrink-0 sm:w-auto">
+              Me contacter
+            </Button>
+          </aside>
+        </>
       )}
     </Container>
   </section>
+
+  <!-- ========== AUTRES UNIVERS ========== -->
+  <section aria-labelledby="autres-titre" class="py-12 md:py-20">
+    <Container>
+      <h2 id="autres-titre" class="text-xl font-bold text-text md:text-2xl">Explorer un autre univers</h2>
+      <!-- data-theme : chaque lien prend les couleurs de son univers. -->
+      <ul class="mt-4 grid gap-2.5 md:mt-6 md:grid-cols-2 md:gap-5">
+        {autres.map((a) => (
+          <li data-theme={a.info.theme}>
+            <a
+              href={`/sorties/${a.univers}`}
+              class="group flex min-h-18 items-center justify-between gap-4 rounded-2xl bg-primary-light/25 px-5 text-text transition hover:bg-primary-light/40 md:min-h-24 md:rounded-[20px] md:px-7"
+            >
+              <span class="flex flex-col gap-0.5">
+                <span class="font-[family-name:var(--font-epilogue)] text-[17px] font-bold md:text-xl">{a.info.label}</span>
+                <span class="text-[13px] text-text-muted md:text-sm">{a.detail}</span>
+              </span>
+              <span aria-hidden="true" class="text-xl text-primary transition-transform motion-safe:group-hover:translate-x-1">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section class="bg-primary py-14 md:py-24">
+    <Container>
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-[1.75rem] font-bold tracking-tight text-white md:text-5xl">
+          {info.page.appel}
+        </h2>
+        <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/85 md:mt-4 md:text-lg">
+          Dites-moi ce qui vous attire et avec qui vous venez : je vous propose
+          un itinéraire et une date.
+        </p>
+        <div class="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-6 md:mt-8">
+          <Button href="/contact" variant="secondary" size="lg">Me contacter</Button>
+          <a
+            href={telHref}
+            class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:border-0 sm:px-0 sm:underline sm:underline-offset-4 sm:hover:bg-transparent sm:hover:text-white"
+          >
+            Appeler le {PHONE_NUMBER}
+          </a>
+        </div>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
+
+<script>
+  /*
+   * Filtre des formules par thématique.
+   *
+   * - Amélioration progressive : sans ce script, la barre de filtre reste
+   *   masquée et toutes les formules sont visibles.
+   * - L'état est gardé dans l'URL (?thematique=faune) : la page filtrée se
+   *   partage et survit au rechargement.
+   * - Chaque formule existe deux fois dans le DOM (liste mobile et liste
+   *   desktop, l'une en display:none) : on compte les identifiants uniques.
+   */
+  const filtre = document.querySelector<HTMLElement>("[data-filtre]");
+
+  if (filtre) {
+    const boutons = [...filtre.querySelectorAll<HTMLButtonElement>("[data-filtre-valeur]")];
+    const compte = filtre.querySelector<HTMLElement>("[data-filtre-compte]");
+    const formules = [...document.querySelectorAll<HTMLElement>("[data-formule]")];
+    const titreFormules = document.querySelector<HTMLElement>("#formules-titre");
+
+    const libelles = new Map(boutons.map((b) => [b.dataset.filtreValeur ?? "", b.textContent?.trim() ?? ""]));
+    const valeurs = new Set(libelles.keys());
+
+    const appliquer = (valeur: string) => {
+      const visibles = new Set<string>();
+
+      formules.forEach((li) => {
+        const correspond = valeur === "" || (li.dataset.thematiques ?? "").split(" ").includes(valeur);
+        li.hidden = !correspond;
+        if (correspond && li.dataset.formule) visibles.add(li.dataset.formule);
+      });
+
+      boutons.forEach((b) => {
+        b.setAttribute("aria-pressed", String((b.dataset.filtreValeur ?? "") === valeur));
+      });
+
+      if (compte) {
+        const n = visibles.size;
+        compte.textContent =
+          `${n} formule${n > 1 ? "s" : ""}` + (valeur ? ` · thème « ${libelles.get(valeur)} »` : "");
+      }
+
+      const url = new URL(window.location.href);
+      if (valeur) url.searchParams.set("thematique", valeur);
+      else url.searchParams.delete("thematique");
+      history.replaceState(null, "", url);
+    };
+
+    boutons.forEach((b) => {
+      b.addEventListener("click", () => appliquer(b.dataset.filtreValeur ?? ""));
+    });
+
+    // Cartes de thématiques : on filtre sur place au lieu de recharger la page.
+    document.querySelectorAll<HTMLAnchorElement>("[data-choisir-thematique]").forEach((lien) => {
+      lien.addEventListener("click", (e) => {
+        const valeur = lien.dataset.choisirThematique ?? "";
+        if (!valeurs.has(valeur)) return;
+        e.preventDefault();
+        appliquer(valeur);
+        const reduire = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        titreFormules?.scrollIntoView({ behavior: reduire ? "auto" : "smooth", block: "start" });
+        // Le focus suit le saut : clavier et lecteur d'écran repartent des formules.
+        titreFormules?.focus({ preventScroll: true });
+      });
+    });
+
+    filtre.hidden = false;
+
+    const initiale = new URL(window.location.href).searchParams.get("thematique") ?? "";
+    appliquer(valeurs.has(initiale) ? initiale : "");
+  }
+</script>
+
+<script>
+  /*
+   * Animations des thématiques (même principe que les valeurs de Qui je suis) :
+   * apparition au défilement, et le picto s'agite au survol.
+   */
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const mm = gsap.matchMedia();
+
+  // Une condition par affichage : matchMedia nous dit laquelle est active
+  // et relance tout proprement si l'écran passe de l'une à l'autre.
+  // 48rem = le point de bascule du préfixe md: de Tailwind.
+  mm.add(
+    {
+      mobile: "(max-width: 47.99rem)",
+      desktop: "(min-width: 48rem)",
+      animer: "(prefers-reduced-motion: no-preference)",
+    },
+    (context) => {
+      const { mobile, animer } = context.conditions!;
+      // L'utilisateur a demandé moins d'animations : on ne fait rien.
+      if (!animer) return;
+
+      const nettoyages: Array<() => void> = [];
+
+      /* ---------- Thématiques ---------- */
+
+      const listeThematiques = document.querySelector("[data-thematiques-liste]");
+      if (listeThematiques) {
+        gsap.from("[data-thematique]", {
+          opacity: 0,
+          y: 24,
+          duration: 0.5,
+          ease: "power2.out",
+          stagger: 0.1, // les cartes arrivent l'une après l'autre
+          scrollTrigger: {
+            trigger: listeThematiques,
+            start: "top 80%",
+            once: true,
+          },
+        });
+
+        // Le picto s'agite au survol (souris uniquement). Pas de version tactile :
+        // toucher une carte filtre les formules et fait défiler la page.
+        gsap.utils.toArray<HTMLElement>("[data-thematique-icone]").forEach((icone) => {
+          const carte = icone.closest<HTMLElement>("[data-thematique]");
+          if (!carte) return;
+
+          const auSurvol = (e: PointerEvent) => {
+            if (e.pointerType !== "mouse" || gsap.isTweening(icone)) return;
+            gsap.to(icone, {
+              keyframes: { rotation: [0, -8, 7, -4, 2, 0] },
+              duration: 0.6,
+              ease: "power1.inOut",
+            });
+          };
+
+          carte.addEventListener("pointerenter", auSurvol);
+          nettoyages.push(() => carte.removeEventListener("pointerenter", auSurvol));
+        });
+      }
+
+      /* ---------- Formules ---------- */
+
+      // Uniquement la liste affichée : l'autre est en display:none et
+      // fausserait le décalage (stagger).
+      const listeFormules = document.querySelector<HTMLElement>(
+        `[data-formules-liste="${mobile ? "mobile" : "desktop"}"]`,
+      );
+      if (listeFormules) {
+        const cartes = gsap.utils.toArray<HTMLElement>("[data-formule]", listeFormules);
+
+        // État de départ posé tout de suite, pour éviter un flash des cartes
+        // avant le déclenchement.
+        gsap.set(cartes, { opacity: 0, y: 24 });
+
+        ScrollTrigger.create({
+          trigger: listeFormules,
+          start: "top 85%",
+          once: true,
+          onEnter: () => {
+            // Le tri se fait au moment de l'entrée, pas au chargement : si le
+            // filtre a changé entre-temps (clic sur une thématique), seules les
+            // cartes réellement affichées comptent dans le décalage.
+            const visibles = cartes.filter((carte) => !carte.hidden);
+            const masquees = cartes.filter((carte) => carte.hidden);
+
+            // Les cartes masquées par le filtre retrouvent leur état normal,
+            // pour réapparaître sans animation si le filtre change ensuite.
+            gsap.set(masquees, { clearProps: "opacity,transform" });
+            gsap.to(visibles, {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              ease: "power2.out",
+              stagger: 0.1,
+              clearProps: "opacity,transform",
+            });
+          },
+        });
+      }
+
+      // matchMedia annule les animations GSAP ; on retire nous-mêmes les écouteurs.
+      return () => nettoyages.forEach((retirer) => retirer());
+    },
+  );
+</script>

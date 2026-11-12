@@ -11,6 +11,7 @@ import { Image } from "astro:assets";
 import Button from "./Button.astro";
 import { UNIVERS_INFO, type Univers } from "../lib/univers";
 import { FORMAT_LABEL, formatPrix } from "../lib/formats";
+import { THEMATIQUE_INFO } from "../lib/thematiques";
 import type { ResumeSorties } from "../lib/sorties";
 
 interface Props {
@@ -81,10 +82,10 @@ const info = UNIVERS_INFO[univers];
 
     {resume.nombre > 0 ? (
       <dl class="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-        {resume.themes.length > 0 && (
+        {resume.thematiques.length > 0 && (
           <>
             <dt class="text-text-muted">Thèmes</dt>
-            <dd class="font-semibold">{resume.themes.join(" · ")}</dd>
+            <dd class="font-semibold">{resume.thematiques.map((t) => THEMATIQUE_INFO[t].label).join(" · ")}</dd>
           </>
         )}
         <dt class="text-text-muted">Formats</dt>

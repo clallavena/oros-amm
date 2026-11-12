@@ -5,6 +5,7 @@ import { glob } from "astro/loaders";
 
 import { UNIVERS } from "./lib/univers";
 import { FORMATS, NIVEAUX } from "./lib/formats";
+import { THEMATIQUES } from "./lib/thematiques";
 
 /* Carnet (ex-blog) : récits et conseils. Dossier : src/content/carnet/ */
 const carnet = defineCollection({
@@ -81,8 +82,12 @@ const sorties = defineCollection({
           error: "prix.des doit être inférieur ou égal à prix.jusqua",
         }),
 
-      /** Thèmes abordés : « Faune », « Lecture de paysage »… */
-      themes: z.array(z.string()).default([]),
+      /**
+       * Thématiques de découverte (lib/thematiques.ts) : faune, flore,
+       * milieu, vie-en-montagne. Servent au filtre de la page d'univers.
+       * Une valeur inconnue fait échouer le build.
+       */
+      thematiques: z.array(z.enum(THEMATIQUES)).default([]),
 
       couverture: photo,
       galerie: z.array(photo).default([]),

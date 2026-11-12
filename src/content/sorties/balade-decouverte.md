@@ -13,13 +13,13 @@ couverture:
   src: ../../images/bauges2.jpg
   alt: "Randonnée sur un sentier de montagne"
 ordre: 1
+thematiques: [flore, milieu]
 # À compléter quand on a les infos (tous optionnels) :
 # lieu: { massif: "…", depart: "…" }
 # duree: "≈ 3 h"
 # distanceKm: 6
 # deniveleM: 300
 # altitudeMaxM: 1500
-# themes: ["Lecture de paysage", "Flore"]
 # galerie:
 #   - src: ../../images/….jpg
 #     alt: "…"

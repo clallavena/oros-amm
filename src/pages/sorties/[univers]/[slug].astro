@@ -9,8 +9,9 @@ import Button from "../../../components/Button.astro";
 import { Image } from "astro:assets";
 import { render } from "astro:content";
 import { UNIVERS_INFO } from "../../../lib/univers";
+import { THEMATIQUE_INFO } from "../../../lib/thematiques";
 import { TITRE_MAJ } from "../../../lib/statut";
-import { getSorties, getSortiesProches, type Sortie } from "../../../lib/sorties";
+import { getSorties, getSortiesProches, thematiquesAbordees, type Sortie } from "../../../lib/sorties";
 import {
   FORMAT_LABEL,
   NIVEAU_LABEL,
@@ -37,6 +38,8 @@ const { sortie } = Astro.props;
 const { data } = sortie;
 const { Content } = await render(sortie);
 const info = UNIVERS_INFO[data.univers];
+/* Une sortie sur mesure aborde toutes les thématiques (voir lib/sorties.ts). */
+const thematiques = thematiquesAbordees(sortie);
 
 /* ---------- Chiffres clés : seulement ceux qui sont renseignés ---------- */
 const chiffres: { label: string; valeur: string }[] = [];
@@ -194,11 +197,11 @@ const proches = await getSortiesProches(sortie);
             <Content />
           </div>
 
-          {data.themes.length > 0 && (
+          {thematiques.length > 0 && (
             <ul aria-label="Thèmes abordés" class="mt-5 flex flex-wrap gap-2">
-              {data.themes.map((theme) => (
+              {thematiques.map((t) => (
                 <li class="rounded-full bg-primary-light/30 px-3.5 py-1.5 text-sm font-semibold text-primary">
-                  {theme}
+                  {THEMATIQUE_INFO[t].label}
                 </li>
               ))}
             </ul>

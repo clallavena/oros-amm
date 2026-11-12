@@ -13,6 +13,7 @@ couverture:
   src: ../../images/forest_mountain_hiking.jpg
   alt: "Faune et flore de montagne"
 ordre: 2
+thematiques: [faune, flore, milieu]
 ---
 
 Une journée pour s'immerger dans la nature montagnarde et son environnement. Venez découvrir ce qui se cache derrière chaque arbres, caillou ou trace. 

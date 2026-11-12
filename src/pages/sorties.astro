@@ -3,6 +3,9 @@
  * Hub /sorties
  * On entre par l'envie (l'univers), puis on choisit le format.
  * Les listes de sorties vivent sur les pages d'univers : /sorties/<univers>.
+ *
+ * Mobile (planche « 1 · Hub Sorties, mobile ») : même contenu, même ordre,
+ * mais chaque bloc est resserré pour un balayage vertical au pouce.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
@@ -10,6 +13,7 @@ import Button from "../components/Button.astro";
 import UniversCard from "../components/UniversCard.astro";
 import StatutEncadrement from "../components/StatutEncadrement.astro";
 import { TITRE_MAJ } from "../lib/statut";
+import { PHONE_NUMBER } from "../lib/site";
 import { getCollection } from "astro:content";
 import { UNIVERS, UNIVERS_INFO, type Univers } from "../lib/univers";
 import { FORMATS, FORMAT_INFO, FORMAT_LABEL, NIVEAU_LABEL, formatPrix } from "../lib/formats";
@@ -48,9 +52,11 @@ const recits = (await getCollection("carnet"))
 const formatDate = (date: Date) =>
   date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-/* Classes partagées par les en-têtes de section. */
-const surtitre = "text-sm font-semibold uppercase tracking-widest text-primary";
-const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-text md:text-4xl";
+const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
+
+/* Classes partagées par les en-têtes de section (mêmes valeurs que les pages d'univers). */
+const surtitre = "text-xs font-semibold uppercase tracking-widest text-primary md:text-sm";
+const titreSection = "mt-3 text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl";
 ---
 
 <BaseLayout
@@ -58,23 +64,29 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
   description="Randonnée au fil des saisons, raquettes sous la neige ou nuit en refuge : choisissez un univers, puis la formule qui vous ressemble."
 >
   <!-- ========== HERO ========== -->
-  <section class="bg-primary pb-20 pt-40 md:pb-28 md:pt-48">
+  <!-- pt-28 sur mobile : juste la hauteur de l'en-tête fixe (h-20) + un peu d'air. -->
+  <section class="bg-primary pb-10 pt-28 md:pb-28 md:pt-48">
     <Container>
-      <p class="text-sm font-semibold uppercase tracking-[0.2em] text-white/75">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-white/75 motion-safe:animate-apparition md:text-sm">
         Sorties
       </p>
-      <h1 class="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-white md:text-6xl">
+      <h1 class="mt-3 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-white motion-safe:animate-apparition motion-safe:[animation-delay:80ms] md:mt-4 md:text-6xl">
         Quelle montagne avez-vous envie de vivre ?
       </h1>
-      <p class="mt-5 max-w-xl text-lg leading-relaxed text-white/85">
-        Randonnée au fil des saisons, raquettes sous la neige ou nuit en
-        refuge : choisissez un univers, puis la formule qui vous ressemble.
+      <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-white/85  motion-safe:animate-apparition motion-safe:[animation-delay:160ms] md:mt-5 md:text-lg">
+          Randonnée au fil des saisons, raquettes sous la neige ou nuit en
+          refuge : choisissez un univers, puis la formule qui vous ressemble.
       </p>
 
-      <nav aria-label="Accès rapide aux univers" class="mt-9">
+      <!--
+        Accès rapide : utile sur desktop où les cartes sont sous la ligne de
+        flottaison. Sur mobile, les cartes suivent immédiatement le hero :
+        les pastilles feraient doublon et repousseraient le contenu.
+      -->
+      <nav aria-label="Accès rapide aux univers" class="mt-9 hidden md:block">
         <ul class="flex flex-wrap gap-3">
           {UNIVERS.map((u) => (
-            <li>
+            <li data-univers-label>
               <a
                 href={`/sorties/${u}`}
                 class="inline-flex min-h-11 items-center gap-2.5 rounded-full border border-white/35 bg-white/10 px-4.5 text-sm font-semibold text-white transition hover:bg-white/20"
@@ -89,7 +101,7 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
               </a>
             </li>
           ))}
-          <li>
+          <li data-univers-label>
             <a
               href="/groupes"
               class="inline-flex min-h-11 items-center rounded-full border border-dashed border-white/45 px-4.5 text-sm font-semibold text-white transition hover:bg-white/10"
@@ -103,27 +115,38 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
   </section>
 
   <!-- ========== UNIVERS ========== -->
-  <section aria-labelledby="univers-titre" class="py-24 md:py-28">
+  <section aria-labelledby="univers-titre" class="py-12 md:py-28">
     <Container>
-      <div class="flex flex-wrap items-end justify-between gap-6">
-        <div class="max-w-2xl">
-          <p class={surtitre}>Trois univers</p>
-          <h2 id="univers-titre" class={titreSection}>
-            Chaque univers a sa saison, son rythme, sa lumière
-          </h2>
-        </div>
+      <div class="max-w-2xl">
+        <p class={surtitre}>Trois univers</p>
+        <h2 id="univers-titre" class={titreSection}>
+          Chaque univers a sa saison, son rythme, sa lumière
+        </h2>
       </div>
 
-      <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      <div data-grid-univers class="mt-6 grid gap-4 md:mt-12 md:gap-6 lg:grid-cols-3">
         {univers.map(({ univers: u, resume }) => (
-          <UniversCard univers={u} resume={resume} photo={PHOTOS[u]} />
+          <UniversCard univers={u} resume={resume} photo={PHOTOS[u]} data-univers-card />
         ))}
       </div>
+
+      <!--
+        Remplace la pastille « Scolaires & entreprises » du hero sur mobile.
+        Bordure en pointillés : même code visuel que la pastille desktop,
+        une porte « à part » des trois univers.
+      -->
+      <a
+        href="#groupes"
+        class="mt-3.5 flex min-h-13 items-center justify-between rounded-2xl border border-dashed border-primary/45 px-4.5 font-semibold text-text md:hidden"
+      >
+        Vous venez en groupe ?
+        <span aria-hidden="true" class="text-xl text-primary">›</span>
+      </a>
     </Container>
   </section>
 
   <!-- ========== COMPARATIF DES FORMATS ========== -->
-  <section aria-labelledby="formats-titre" class="bg-white py-24 md:py-28">
+  <section aria-labelledby="formats-titre" class="bg-white py-12 md:py-28">
     <Container>
       <p class={surtitre}>Choisir son format</p>
       <h2 id="formats-titre" class={`${titreSection} max-w-2xl`}>
@@ -131,15 +154,49 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
       </h2>
 
       <!--
-        Sur mobile, le tableau défile horizontalement. tabindex="0" rend la zone
-        atteignable au clavier pour pouvoir la faire défiler (WCAG 2.1.1).
+        Mobile : une carte par format. Un tableau de 4 colonnes en défilement
+        horizontal cache la moitié des colonnes et oblige à mémoriser les
+        en-têtes ; ici, chaque carte se lit seule, de haut en bas.
+      -->
+      <ul data-formats-mobile-ul class="mt-6 flex flex-col gap-2.5 md:hidden">
+        {formats.map(({ format, info, resume }) => (
+          <li data-formats-mobile-li class="rounded-2xl border border-border bg-background px-4.5 py-4">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="text-[1.1875rem] font-bold text-text">{FORMAT_LABEL[format]}</h3>
+              <span class="shrink-0 text-[1.0625rem] font-bold text-primary">
+                {resume.prixDes !== undefined ? `dès ${formatPrix(resume.prixDes)}` : "Bientôt"}
+              </span>
+            </div>
+            <dl class="mt-2.5 grid grid-cols-[6.5rem_1fr] gap-x-3 gap-y-1 text-sm">
+              <dt class="text-text-muted">Durée</dt>
+              <dd class="text-text">{info.duree}</dd>
+              <dt class="text-text-muted">Effort</dt>
+              <dd class="text-text">{NIVEAU_LABEL[info.effort]}</dd>
+              <dt class="text-text-muted">Idéal pour</dt>
+              <dd class="text-text">{info.idealPour}</dd>
+              <dt class="text-text-muted">Univers</dt>
+              <dd class="text-text">
+                {info.universFixe ??
+                  (resume.univers.length > 0
+                    ? resume.univers.map((u) => UNIVERS_INFO[u].labelCourt).join(" · ")
+                    : "Bientôt")}
+              </dd>
+            </dl>
+          </li>
+        ))}
+      </ul>
+
+      <!--
+        md et plus : le tableau comparatif.
+        tabindex="0" rend la zone atteignable au clavier pour pouvoir la faire
+        défiler si elle déborde (WCAG 2.1.1).
       -->
       <div
+        data-table-format
         role="region"
         aria-labelledby="formats-titre"
         tabindex="0"
-        class="mt-10 overflow-x-auto rounded-2xl border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-      >
+        class="mt-10 hidden overflow-x-auto rounded-2xl border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus md:block">
         <table class="w-full min-w-[760px] border-collapse text-left text-[15px]">
           <caption class="sr-only">Comparatif des formats de sortie</caption>
           <thead>
@@ -193,35 +250,33 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
   </section>
 
   <!-- ========== GROUPES (renvoi vers /groupes) ========== -->
-  <section aria-labelledby="groupes-titre" class="py-24 md:py-28">
+  <section id="groupes" aria-labelledby="groupes-titre" class="py-12 md:py-28">
     <Container>
-      <div class="flex flex-wrap items-end justify-between gap-6">
-        <div class="max-w-2xl">
-          <p class={surtitre}>En groupe</p>
-          <h2 id="groupes-titre" class={titreSection}>
-            Une classe, une équipe ? On construit le programme ensemble.
-          </h2>
-        </div>
+      <div class="max-w-2xl">
+        <p class={surtitre}>En groupe</p>
+        <h2 id="groupes-titre" class={titreSection}>
+          Une classe, une équipe ? On construit le programme ensemble.
+        </h2>
       </div>
 
-      <ul class="mt-10 grid gap-6 md:grid-cols-2">
-        <li class="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-8">
-          <h3 class="text-2xl font-bold text-text">Scolaires</h3>
-          <p class="leading-relaxed text-text-muted">
+      <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-2 md:gap-6">
+        <li class="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5 md:gap-3 md:rounded-3xl md:p-8">
+          <h3 class="text-[1.1875rem] font-bold text-text md:text-2xl">Scolaires</h3>
+          <p class="text-[15px] leading-relaxed text-text-muted md:text-base">
             Sorties pédagogiques et classes de découverte, du primaire au
             lycée, en lien avec le projet de la classe.
           </p>
-          <div class="mt-auto pt-3">
+          <div class="mt-auto pt-2 md:pt-3">
             <Button href="/groupes#scolaires" variant="ghost">Préparer une sortie scolaire</Button>
           </div>
         </li>
-        <li class="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-8">
-          <h3 class="text-2xl font-bold text-text">Entreprises &amp; séminaires</h3>
-          <p class="leading-relaxed text-text-muted">
+        <li class="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5 md:gap-3 md:rounded-3xl md:p-8">
+          <h3 class="text-[1.1875rem] font-bold text-text md:text-2xl">Entreprises &amp; séminaires</h3>
+          <p class="text-[15px] leading-relaxed text-text-muted md:text-base">
             Une journée au vert ou un temps fort de séminaire : marcher
             ensemble, sortir du cadre.
           </p>
-          <div class="mt-auto pt-3">
+          <div class="mt-auto pt-2 md:pt-3">
             <Button href="/groupes#entreprises" variant="ghost">Demander un devis</Button>
           </div>
         </li>
@@ -230,7 +285,7 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
   </section>
 
   <!-- ========== STATUT ========== -->
-  <div class="pb-24 md:pb-28">
+  <div class="pb-12 md:pb-28">
     <Container>
       <StatutEncadrement />
     </Container>
@@ -238,30 +293,31 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
 
   <!-- ========== CARNET ========== -->
   {recits.length > 0 && (
-    <section aria-labelledby="carnet-titre" class="bg-white py-24 md:py-28">
+    <section aria-labelledby="carnet-titre" class="bg-white py-12 md:py-28">
       <Container>
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p class={surtitre}>Carnet de terrain</p>
             <h2 id="carnet-titre" class={titreSection}>Les derniers récits</h2>
           </div>
+          <!-- Desktop : lien en face du titre. Mobile : après la liste (voir plus bas). -->
           <a
             href="/carnet"
-            class="inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline"
+            class="hidden min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:inline-flex"
           >
             Tout le carnet →
           </a>
         </div>
 
-        <ul class="mt-10 grid gap-6 md:grid-cols-3">
+        <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-3 md:gap-6">
           {recits.map((recit) => (
-            <li class="group relative flex flex-col gap-3 rounded-2xl bg-background p-7 transition hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2">
+            <li class="group relative flex flex-col gap-3 rounded-2xl bg-background p-5 transition hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2 md:p-7">
               {recit.data.tags?.[0] && (
                 <span class="self-start rounded-full bg-primary-light/30 px-3 py-1 text-[13px] font-semibold text-primary">
                   {recit.data.tags[0]}
                 </span>
               )}
-              <h3 class="text-xl font-bold leading-snug text-text">
+              <h3 class="text-lg font-bold leading-snug text-text md:text-xl">
                 <!-- Lien étendu à toute la carte (même modèle que SortieCard). -->
                 <a
                   href={`/carnet/${recit.id}`}
@@ -278,27 +334,119 @@ const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-
             </li>
           ))}
         </ul>
+
+        <a
+          href="/carnet"
+          class="mt-3 inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:hidden"
+        >
+          Tout le carnet →
+        </a>
       </Container>
     </section>
   )}
 
   <!-- ========== CTA ========== -->
-  <section class="bg-primary py-24 md:py-28">
+  <section class="bg-primary py-14 md:py-28">
     <Container>
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-white md:text-5xl">
+        <h2 class="text-[1.75rem] font-bold tracking-tight text-white md:text-5xl">
           Pas sûr de votre choix ?
         </h2>
-        <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-white/80">
+        <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/80 md:mt-4 md:text-lg">
           Dites-moi qui vous êtes, vos dates et votre niveau : je vous oriente
           vers la bonne sortie.
         </p>
-        <div class="mt-8 flex justify-center">
+        <!-- Même paire d'actions que sur les pages d'univers : formulaire ou appel direct. -->
+        <div class="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-6 md:mt-8">
           <Button href="/contact" variant="secondary" size="lg">
             Me contacter <span aria-hidden="true" class="ml-2">→</span>
           </Button>
+          <a
+            href={telHref}
+            class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:border-0 sm:px-0 sm:underline sm:underline-offset-4 sm:hover:bg-transparent sm:hover:text-white"
+          >
+            Appeler le {PHONE_NUMBER}
+          </a>
         </div>
       </div>
     </Container>
   </section>
 </BaseLayout>
+
+<script>
+  // Animations GSAP
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const mm = gsap.matchMedia();
+
+  mm.add(    
+    {
+      mobile: "(max-width: 47.99rem)",
+      desktop: "(min-width: 48rem)",
+      animer: "(prefers-reduced-motion: no-preference)",
+    }, (context) => {
+    const { mobile, animer } = context.conditions!;
+    const gridUnivers = document.querySelector("[data-grid-univers]");
+    const tableFormat = document.querySelector("[data-table-format]");
+    const ulFormat = document.querySelector("[data-formats-mobile-ul]");
+
+    if(!animer) return;
+
+
+    // ssi on est sur desktop
+    if(!mobile) {
+      // Animation label univers ssi on est sur desktop
+      gsap.from("[data-univers-label]", {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        stagger: 0.1,
+        delay: 0.2,
+        ease: "back.out",
+      });
+      // Animation du tableau ssi on est sur desktop
+      gsap.from("[data-table-format]", {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: tableFormat,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }
+
+    // Animation des univers card
+    gsap.from("[data-univers-card]", {
+      opacity: 0,
+      y: 24,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: gridUnivers,
+        start: "top 80%",
+        once: true,
+      },
+    });
+
+    gsap.from("[data-formats-mobile-li]", {
+      opacity: 0,
+      y: 24,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ulFormat,
+        start: "top 80%",
+        once: true,
+      },
+    });
+  });
+
+</script>

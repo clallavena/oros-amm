@@ -9,30 +9,35 @@ import { GARANTIES } from "../lib/statut";
 ---
 
 <section aria-labelledby="statut-titre">
-  <div class="flex flex-wrap items-start gap-x-12 gap-y-8 rounded-3xl bg-primary-light/25 p-8 md:p-10">
-    <div class="flex flex-[1_1_320px] flex-col gap-3.5">
-      <p class="text-sm font-semibold uppercase tracking-widest text-primary">
+  <div class="flex flex-wrap items-start gap-x-12 gap-y-4 rounded-3xl bg-primary-light/25 px-4.5 py-5.5 md:gap-y-8 md:p-10">
+    <div class="flex flex-[1_1_320px] flex-col gap-2.5 md:gap-3.5">
+      <p class="text-xs font-semibold uppercase tracking-widest text-primary md:text-sm">
         Qui vous encadre
       </p>
-      <h2 id="statut-titre" class="text-3xl font-bold leading-tight tracking-tight text-text">
+      <h2 id="statut-titre" class="text-[1.375rem] font-bold leading-tight tracking-tight text-text md:text-3xl">
         Accompagnateur stagiaire, encadrement en règle
       </h2>
-      <p class="leading-relaxed text-text">
+      <p class="text-[15px] leading-relaxed text-text md:text-base">
         Je suis en formation au diplôme d'État d'accompagnateur en
         montagne. Pendant ce cursus, la loi m'autorise à encadrer dans un cadre
         précis : je préfère vous l'expliquer clairement.
       </p>
+      <!-- Desktop : le lien suit le texte. Mobile : il passe sous la liste (plus bas). -->
       <a
         href="/qui-je-suis"
-        class="inline-flex min-h-11 items-center self-start font-semibold text-primary underline-offset-4 hover:underline"
+        class="hidden min-h-11 items-center self-start font-semibold text-primary underline-offset-4 hover:underline md:inline-flex"
       >
         Mon parcours et mon statut →
       </a>
     </div>
 
-    <ul class="grid flex-[2_1_480px] gap-4 sm:grid-cols-3">
+    <!--
+      Mobile : une seule liste blanche à séparateurs plutôt que trois cartes
+      empilées. Desktop : trois cartes côte à côte. Même texte partout.
+    -->
+    <ul class="flex w-full flex-[2_1_480px] flex-col divide-y divide-primary-light/40 rounded-2xl bg-surface md:grid md:w-auto md:grid-cols-3 md:gap-4 md:divide-y-0 md:rounded-none md:bg-transparent">
       {GARANTIES.map((g) => (
-        <li class="flex flex-col gap-2 rounded-2xl bg-surface p-5">
+        <li class="flex items-start gap-3 px-3.5 py-3.25 md:flex-col md:gap-2 md:rounded-2xl md:bg-surface md:p-5">
           <svg
             aria-hidden="true"
             width="26"
@@ -43,14 +48,23 @@ import { GARANTIES } from "../lib/statut";
             stroke-width="1.8"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="text-primary"
+            class="mt-0.5 size-5 shrink-0 text-primary md:mt-0 md:size-[26px]"
           >
             <path d={g.icone} />
           </svg>
-          <b class="font-bold text-text">{g.titre}</b>
-          <span class="text-[15px] leading-relaxed text-text-muted">{g.texte}</span>
+          <span class="flex flex-col md:contents">
+            <b class="text-[15px] font-bold text-text md:text-base">{g.titre}</b>
+            <span class="text-sm leading-relaxed text-text-muted md:text-[15px]">{g.texte}</span>
+          </span>
         </li>
       ))}
     </ul>
+
+    <a
+      href="/qui-je-suis"
+      class="inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:hidden"
+    >
+      Mon parcours et mon statut →
+    </a>
   </div>
 </section>

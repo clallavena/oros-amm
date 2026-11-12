@@ -41,6 +41,13 @@ const titrePage = isSent
  * /contact?sortie=balade-decouverte
  */
 const sorties = await getSorties();
+
+/* Encarts « Bientôt » des univers (bivouac…) : « Être prévenu ». */
+const bientots = UNIVERS.flatMap((u) => {
+  const b = UNIVERS_INFO[u].page.bientot;
+  return b ? [b] : [];
+});
+
 const groupesDeSorties = UNIVERS.map((u) => ({
   label: UNIVERS_INFO[u].label,
   sorties: sorties.filter((s) => s.data.univers === u),
@@ -182,6 +189,15 @@ const etiquette = "text-sm font-semibold text-text";
                     </optgroup>
                   ))
                 }
+                {bientots.length > 0 && (
+                  <optgroup label="Bientôt">
+                    {bientots.map((b) => (
+                      <option value={b.id} data-message={`Bonjour, j'aimerais être prévenu(e) quand « ${b.titre.toLowerCase()} » sera proposé.\n\n`}>
+                        Être prévenu : {b.titre.toLowerCase()}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
                 <optgroup label="Groupes">
                   <option value="groupe-scolaires">Sortie scolaire</option>
                   <option value="groupe-entreprises"
@@ -344,6 +360,12 @@ const etiquette = "text-sm font-semibold text-text";
     if (message && params.get("groupe") === "1" && message.value === "") {
       message.value =
         "Bonjour, je souhaiterais proposer une date pour un groupe.\n\n";
+    }
+
+    // Option « Être prévenu » (encarts Bientôt) : message de départ, modifiable.
+    const texteOption = select?.selectedOptions[0]?.dataset.message;
+    if (message && texteOption && message.value === "") {
+      message.value = texteOption;
     }
   }
 </script>

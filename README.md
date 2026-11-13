@@ -17,6 +17,7 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
 
 - [Stack technique](#stack-technique)
 - [Design system](#design-system)
+- [Animation](#animation)
 - [Architecture](#architecture)
 - [Structure du dépôt](#structure-du-dépôt)
 - [Choix de conception](#choix-de-conception)
@@ -45,6 +46,44 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
 Le design system du projet respecte les recommandations WCAG 2.X de l'académie W3C.
 
 ![Design System](/docs/design-system.svg)
+
+---
+
+## Animation
+
+Les animations dans le site web ont été réalisées avec tailwind CSS animation:
+
+```css
+  /* Animation */
+  /* Apparition douce : fondu + légère montée. « both » garde l'élément
+     caché pendant son délai, puis visible une fois l'animation finie. */
+  --animate-apparition: apparition 3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+
+  @keyframes apparition {
+    from {
+      opacity: 0;
+      translate: 0 0.75rem;
+    }
+  }
+```
+
+et les animations au déclenchement du scroll ou sur DOM ont été réalisées grâce à la librairie [GSAP](https://gsap.com/) qui est une librairie d'animation JS. 
+J'ai notamment utilisé les actions de déclenchement (scrollTrigered) du scroll de la souris, afin que les animations apparaissent à la vue de l'utilisateur.
+
+```typescript
+      gsap.from("[data-valeur]", {
+        opacity: 0,
+        y: 24,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.12, // les blocs arrivent l'un après l'autre
+        scrollTrigger: {
+          trigger: blocValeurs,
+          start: "top 80%",
+          once: true,
+        },
+      });
+```
 
 ---
 

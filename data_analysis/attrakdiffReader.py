@@ -1,4 +1,10 @@
+import matplotlib.pyplot as plt
 import pandas as pd
+from scipy import stats
+
+from common import (TODAY, INK, INK_2, GRID, SERIES, POSITIVE_BG, NEGATIVE_BG,
+                    DATA_FILE, load_forms, output_path, results_dir, require_columns,
+                    style_axes)
 
 # Qualité Pragmatique
 ## Décrit l’utilisabilité du produit et indique le niveau de facilité perçue des utilisateurs à atteindre leurs buts
@@ -20,7 +26,6 @@ qhs = {'QHS1': {'Original / Conventionnel': True},
        'QHS5' : {'Ennuyeux / Captivant': False},
        'QHS6' : {'Peu exigeant / Challenging': False},
        'QHS7' : {'Nouveau / Commun': True}}
-
 
 # Qualité Hédonique - Identité
 ## Indique dans quelle mesure le produit soutient une fonction sociale et communique une certaine identité de l’utilisateur
@@ -44,13 +49,11 @@ att = {'ATT1': {'Plaisant / Déplaisant': True},
 
 scales = {'QP': qp, 'QHS': qhs, 'QHI': qhi, 'ATT': att}
 
-# Ligne 0 vide, ligne 1 = "Item 1/3", ligne 2 = libellés des paires de mots
-forms_df = pd.read_csv('attrakdiff_orosens.tsv', sep='\t', header=2)
-
-
 def build_items_df(forms_df: pd.DataFrame, scales: dict) -> pd.DataFrame:
     """Un DataFrame : une ligne par participant, une colonne par code d'item,
     valeurs recodées de [1..7] vers [-3..+3], items inversés (*) retournés."""
+    require_columns(forms_df, [next(iter(p)) for items in scales.values()
+                               for p in items.values()], 'AttrakDiff')
     columns = {}
     for items in scales.values():
         for code, pair in items.items():
@@ -60,37 +63,31 @@ def build_items_df(forms_df: pd.DataFrame, scales: dict) -> pd.DataFrame:
     return pd.DataFrame(columns)
 
 
-items_df = build_items_df(forms_df, scales)
+def compute(forms_df: pd.DataFrame):
+    """Renvoie (items_df, scales_df). Les participants sans aucune réponse
+    AttrakDiff sont écartés."""
+    items_df = build_items_df(forms_df, scales).dropna(how='all')
+    # Score de chaque échelle par participant (moyenne de ses 7 items)
+    scales_df = pd.DataFrame({name: items_df[list(items)].mean(axis=1)
+                              for name, items in scales.items()})
+    # QH = moyenne de QH-S et QH-I
+    scales_df['QH'] = scales_df[['QHS', 'QHI']].mean(axis=1)
+    return items_df, scales_df
 
-# Score de chaque échelle par participant (moyenne de ses 7 items)
-scales_df = pd.DataFrame({name: items_df[list(items)].mean(axis=1)
-                          for name, items in scales.items()})
-# QH = moyenne de QH-S et QH-I
-scales_df['QH'] = scales_df[['QHS', 'QHI']].mean(axis=1)
 
-print(items_df)
-print(scales_df.round(2))
-print(scales_df.agg(['mean', 'std']).round(2))
+def summary_table(scales_df: pd.DataFrame) -> pd.DataFrame:
+    """Moyenne, écart-type et IC 95 % de chaque échelle."""
+    return scales_df.agg(['mean', 'std', ci95]).T.round(2)
 
 
 # ---------------------------------------------------------------------------
 # Graphiques
 # ---------------------------------------------------------------------------
-import matplotlib.pyplot as plt
-from scipy import stats
-from datetime import date
-
-TODAY = date.today().strftime('%d%m%Y')   # format DDMMAAAA
-
-INK, INK_2, GRID, SERIES = '#0b0b0b', '#52514e', '#e4e3df', '#2a78d6'
 SCALE_LABELS = {'QP': 'QP', 'QHI': 'QH-I', 'QHS': 'QH-S', 'ATT': 'ATT'}
 
 
 def _style(ax):
-    for side in ('top', 'right', 'left'):
-        ax.spines[side].set_visible(False)
-    ax.spines['bottom'].set_color(GRID)
-    ax.tick_params(colors=INK_2, length=0)
+    style_axes(ax)
 
 
 def ci95(series: pd.Series) -> float:
@@ -102,8 +99,9 @@ def ci95(series: pd.Series) -> float:
 def plot_mean_values(scales_df: pd.DataFrame, path='attrakdiff_valeurs_moyennes.png'):
     order = ['QP', 'QHI', 'QHS', 'ATT']            # ordre du diagramme AttrakDiff
     summary = (scales_df[order]
-               .agg(['mean', ci95]).T
-               .rename(index=SCALE_LABELS, columns={'mean': 'moyenne', 'ci95': 'ic95'}))
+               .agg(['mean', 'std', ci95]).T
+               .rename(index=SCALE_LABELS,
+                       columns={'mean': 'moyenne', 'std': 'ecart_type', 'ci95': 'ic95'}))
 
     ax = summary['moyenne'].plot(yerr=summary['ic95'], figsize=(7, 4.5),
                                  ylim=(-3, 3), yticks=range(-3, 4), rot=0,
@@ -112,8 +110,8 @@ def plot_mean_values(scales_df: pd.DataFrame, path='attrakdiff_valeurs_moyennes.
                                  xlim=(-0.3, len(order) - 0.7))
     ax.axhline(0, color=INK_2, lw=1, zorder=1)
     # Zone neutre [-1 ; +1], scindée en neutre positif / neutre négatif
-    ax.axhspan(0, 1, color='#e8f0fb', zorder=0, lw=0)
-    ax.axhspan(-1, 0, color='#fbece6', zorder=0, lw=0)
+    ax.axhspan(0, 1, color=POSITIVE_BG, zorder=0, lw=0)
+    ax.axhspan(-1, 0, color=NEGATIVE_BG, zorder=0, lw=0)
     for y, label in ((0.5, 'neutre positif'), (-0.5, 'neutre négatif')):
         ax.text(1.0, y, label, transform=ax.get_yaxis_transform(), ha='right',
                 va='center', color=INK_2, fontsize=8)
@@ -122,10 +120,14 @@ def plot_mean_values(scales_df: pd.DataFrame, path='attrakdiff_valeurs_moyennes.
                     va='center', color=INK, fontsize=9,
                     bbox=dict(boxstyle='square,pad=0.15', fc='white', ec='none'))
     ax.set_xlabel('')
+    # Écart-type (ET) sous chaque échelle : dispersion des scores individuels,
+    # à ne pas confondre avec la barre d'erreur (IC 95 % de la moyenne)
+    ax.set_xticks(range(len(summary)),
+                  [f'{name}\nET = {sd:.2f}' for name, sd in summary['ecart_type'].items()])
     ax.grid(axis='y', color=GRID, lw=0.8)
     ax.set_axisbelow(True)
     _style(ax)
-    ax.set_title(f'Diagramme des valeurs moyennes (n = {len(scales_df)}, IC 95 %) – {TODAY}',
+    ax.set_title(f'Diagramme des valeurs moyennes (n = {len(scales_df)}, barres : IC 95 %) – {TODAY}',
                  loc='left', color=INK, fontsize=12)
     fig = ax.figure
     fig.tight_layout()
@@ -148,8 +150,8 @@ def plot_word_pairs(items_df: pd.DataFrame, scales: dict, path='attrakdiff_paire
     fig, ax = plt.subplots(figsize=(8, 10))
     ax.axvline(0, color=INK_2, lw=1)
     # Zones des valeurs extrêmes : [-3 ; -2] négatif, [+2 ; +3] positif
-    ax.axvspan(2, 3, color='#e8f0fb', zorder=0, lw=0)
-    ax.axvspan(-3, -2, color='#fbece6', zorder=0, lw=0)
+    ax.axvspan(2, 3, color=POSITIVE_BG, zorder=0, lw=0)
+    ax.axvspan(-3, -2, color=NEGATIVE_BG, zorder=0, lw=0)
     for x, label in ((2.5, 'extrême positif'), (-2.5, 'extrême négatif')):
         ax.text(x, 1.0, label, transform=ax.get_xaxis_transform(), ha='center',
                 va='bottom', color=INK_2, fontsize=8)
@@ -231,6 +233,20 @@ def plot_portfolio(scales_df: pd.DataFrame, path='attrakdiff_portfolio.png'):
     return fig
 
 
-plot_mean_values(scales_df, path=f'attrakfigg_valeurs_moyenne_n{len(scales_df)}_{TODAY}.png')
-plot_word_pairs(items_df, scales, path=f'attrakdiff_paires_de_mots_n{len(scales_df)}_{TODAY}.png')
-plot_portfolio(scales_df, path=f'attrakdiff_portfolio_n{len(scales_df)}_{TODAY}.png')
+def run(forms_df: pd.DataFrame, out_dir='.'):
+    """Calcule les scores, enregistre graphiques et tableaux dans out_dir."""
+    items_df, scales_df = compute(forms_df)
+    n = len(scales_df)
+    summary_table(scales_df).to_csv(output_path(out_dir, 'attrakdiff_scores', n, '.csv'))
+    plot_mean_values(scales_df, output_path(out_dir, 'attrakdiff_valeurs_moyennes', n))
+    plot_word_pairs(items_df, scales, output_path(out_dir, 'attrakdiff_paires_de_mots', n))
+    plot_portfolio(scales_df, output_path(out_dir, 'attrakdiff_portfolio', n))
+    return items_df, scales_df
+
+
+if __name__ == '__main__':
+    forms_df = load_forms(DATA_FILE)
+    items_df, scales_df = run(forms_df, results_dir(len(forms_df)))
+    print(items_df)
+    print(scales_df.round(2))
+    print(summary_table(scales_df))

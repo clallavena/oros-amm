@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 #local env file
 .env
+
+#pycache
+data_analysis/__pycache__

@@ -1,0 +1,25 @@
+participant,verbatim,codes,question
+0,très propre. Un peu trop de contenu peut etre? On note l'effort sur l'explication du cursus amm et sur le supplément d'âme,"ESTHETIQUE, DENSITE, PARCOURS, VISION",retenu
+1,"Design du site très sympa, facile d'utilisation tout y est clair et bien expliqué.","ESTHETIQUE, FACILITE, CLARTE",retenu
+2,Le site est très intuitif et les sorties donnent envie. Bravo à toi pour ton parcours et ton ambition.,"FACILITE, PROJECTION, PARCOURS",retenu
+3,"Site très agréable à parcourir, simple et clair. Il est très intéressant de connaître le parcours de l'accompagnateur","ESTHETIQUE, FACILITE, CLARTE, PARCOURS",retenu
+4,"Force de proposition, adaptation, ludique/culture, transparence, prévention, site fluide","POSTURE_PRO, CULTURE, FACILITE",retenu
+5,"Site très facile à consulter, instructif, belle presentation des différentes sorties possibles","FACILITE, INFORMATIF, ESTHETIQUE, DIVERSITE",retenu
+6,Niveaux variés avec différents types de sorties / Filtres pour choisir le type de sortie peu aidant,"DIVERSITE, FILTRES",retenu
+7,"Très belle interface, large choix de sorties ; très intéressant !","ESTHETIQUE, DIVERSITE",retenu
+8,parcours de l'accompagnateur et sa vision du métier,"PARCOURS, VISION",retenu
+9,"Professionnel, clair, organisé, beau, on se projette facilement","POSTURE_PRO, CLARTE, ESTHETIQUE, PROJECTION",retenu
+10,"complet, précis, tarifs abordables, diversités des propositions","INFORMATIF, TARIFS, DIVERSITE",retenu
+11,Site agréable à  consulter,ESTHETIQUE,retenu
+0,ras,AUCUNE,questions
+1,"Le déroulement de la sortie logistiquement parlant (point de rdv, durée des sorties…))",LOGISTIQUE,questions
+2,"Peut être préciser dans le futur, les parcours et activités déjà effectués avec l’avis des participants.",PREUVE_SOCIALE,questions
+3,Pas vraiment de question tout de suite,AUCUNE,questions
+4,Je peux prendre mon chien ?,CHIEN,questions
+5,La bonne gestion de l'environnement à découvrir,ENVIRONNEMENT,questions
+6,Le prix n'est pas explicite avant de remplir le formulaire d'inscription,PRIX,questions
+7,Est ce que j'ai assez d'eau pour toute la rando ?,MATERIEL,questions
+8,aucune,AUCUNE,questions
+9,quoi amener concrètement selon les sorties ?,MATERIEL,questions
+10,peut-on annulé une réservation et si oui combien de temps avant. et peut être  préciser quel encas amener,"ANNULATION, MATERIEL",questions
+11,Le nom des sorties,NOM_SORTIES,questions

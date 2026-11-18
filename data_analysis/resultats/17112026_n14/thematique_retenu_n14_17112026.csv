@@ -1,0 +1,16 @@
+code,libelle,theme,valence,n,%
+ESTHETIQUE,"Esthétique, design agréable",Interface,+,7,50
+FACILITE,"Facilité d'utilisation, fluidité",Interface,+,5,36
+CLARTE,"Clarté, organisation",Interface,+,3,21
+PHOTOS,"Photos, visuels",Interface,+,2,14
+AFFICHAGE_PC,Images moins bien rendues sur PC (format fixe),Interface,-,1,7
+INFORMATIF,"Contenu complet, précis, instructif",Contenu,+,2,14
+DENSITE,Trop de contenu,Contenu,-,1,7
+FILTRES,Filtres des sorties peu aidants,Contenu,-,1,7
+DIVERSITE,Diversité des sorties et des niveaux,Offre de sorties,+,4,29
+PROJECTION,"Les sorties donnent envie, on se projette",Offre de sorties,+,2,14
+TARIFS,Tarifs abordables,Offre de sorties,+,1,7
+PARCOURS,Parcours de l'accompagnateur,Accompagnateur,+,4,29
+VISION,"Vision du métier, supplément d'âme",Accompagnateur,+,2,14
+POSTURE_PRO,"Professionnalisme, transparence, prévention",Accompagnateur,+,2,14
+CULTURE,Dimension ludique et culturelle,Accompagnateur,+,1,7

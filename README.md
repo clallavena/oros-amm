@@ -352,7 +352,7 @@ Il représente les valeurs moyennes des différentes sous-échelles de l'Attrakd
 
 Les valeurs en dehors de cette zone neutre (représenté ici par une zone neutre positive et une zone neutre négative) sont à considérer comme des points positifs ou négatifs du système.
 
-![Diagramme des valeurs moyennes](data_analysis\resultats\18112026_n14\attrakdiff_valeurs_moyennes_n14_18112026.png)
+![Diagramme des valeurs moyennes](data_analysis/resultats/18112026_n14/attrakdiff_valeurs_moyennes_n14_18112026.png)
 
 Chaque point dans le graphique représente donc la valeur moyenne des réponses utilisateurs par sous-échelle. Les barres en bougies sont des barres d'erruer est sont calculé d'après [loi de Student](https://fr.wikipedia.org/wiki/Loi_de_Student). Les barres couvrent l'intervalle de confiance à 95% (IC 95%). Cette loi est utilisée car les tailles des échantillons sont petit pour l'instant et ne justifie pas l'utilisation de la loi normale pour le calcul de l'écart type et de l'indice de confiance. Si le nombre de participant à l'étude grossit, alors l'utilisation de la loi normale suffira au calcul.
 
@@ -367,7 +367,7 @@ Il présente les valeurs moyennes pour chaque paire de mots.
 
 Les items sont regroupés par sous-échelles et placés autour d'un continuum avec au centre la valeur neutre 0, ce qui permet de distinguer très rapidement quels aspects sont perçus comme négatifs et quels aspects sont perçus comme positifs.
 
-![Diagramme des paires de mots](data_analysis\resultats\18112026_n14\attrakdiff_paires_de_mots_n14_18112026.png)
+![Diagramme des paires de mots](data_analysis/resultats/18112026_n14/attrakdiff_paires_de_mots_n14_18112026.png)
 
 Les valeurs extrêmes (entre -2 et -3 ou à l'inverse entre +2 et +3) sont particulièrement intéressantes. Elles montrent quelles dimensions sont critiques ou au contraire particulièrement positives, et appellent à des actions d'amélioration sur ces aspects.
 
@@ -398,7 +398,7 @@ Le profil des paires de mots (n = 14) ne présente aucune paire franchement nég
 
 Dans cette représentation des résultats, les valeurs moyennes obtenues aux échelles hédoniques sont représentées sur l'axe vertical (avec en bas la valeur la plus basse, soit -3) et la valeur moyenne à l'échelle pragmatique est représentée sur l'axe horizontal (à gauche la valeur la plus basse).
 
-![portfolio des résultats](data_analysis\resultats\18112026_n14\attrakdiff_portfolio_n14_18112026.png)
+![portfolio des résultats](data_analysis/resultats/18112026_n14/attrakdiff_portfolio_n14_18112026.png)
 
 :arrow_right: Qualité pragmatique (QP) "est-ce que le site m'aide à faire ce que je veux, facilement ?"
 :arrow_up: Qualité hédonique (QH) "est-ce qu'il est agréable, stimulant, valorisant?"

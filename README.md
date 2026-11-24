@@ -319,25 +319,25 @@ Ce questionnaire s'appuie sur la traduction française validée par *Carine Lall
 
 [3]: Lallemand, C., Gronier, G. & Dugué, M. (2018). *Méthodes de design UX* (2ᵉ éd.). Eyrolles.
 
-L'analyse des résultats est réalisé directement avec un script python qu'on retrouve dans [/data_analysis](/data_analysis) en lancant le script `analyse.py` qui s'occupe de lancer les autres scripts et qui range les résultats et les graphes dans des dossiers formatté tel quel: ddmmaaa_nX ou 'nX' correspond à l'échantillon statistique.
+L'analyse des résultats est réalisée directement avec des scripts Python qu'on retrouve dans [/data_analysis](/data_analysis). Le script `analyse.py` lance les autres scripts et range les résultats et les graphiques dans des dossiers nommés `ddmmaaaa_nX`, où `nX` correspond à la taille de l'échantillon.
 
-Toutes les données sont anonymisée.
+Toutes les données sont anonymisées.
 
 ### Présentation des résultats
 
 Le questionnaire, aujourd'hui, est utilisé en tant qu'évaluation unique. C'est à dire qu'on évalue le système sans comparaison avec un autre ou sans comparaison avant/après le même système. On peut imaginer ce type d'évaluation dans un second temps.
 
-Les personnes évaluées n'ont pas reçu de scénario préferentielle d'utilisation du système, ce qui rend les résultats parfois hétérogène et libre d'interpretation.
+Les personnes évaluées n'ont pas reçu de scénario préferentielle d'utilisation du système, ce qui rend les résultats parfois hétérogènes et libres d'interprétation.
 
-Le questionnaire **Attrakdiff** comprends 28 items répartis en 4 échelles différentes:
+Le questionnaire **Attrakdiff** comprend 28 items répartis en 4 échelles différentes :
 
 - L'échelle de **Qualité Pragmatique** (QP): Décrit l'utilisabilité du produit et indique le niveau de facilité perçue des utilisateurs à atteindre leurs buts.
-- L'échelle de **Qualité Hédonique - Stimulation** (QH-S): Indique dans quelle mesure le produit soutient le besoin de simulation en proposant des contenus, fonctionnalités, styles
+- L'échelle de **Qualité Hédonique - Stimulation** (QH-S): Indique dans quelle mesure le produit soutient le besoin de stimulation en proposant des contenus, fonctionnalités, styles
 d'interaction nouveaux, intéressants et stimulants.
 - L'échelle de **Qualité Hédonique - Identité** (QH-I): Indique dans quelle mesure le produit soutient une fonction sociale et communique une certaine identité de l'utilisateur.
 - L'échelle d'**Attractivité globale** (ATT): Décrit la valeur globale perçue du produit basée sur la perception des qualités pragmatiques et hédoniques.
 
-Les 28 items du questionnaire se présentent sous la forme de différenciateurs sémantiques (paires de mots contrastés) en échelle de Likert à 7 points. L'ordre de passation des items est standardisé. Les 28 items ont été séparé en 3 blocs de 9 ou 10 items afin d'augmenter la lisibilité du questionnaire.
+Les 28 items du questionnaire se présentent sous la forme de différenciateurs sémantiques (paires de mots contrastés) en échelle de Likert à 7 points. L'ordre de passation des items est standardisé. Les 28 items ont été séparés en 3 blocs de 9 ou 10 items afin d'augmenter la lisibilité du questionnaire.
 
 Au début du questionnaire, les utilisateurs ont cette consigne:
 > Dans le cadre d'un projet, je souhaiterais évaluer vos impressions sur le site web <www.orosens.fr>. Ce questionnaire se présente sous forme de paires de mots pour vous assister dans l'évaluation du système. Chaque paire représente des contrastes. Les échelons entre les deux extrémités vous permettent de décrire l'intensité de la qualité choisie.
@@ -348,18 +348,29 @@ Pour présenter les résultats Lallemand propose plusieurs diagrammes possible.
 
 #### Le diagramme des valeurs moyennes
 
-Il représente les valeurs moyennes des différentes sous-échelles de l'Attrakdiff présenté plus tôt. Les valeurs proches de la moyenne (zone entre 0 et 1) sont standards: elles ne sont pas négatives et signifie que le produit remplit son obectif sans avoir d'impact négatif. Toutefois, des améliorations sont possibles sur ces aspects pour créer une UX ou attractivité très positive.
+Il représente les valeurs moyennes des différentes sous-échelles de l'AttrakDiff présentées plus tôt. Les valeurs proches de la moyenne (zone neutre, entre -1 et +1) sont standards : elles ne sont pas négatives et signifient que le produit remplit son objectif sans avoir d'impact négatif. Toutefois, des améliorations sont possibles sur ces aspects pour créer une UX ou une attractivité très positive.
 
-Les valeurs en dehors de cette zone neutre (représenté ici par une zone neutre positive et une zone neutre négative) sont à considérer comme des points positifs ou négatifs du système.
+Les valeurs en dehors de cette zone neutre (représentée ici par une zone neutre positive et une zone neutre négative) sont à considérer comme des points positifs ou négatifs du système.
 
-![Diagramme des valeurs moyennes](data_analysis/resultats/18112026_n14/attrakdiff_valeurs_moyennes_n14_18112026.png)
+![Diagramme des valeurs moyennes](data_analysis/resultats/24112026_n18/attrakdiff_valeurs_moyennes_n18_24112026.png)
 
-Chaque point dans le graphique représente donc la valeur moyenne des réponses utilisateurs par sous-échelle. Les barres en bougies sont des barres d'erruer est sont calculé d'après [loi de Student](https://fr.wikipedia.org/wiki/Loi_de_Student). Les barres couvrent l'intervalle de confiance à 95% (IC 95%). Cette loi est utilisée car les tailles des échantillons sont petit pour l'instant et ne justifie pas l'utilisation de la loi normale pour le calcul de l'écart type et de l'indice de confiance. Si le nombre de participant à l'étude grossit, alors l'utilisation de la loi normale suffira au calcul.
+Chaque point du graphique représente la valeur moyenne des réponses des utilisateurs pour une sous-échelle. Les barres d'erreur couvrent l'intervalle de confiance à 95 % (IC 95 %), calculé d'après la [loi de Student](https://fr.wikipedia.org/wiki/Loi_de_Student). Cette loi est utilisée car l'échantillon est encore petit : elle tient compte du fait que l'écart-type est lui-même estimé de façon imprécise, ce que la loi normale ne fait pas. Si le nombre de participants augmente, la loi de Student et la loi normale donneront des résultats quasiment identiques.
+
+L'écart-type (ET) est indiqué sous chaque sous-échelle. Il mesure à quel point les participants sont d'accord entre eux, et ne doit pas être confondu avec la barre d'erreur, qui mesure la précision de la moyenne.
+
+| Sous-échelle | Moyenne | IC 95 % | ET |
+|---|---|---|---|
+| QP | 1,77 | ± 0,33 | 0,66 |
+| QH-I | 1,99 | ± 0,31 | 0,62 |
+| QH-S | 1,06 | ± 0,35 | 0,71 |
+| ATT | 2,49 | ± 0,29 | 0,58 |
+
+Avec 18 participants, trois sous-échelles (QP, QH-I, ATT) sont nettement au-dessus de la zone neutre, IC compris. La stimulation (QH-S) est la plus faible : sa moyenne est juste au-dessus de +1, mais son intervalle de confiance descend dans la zone neutre positive. C'est aussi la sous-échelle où les participants sont le moins d'accord entre eux.
 
 Avec cet effectif, les résultats doivent être lus comme des tendances.
 
-Pour résumer:
-la barre d’erreur mesure la précision de la moyenne ; elle dépend du désaccord entre les gens (l’écart-type), et elle diminue avec la racine du nombre de participants. Plus il y a de participants, plus la barre d'incertitude diminue et plus la moyenne s'affine.
+Pour résumer :
+la barre d'erreur mesure la précision de la moyenne ; elle dépend du désaccord entre les gens (l'écart-type), et elle diminue avec la racine du nombre de participants. Plus il y a de participants, plus la barre d'incertitude diminue et plus la moyenne s'affine.
 
 #### Diagramme des paires de mots
 
@@ -367,53 +378,64 @@ Il présente les valeurs moyennes pour chaque paire de mots.
 
 Les items sont regroupés par sous-échelles et placés autour d'un continuum avec au centre la valeur neutre 0, ce qui permet de distinguer très rapidement quels aspects sont perçus comme négatifs et quels aspects sont perçus comme positifs.
 
-![Diagramme des paires de mots](data_analysis/resultats/18112026_n14/attrakdiff_paires_de_mots_n14_18112026.png)
+![Diagramme des paires de mots](data_analysis/resultats/24112026_n18/attrakdiff_paires_de_mots_n18_24112026.png)
 
 Les valeurs extrêmes (entre -2 et -3 ou à l'inverse entre +2 et +3) sont particulièrement intéressantes. Elles montrent quelles dimensions sont critiques ou au contraire particulièrement positives, et appellent à des actions d'amélioration sur ces aspects.
 
-On apperçoit sur notre diagramme qu'aucune paire n'est clairement négative. La seule moyenne sous zéro est la paire "prudent/audacieux" et est à -0.14. Comme dit précédement l'échantillon étant faible, peut être qu'il s'affinera avec l'augmentation de l'échantillon.
+On aperçoit sur notre diagramme qu'aucune paire n'a une moyenne négative. La paire la plus basse, « prudent/audacieux », est à 0,11 (elle était à -0,14 avec 14 participants) : elle reste neutre, avec 5 notes négatives et 6 notes à 0 sur 18.
 
-15 paires de mots sur 28 sont dans la zone extrême positive, avec une belle courbe pour la sous-échelle "Attractivité Globale".
+16 paires de mots sur 28 sont dans la zone extrême positive, avec une belle courbe pour la sous-échelle « Attractivité globale ».
 
-**Echelle d'attractivité globale** jouie d'une solide moyenne avec des écart-type faible (0.5-0.7), ce qui signifie que les participants sont le plus d'accord entre eux que sur n'importe quelle autre sous-échelle.
+**Échelle d'attractivité globale** : elle jouit d'une solide moyenne (toutes les paires entre 2,33 et 2,67) avec des écarts-types faibles (0,5 à 1,0), ce qui signifie que les participants sont plus d'accord entre eux que sur n'importe quelle autre sous-échelle.
 
-A noter tout de même que cette échelle est la plus sensible au biais de désirabilité sociale, puisque la plupart des répondants actuelles me connaissent. Cependant, l'échelle a pour but de reflèter une impression d'ensemble plutôt qu'une qualité précise et pour le cas de mon système, je suis satisfait du résultat obtenu.
+À noter tout de même que cette échelle est la plus sensible au biais de désirabilité sociale, puisque la plupart des répondants actuels me connaissent (15 sur 18). Cependant, l'échelle a pour but de refléter une impression d'ensemble plutôt qu'une qualité précise et, pour le cas de mon système, je suis satisfait du résultat obtenu.
 
-**Echelle de qualité pragmatique** est plutôt solide, sauf deux paires "imprévisible/prévisible" et "technique/humain". Pour la paire "imprévisible/prévisible" 9 personnes sur 14 ont répondu exactement 0, ce qui pourrait se traduire par une difficulté à appliquer ce mot à ce système et donc que les participants ne savent pas quoi répondre. Ce qui pour le cas de mon système ne me surprends pas et ne me choque pas non plus.
+**Échelle de qualité pragmatique** : elle est plutôt solide (« Pratique », « Clair » et « Maîtrisable » à 2,28), sauf deux paires, « imprévisible/prévisible » et « technique/humain ». Pour la paire « imprévisible/prévisible » (0,78), 11 personnes sur 18 ont répondu exactement 0, ce qui pourrait traduire une difficulté à appliquer ce mot à ce système : les participants ne savent pas quoi répondre. Pour le cas de mon système, cela ne me surprend pas et ne me choque pas non plus.
 
-Pour la paire "technique/humain" c'est la paire la plus partagée de l'échelle avec un écart type de **1.48** contre 0.9 a 1.2 pour les autres. La aussi il peut s'expliquer par la différence sémantique des mots utilisées. Pour certain "Technique" peut être pris positivement (sérieux, compétent...), surtout pour un site d'accompagnateur, ce qui brouille l'interprétation de cette paire. Le participant qui à répondu "Technioque" au maximum a d'ailleurs dibbé des bites très positives partout ailleurs. Il y a donc fort à penser qu'il s'agissent, pour le participant, d'une affirmation positive.
+La paire « technique/humain » (0,94) est la plus partagée de l'échelle, avec un écart-type de **1,43** contre 0,9 à 1,4 pour les autres. Là aussi, cela peut s'expliquer par la différence sémantique des mots utilisés. Pour certains, « Technique » peut être pris positivement (sérieux, compétent...), surtout pour un site d'accompagnateur, ce qui brouille l'interprétation de cette paire. Le participant qui a répondu « Technique » au maximum a d'ailleurs donné des notes très positives partout ailleurs. Il y a donc fort à penser qu'il s'agit, pour ce participant, d'une appréciation positive.
 
-**Echelle de qualité hédonique identité** possède elle un point fort, l'image professionnelle. "Professionnel" (2.57) et "de bon goût" (2.57) sont parmis les moyennes les plus hautes de tout le questionnaire, avec un **fort consensus** (écart-type 0.65, aucune note sous zéro). Pour un site d'accompagnateur, c'est une vrai réussite car la crédibilité fait réserver et assure une confiance.
+**Échelle de qualité hédonique identité** : elle possède un point fort, l'image professionnelle. « Professionnel » (2,50) et « De bon goût » (2,61) sont parmi les moyennes les plus hautes de tout le questionnaire, avec un **fort consensus** (écarts-types de 0,71 et 0,61, aucune note sous zéro). Pour un site d'accompagnateur, c'est une vraie réussite, car la crédibilité fait réserver et inspire confiance.
 
-Les paires "sociales" sont plus basses et plus dispersées, comme "me sociabilise" (1.43), "me rapproche" (1.29) avec un écart type de 1.73 le plus fort désaccord du questionnaire, "mintegre" (1.79) avec beaucoup de réponse à 0. Comme pour la paire "technique/humain" on peut faire l'hypothèse que ces mots s'appliquent mal à un site consulté seul.
+Les paires « sociales » sont plus basses et plus dispersées : « Me sociabilise » (1,50), « Me rapproche des autres » (1,17, avec un écart-type de 1,95, le plus fort désaccord du questionnaire) et « M'intègre » (1,94), avec beaucoup de réponses à 0. Comme pour la paire « imprévisible/prévisible », on peut faire l'hypothèse que ces mots s'appliquent mal à un site consulté seul.
 
-**Echelle de qualité hédonique stimulation** possède un profil en deux temps. Un profil **haut** avec des mots comme "Créatif" (2.29) et "Captivant"(2.07), et un profil **bas** avec des mots comme "Original" (0.57), "Novateur" (0.64), "Nouveau" (0.71), Challenging (0.79), "Audacieux"  (-0.14) avec 5 notes négatives et 5 neutres.
+**Échelle de qualité hédonique stimulation** : elle possède un profil en deux temps. Un profil **haut** avec des mots comme « Créatif » (2,17) et « Captivant » (2,11), et un profil **bas** avec des mots comme « Original » (0,83), « Novateur » (0,67), « Nouveau » (0,83), « Challenging » (0,72) et « Audacieux » (0,11).
 
-On peut faire une lecture de ce résultat comme suit: le site est perçu comme intéressant mais classique dans sa forme. Ce qui n'est pas forcément un défaut, un site qui suit les conventions du web est plus facile à utiliser parce que les visiteurs passent la plupart de leur temps sur d'autres sites et attendent qu'il fonctionne de la même façon. Cela fait partie des 10 **Heuristique de Nielsen** 4.*"Consistency and standards"*
+On peut faire une lecture de ce résultat comme suit : le site est perçu comme intéressant mais classique dans sa forme. Ce n'est pas forcément un défaut : un site qui suit les conventions du web est plus facile à utiliser, parce que les visiteurs passent la plupart de leur temps sur d'autres sites et attendent qu'il fonctionne de la même façon. Cela fait partie des 10 **heuristiques de Nielsen** (n° 4, *« Consistency and standards »*).
 
-**Ce qu'il faut retenir (TLDR;)** 
-Le profil des paires de mots (n = 14) ne présente aucune paire franchement négative. L’attractivité (ATT) et l’image professionnelle (« Professionnel », « De bon goût ») obtiennent les scores les plus élevés et les plus consensuels. En qualité pragmatique, le site est jugé pratique, clair et maîtrisable. L’échelle de stimulation (QH-S) présente un profil contrasté : le contenu est perçu comme créatif et captivant, mais la forme comme peu originale, peu novatrice et plutôt prudente. Plusieurs paires (« Prévisible », paires de socialisation, « Challenging ») recueillent de nombreuses réponses neutres, ce qui suggère qu’elles s’appliquent difficilement à un site vitrine. Compte tenu de l’effectif et du fait que la majorité des répondants connaissent l’auteur, ces résultats sont à considérer comme des tendances.
+**Ce qu'il faut retenir (TL;DR)**
+Le profil des paires de mots (n = 18) ne présente aucune paire négative. L'attractivité (ATT) et l'image professionnelle (« Professionnel », « De bon goût ») obtiennent les scores les plus élevés et les plus consensuels. En qualité pragmatique, le site est jugé pratique, clair et maîtrisable. L'échelle de stimulation (QH-S) présente un profil contrasté : le contenu est perçu comme créatif et captivant, mais la forme comme peu originale, peu novatrice et plutôt prudente. Plusieurs paires (« Prévisible », paires de socialisation, « Challenging ») recueillent de nombreuses réponses neutres, ce qui suggère qu'elles s'appliquent difficilement à un site vitrine. Compte tenu de l'effectif et du fait que la majorité des répondants connaissent l'auteur, ces résultats sont à considérer comme des tendances.
 
 #### Portfolio des résultats
 
 Dans cette représentation des résultats, les valeurs moyennes obtenues aux échelles hédoniques sont représentées sur l'axe vertical (avec en bas la valeur la plus basse, soit -3) et la valeur moyenne à l'échelle pragmatique est représentée sur l'axe horizontal (à gauche la valeur la plus basse).
 
-![portfolio des résultats](data_analysis/resultats/18112026_n14/attrakdiff_portfolio_n14_18112026.png)
+![portfolio des résultats](data_analysis/resultats/24112026_n18/attrakdiff_portfolio_n18_24112026.png)
 
-:arrow_right: Qualité pragmatique (QP) "est-ce que le site m'aide à faire ce que je veux, facilement ?"
-:arrow_up: Qualité hédonique (QH) "est-ce qu'il est agréable, stimulant, valorisant?"
+:arrow_right: Qualité pragmatique (QP) « est-ce que le site m'aide à faire ce que je veux, facilement ? »
+:arrow_up: Qualité hédonique (QH) « est-ce qu'il est agréable, stimulant, valorisant ? »
 
-La diagramme se compose de 9 cases, avec des frontières à -1 et +1. La case visée est "désiré" en haut à droit, il correspond à un produit à la fois utile et plaisant.
+Le diagramme se compose de 9 cases, avec des frontières à -1 et +1. La case visée est « désiré », en haut à droite : elle correspond à un produit à la fois utile et plaisant.
 
 Le point bleu représente la moyenne du groupe.
 
 Le rectangle représente l'incertitude sur cette moyenne.
 
-Les points gris représente chaque participant.
+Les points gris représentent chaque participant.
 
-Le portfolio (n = 14) place le site dans la zone « désiré » (QP = 1,72 ; QH = 1,48). Le rectangle de confiance à 95 % est entièrement contenu dans cette zone, ce qui permet de considérer ce classement comme fiable ; il s’est stabilisé à mesure que l’échantillon augmentait (n = 9, 12 puis 14). Individuellement, 10 participants sur 14 se situent dans la zone « désiré ». Les deux participants ayant la qualité pragmatique la plus faible sont aussi ceux qui ont signalé dans les questions ouvertes des difficultés concrètes (filtres peu utiles, prix non visible, densité du contenu). Le score hédonique (QH) masque toutefois un écart entre une identité élevée (QH-I = 1,97) et une stimulation plus modeste (QH-S = 0,99), visible sur le diagramme des valeurs moyennes. Ces résultats restent à interpréter avec prudence compte tenu de l’effectif et d’un possible biais de désirabilité sociale, la majorité des répondants connaissant l’auteur.
+Le portfolio (n = 18) place le site dans la zone « désiré » (QP = 1,77 ; QH = 1,53). Le rectangle de confiance à 95 % (QP de 1,44 à 2,10 ; QH de 1,24 à 1,81) est entièrement contenu dans cette zone, ce qui permet de considérer ce classement comme fiable. Il s'est stabilisé à mesure que l'échantillon augmentait :
 
-*Compte tenu de l’effectif et du fait que la majorité des répondants connaissent l’auteur, ces résultats peuvent être influencés par un biais de désirabilité sociale [Dell et al., 2012](https://dl.acm.org/doi/10.1145/2207676.2208589) et sont à considérer comme des tendances.*
+| Date | n | QP | QH | Bas du rectangle (QH) |
+|---|---|---|---|---|
+| 15/11/2026 | 9 | 1,68 | 1,47 | 0,97 |
+| 17/11/2026 | 12 | 1,74 | 1,49 | 1,11 |
+| 18/11/2026 | 14 | 1,72 | 1,48 | 1,13 |
+| 24/11/2026 | 18 | 1,77 | 1,53 | 1,24 |
+
+Les moyennes ne bougent presque plus : ce sont les nouveaux participants qui réduisent l'incertitude.
+
+Individuellement, 14 participants sur 18 se situent dans la zone « désiré ». Les deux participants ayant la qualité pragmatique la plus faible sont aussi ceux qui ont signalé dans les questions ouvertes des difficultés concrètes (filtres peu utiles, prix non visible, densité du contenu). Le score hédonique (QH) masque toutefois un écart entre une identité élevée (QH-I = 1,99) et une stimulation plus modeste (QH-S = 1,06), visible sur le diagramme des valeurs moyennes.
+
+*Compte tenu de l'effectif et du fait que la majorité des répondants connaissent l'auteur (15 sur 18), ces résultats peuvent être influencés par un biais de désirabilité sociale [Dell et al., 2012](https://dl.acm.org/doi/10.1145/2207676.2208589) et sont à considérer comme des tendances.*
 
 ---
 

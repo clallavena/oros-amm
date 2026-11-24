@@ -1,0 +1,18 @@
+code,libelle,theme,valence,n,%
+ESTHETIQUE,"Esthétique, design agréable",Interface,+,8,44
+FACILITE,"Facilité d'utilisation, fluidité",Interface,+,7,39
+CLARTE,"Clarté, organisation",Interface,+,4,22
+PHOTOS,"Photos, visuels",Interface,+,3,17
+AFFICHAGE_PC,Images moins bien rendues sur PC (format fixe),Interface,-,1,6
+INFORMATIF,"Contenu complet, précis, instructif",Contenu,+,3,17
+DENSITE,Trop de contenu,Contenu,-,1,6
+FILTRES,Filtres des sorties peu aidants,Contenu,-,1,6
+DIVERSITE,Diversité des sorties et des niveaux,Offre de sorties,+,5,28
+PROJECTION,"Les sorties donnent envie, on se projette",Offre de sorties,+,3,17
+TARIFS,Tarifs abordables,Offre de sorties,+,2,11
+BIVOUAC,Pas de sortie en bivouac,Offre de sorties,-,1,6
+PARCOURS,Parcours de l'accompagnateur,Accompagnateur,+,6,33
+VISION,"Vision du métier, supplément d'âme",Accompagnateur,+,2,11
+POSTURE_PRO,"Professionnalisme, transparence, prévention",Accompagnateur,+,2,11
+CULTURE,Dimension ludique et culturelle,Accompagnateur,+,1,6
+NOM_MARQUE,Sens du nom « Orosens » compris,Accompagnateur,+,1,6

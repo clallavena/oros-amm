@@ -1,6 +1,8 @@
+import textwrap
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import pandas as pd
 from scipy import stats
 
@@ -15,7 +17,8 @@ from common import (TODAY, INK, INK_2, GRID, SERIES, DATA_FILE, load_forms, outp
 categorical = {'CONNAIT_AUTEUR': {"Connaissez-vous personnellement l'auteur du site ?": ['Oui', 'Non']},
                'SAIT_RESERVER' : {"A l'avenir, je saurais comment réserver une sortie": ['Oui', 'Non']},
                'INTERFACE'     : {'Interface utilisée ': ['Ordinateur', 'Smartphone', 'Tablette']},
-               'NAVIGATEUR'    : {'Précisez le navigateur utilisé': ['Chrome', 'Firefox', 'Safari', 'Opera']},
+               'NAVIGATEUR'    : {'Précisez le navigateur utilisé': ['Chrome', 'Firefox', 'Safari', 'Opera',
+                                                                  'Samsung Internet', 'Arc']},
                'AGE'           : {"Tranche d'âge": ['18-25', '26-35', '36-45', '46-55', '56-65', '66-75']},
                'SORTIES_12M'   : {'Combien de sorties en montagne avez-vous faites ces 12 derniers mois ?':
                                       ['0', '1-2', '3-5', '6-10', 'plus de 10']},
@@ -24,6 +27,10 @@ categorical = {'CONNAIT_AUTEUR': {"Connaissez-vous personnellement l'auteur du s
                'HABITAT'       : {'Où habitez vous ?': ['Urbain', 'Rural', 'Zone montagne']},
                'INTENTION_12M' : {'Envisagez-vous une sortie accompagnée dans les 12 prochains mois ':
                                       ['Oui', 'Peut-être', 'Non']}}
+
+# Réponses libres à rattacher à une modalité : code -> {réponse en minuscules: modalité}
+aliases = {'NAVIGATEUR': {'samsung browser': 'Samsung Internet',
+                          'arc (~chrome il me semble)': 'Arc'}}
 
 # Échelles de 1 à 5 : code -> {libellé TSV: intitulé de la question}
 likert = {'PLACE_MONTAGNE'  : {'Peu fort / Très forte': 'Place de la montagne dans la vie'},
@@ -72,7 +79,7 @@ def build_profile_df(forms_df: pd.DataFrame) -> pd.DataFrame:
         (label, levels), = question.items()
         raw = forms_df[label].astype('string').str.strip()
         # harmonise la casse ('chrome' -> 'Chrome') sur les modalités connues
-        lookup = {level.lower(): level for level in levels}
+        lookup = {level.lower(): level for level in levels} | aliases.get(code, {})
         mapped = raw.str.lower().map(lookup)
         unknown = sorted(set(raw[mapped.isna() & raw.notna()]))
         if unknown:
@@ -169,7 +176,9 @@ def plot_sample(profile_df: pd.DataFrame, path='questionnaire_echantillon.png'):
         counts = profile_df[code].value_counts(sort=False).sort_index()
         if code in likert:                                   # toutes les valeurs 1 à 5
             counts = counts.reindex(range(1, 6), fill_value=0)
-        bars = ax.bar(counts.index.astype(str), counts.values, color=SERIES, width=0.6)
+        labels = [textwrap.fill(str(v), 10, break_long_words=False) for v in counts.index]     # 'Samsung\nInternet'
+        bars = ax.bar(labels, counts.values, color=SERIES, width=0.6)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.bar_label(bars, padding=2, color=INK, fontsize=8)
         ax.set_ylim(0, N + 1.5)
         ax.set_title(TITLES[code], loc='left', color=INK, fontsize=10)

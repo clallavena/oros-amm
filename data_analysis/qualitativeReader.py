@@ -27,13 +27,15 @@ codebook_retenu = {'ESTHETIQUE'  : {'Esthétique, design agréable': ('Interface
                    'DIVERSITE'   : {'Diversité des sorties et des niveaux': ('Offre de sorties', '+')},
                    'PROJECTION'  : {'Les sorties donnent envie, on se projette': ('Offre de sorties', '+')},
                    'TARIFS'      : {'Tarifs abordables': ('Offre de sorties', '+')},
+                   'BIVOUAC'     : {'Pas de sortie en bivouac': ('Offre de sorties', '-')},
                    'PARCOURS'    : {"Parcours de l'accompagnateur": ('Accompagnateur', '+')},
                    'VISION'      : {'Vision du métier, supplément d\'âme': ('Accompagnateur', '+')},
                    'POSTURE_PRO' : {'Professionnalisme, transparence, prévention': ('Accompagnateur', '+')},
-                   'CULTURE'     : {'Dimension ludique et culturelle': ('Accompagnateur', '+')}}
+                   'CULTURE'     : {'Dimension ludique et culturelle': ('Accompagnateur', '+')},
+                   'NOM_MARQUE'  : {'Sens du nom « Orosens » compris': ('Accompagnateur', '+')}}
 
 codebook_questions = {'AUCUNE'        : {'Aucune question': ('Aucune', '+')},
-                      'LOGISTIQUE'    : {'Déroulé : point de RDV, durée': ('Préparation', '-')},
+                      'LOGISTIQUE'    : {'Déroulé : RDV, durée, programme, taille du groupe': ('Préparation', '-')},
                       'MATERIEL'      : {'Quoi apporter : eau, encas, matériel': ('Préparation', '-')},
                       'PRIX'          : {'Prix pas visible avant le formulaire': ('Conditions', '-')},
                       'ANNULATION'    : {"Conditions d'annulation": ('Conditions', '-')},
@@ -41,6 +43,7 @@ codebook_questions = {'AUCUNE'        : {'Aucune question': ('Aucune', '+')},
                       'PREUVE_SOCIALE': {'Avis des participants, sorties déjà faites': ('Confiance', '-')},
                       'ENVIRONNEMENT' : {"Gestion de l'environnement": ('Confiance', '-')},
                       'NOM_SORTIES'   : {'Nom des sorties': ('Contenu', '-')},
+                      'CARTE'         : {'Localisation des sorties sur une carte (IGN)': ('Contenu', '-')},
                       'DATES'         : {'Dates des prochaines sorties': ('Conditions', '-')}}
 
 # Codage : index du participant (ordre des lignes du TSV) -> codes attribués
@@ -57,7 +60,11 @@ coding_retenu = {0: ['ESTHETIQUE', 'DENSITE', 'PARCOURS', 'VISION'],
                  10: ['INFORMATIF', 'TARIFS', 'DIVERSITE'],
                  11: ['ESTHETIQUE'],
                  12: ['PHOTOS', 'AFFICHAGE_PC'],   # doublon probable du participant 2
-                 13: ['PHOTOS']}
+                 13: ['PHOTOS'],
+                 14: ['ESTHETIQUE', 'PHOTOS', 'FACILITE'],
+                 15: ['FACILITE', 'CLARTE', 'PARCOURS', 'INFORMATIF', 'TARIFS'],
+                 16: ['NOM_MARQUE', 'DIVERSITE', 'PARCOURS', 'BIVOUAC'],
+                 17: ['PROJECTION']}
 
 coding_questions = {0: ['AUCUNE'],
                     1: ['LOGISTIQUE'],
@@ -72,7 +79,11 @@ coding_questions = {0: ['AUCUNE'],
                     10: ['ANNULATION', 'MATERIEL'],
                     11: ['NOM_SORTIES'],
                     12: ['PREUVE_SOCIALE'],        # doublon probable du participant 2
-                    13: ['DATES']}
+                    13: ['DATES'],
+                    14: ['LOGISTIQUE'],
+                    15: ['AUCUNE'],
+                    16: ['AUCUNE'],
+                    17: ['CARTE']}
 
 
 def check_coding(forms_df: pd.DataFrame, question: str, coding: dict) -> pd.DataFrame:

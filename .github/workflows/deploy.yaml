@@ -6,8 +6,10 @@ permissions:
 on:
   push:
     branches: [master]
+    tags: ['v*']
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,6 +19,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -24,11 +28,19 @@ jobs:
           node-version-file: .node-version
           cache: npm
 
+      - name: Check tag is on master
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/master; then
+            echo "::error::Le tag ${GITHUB_REF_NAME} pointe sur un commit absent de master, déploiement annulé."
+            exit 1
+          fi
+
       - run: npm ci
       - run: npm run build
 
       - name: Configure SSH
-        if: github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
         env:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
@@ -38,11 +50,11 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
       - name: Rsync files to alwaysdata server
-        if: github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
         run: |
           rsync -az --delete dist node_modules package.json package-lock.json oros-mountain@ssh-oros-mountain.alwaysdata.net:oros-app/
       - name: Restart site
-        if: github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
         env:
           TOKEN: ${{ secrets.ALWAYSDATA_API_TOKEN }}
           SITE_ID: ${{ secrets.ALWAYSDATA_SITE_ID }}

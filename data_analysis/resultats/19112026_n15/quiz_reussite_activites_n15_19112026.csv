@@ -1,0 +1,10 @@
+code,activite,encadrable,reussite_%
+AMM1,Randonnée estivale à la journée/demi journée,True,100
+AMM2,Randonnée raquette dans la neige,True,80
+AMM3,Randonnée dans la neige sans raquette,True,47
+AMM4,Une course d'alpinisme côté F,False,100
+AMM5,Une course d'orientation,True,27
+AMM6,Itinérance en randonnée en autonomie en milieu isolé,True,67
+AMM7,Du trail,True,33
+AMM8,Une randonnée glaciaire,False,93
+AMM9,Une sortie observation ornitho,True,60

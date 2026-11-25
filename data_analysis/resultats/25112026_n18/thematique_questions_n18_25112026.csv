@@ -1,0 +1,12 @@
+code,libelle,theme,valence,n,%
+AUCUNE,Aucune question,Aucune,+,5,28
+LOGISTIQUE,"Déroulé : RDV, durée, programme, taille du groupe",Préparation,-,2,11
+MATERIEL,"Quoi apporter : eau, encas, matériel",Préparation,-,3,17
+PRIX,Prix pas visible avant le formulaire,Conditions,-,1,6
+ANNULATION,Conditions d'annulation,Conditions,-,1,6
+CHIEN,Chien accepté ?,Conditions,-,1,6
+PREUVE_SOCIALE,"Avis des participants, sorties déjà faites",Confiance,-,2,11
+ENVIRONNEMENT,Gestion de l'environnement,Confiance,-,1,6
+NOM_SORTIES,Nom des sorties,Contenu,-,1,6
+CARTE,Localisation des sorties sur une carte (IGN),Contenu,-,1,6
+DATES,Dates des prochaines sorties,Conditions,-,1,6

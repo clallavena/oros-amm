@@ -1,0 +1,19 @@
+﻿participant;reponse;codes_actuels;mon_codage;notes
+0;ras;AUCUNE;;
+1;Le déroulement de la sortie logistiquement parlant (point de rdv, durée des sorties…));LOGISTIQUE;;
+2;Peut être préciser dans le futur, les parcours et activités déjà effectués avec l’avis des participants.;PREUVE_SOCIALE;;
+3;Pas vraiment de question tout de suite;AUCUNE;;
+4;Je peux prendre mon chien ?;CHIEN;;
+5;La bonne gestion de l'environnement à découvrir;ENVIRONNEMENT;;
+6;Le prix n'est pas explicite avant de remplir le formulaire d'inscription;PRIX;;
+7;Est ce que j'ai assez d'eau pour toute la rando ?;MATERIEL;;
+8;aucune;AUCUNE;;
+9;quoi amener concrètement selon les sorties ?;MATERIEL;;
+10;peut-on annulé une réservation et si oui combien de temps avant. et peut être  préciser quel encas amener;ANNULATION, MATERIEL;;
+11;Le nom des sorties;NOM_SORTIES;;
+12;Ajouter dans le futur les photos des parcours effectués avec les avis des participants.;PREUVE_SOCIALE;;
+13;On part quand ?;DATES;;
+14;"Taille du groupe, thème, plus de précisions sur la sortie ""emploi du temps"" de la journée";LOGISTIQUE;;
+15;Aucune.;AUCUNE;;
+16;Pas de questions;AUCUNE;;
+17;La ou les zones géographiques proposées sous forme de cartographies IGN;CARTE;;

@@ -183,6 +183,22 @@ def plot_thematic(retenu_df, questions_df, n, path='questionnaire_analyse_themat
     return fig
 
 
+def export_answers(forms_df: pd.DataFrame, question: str, coding: dict, path):
+    """Exporte toutes les réponses non vides à une question ouverte, pour une
+    analyse manuelle : une ligne par participant, avec les codes actuels et deux
+    colonnes vides à remplir (son propre codage, notes).
+    Encodage utf-8-sig : les accents s'affichent correctement dans Excel."""
+    require_columns(forms_df, [question], 'Export des réponses')
+    answers = forms_df[question].astype('string').str.strip()
+    answers = answers[answers.notna() & answers.ne('')]
+    pd.DataFrame({'participant': answers.index,
+                  'reponse': answers.values,
+                  'codes_actuels': [', '.join(coding.get(i, [])) for i in answers.index],
+                  'mon_codage': '',
+                  'notes': ''}
+                 ).to_csv(path, index=False, sep=';', encoding='utf-8-sig')
+
+
 def run(forms_df: pd.DataFrame, out_dir='.'):
     """Tableaux de codes, export de relecture, liste des réponses à coder."""
     n = len(forms_df)
@@ -203,6 +219,8 @@ def run(forms_df: pd.DataFrame, out_dir='.'):
     pd.concat([verbatims(forms_df, Q_RETENU, retenu).assign(question='retenu'),
                verbatims(forms_df, Q_QUESTIONS, questions).assign(question='questions')]
               ).to_csv(path('codage_thematique'), index=False)
+    export_answers(forms_df, Q_RETENU, coding_retenu, path('reponses_que_retenez_vous'))
+    export_answers(forms_df, Q_QUESTIONS, questions, path('reponses_questions'))
     plot_thematic(retenu_df, questions_df, len(retenu),
                   path('questionnaire_analyse_thematique', '.png'))
     return retenu_df, questions_df, todo

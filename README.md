@@ -41,6 +41,11 @@ Le projet sert aussi de terrain d'application à ma pratique d'ingénieur IHM : 
       - [Le diagramme des valeurs moyennes](#le-diagramme-des-valeurs-moyennes)
       - [Diagramme des paires de mots](#diagramme-des-paires-de-mots)
       - [Portfolio des résultats](#portfolio-des-résultats)
+    - [Questionnaire complémentaire](#questionnaire-complémentaire)
+      - [Profil des participants](#profil-des-participants)
+      - [Connaissance du métier d'accompagnateur](#connaissance-du-métier-daccompagnateur)
+      - [Réponses ouvertes](#réponses-ouvertes)
+      - [Lien entre l'évaluation UX et l'intention de réserver](#lien-entre-lévaluation-ux-et-lintention-de-réserver)
   - [Auteur](#auteur)
 
 ---
@@ -436,6 +441,71 @@ Les moyennes ne bougent presque plus : ce sont les nouveaux participants qui ré
 Individuellement, 14 participants sur 18 se situent dans la zone « désiré ». Les deux participants ayant la qualité pragmatique la plus faible sont aussi ceux qui ont signalé dans les questions ouvertes des difficultés concrètes (filtres peu utiles, prix non visible, densité du contenu). Le score hédonique (QH) masque toutefois un écart entre une identité élevée (QH-I = 1,99) et une stimulation plus modeste (QH-S = 1,06), visible sur le diagramme des valeurs moyennes.
 
 *Compte tenu de l'effectif et du fait que la majorité des répondants connaissent l'auteur (15 sur 18), ces résultats peuvent être influencés par un biais de désirabilité sociale [Dell et al., 2012](https://dl.acm.org/doi/10.1145/2207676.2208589) et sont à considérer comme des tendances.*
+
+### Questionnaire complémentaire
+
+Après l'AttrakDiff, le questionnaire comporte une série de questions qui servent à décrire les participants, à vérifier ce qu'ils ont compris du métier d'accompagnateur et à recueillir leurs remarques libres. Ces réponses sont analysées par `questionnaireReader.py` (questions fermées et quiz) et `qualitativeReader.py` (questions ouvertes).
+
+#### Profil des participants
+
+![Description de l'échantillon](data_analysis/resultats/24112026_n18/questionnaire_echantillon_n18_24112026.png)
+
+![Pratiques déclarées](data_analysis/resultats/24112026_n18/questionnaire_pratiques_n18_24112026.png)
+
+Les 18 participants ont surtout consulté le site sur smartphone (11), puis sur ordinateur (6) et sur tablette (1), principalement avec Chrome (12). L'âge est bimodal : 11 participants ont entre 18 et 35 ans, 6 ont plus de 45 ans.
+
+Côté pratique de la montagne, l'échantillon ressemble à ma cible : des pratiquants occasionnels et peu autonomes.
+
+- 8 participants sur 18 ont fait 0 à 2 sorties en montagne ces 12 derniers mois ;
+- ils partent surtout à la demi-journée (83 %) ou à la journée (78 %), sur sentiers balisés (72 %), et plus de la moitié ne partent jamais seuls (56 %) ;
+- peu déclarent des compétences d'autonomie : 28 % savent s'orienter, 17 % savent identifier les risques ;
+- 14 participants sur 18 n'ont jamais fait appel à un professionnel de la montagne.
+
+Tous les participants (18 sur 18) déclarent qu'ils sauraient réserver une sortie à l'avenir. Pour une sortie accompagnée dans les 12 prochains mois, 5 répondent « oui », 7 « peut-être » et 6 « non ».
+
+La principale limite de l'échantillon est sa composition : 15 participants sur 18 connaissent personnellement l'auteur du site.
+
+#### Connaissance du métier d'accompagnateur
+
+Une question demande aux participants de cocher, parmi 9 activités, celles qu'un accompagnateur en moyenne montagne diplômé peut encadrer. Sept sont encadrables (randonnée estivale, raquettes, randonnée dans la neige sans raquettes, course d'orientation, itinérance en milieu isolé, trail, observation ornithologique) et deux ne le sont pas (course d'alpinisme, randonnée glaciaire). Une bonne réponse consiste à cocher une activité encadrable ou à laisser vide une activité non encadrable.
+
+![Quiz AMM](data_analysis/resultats/24112026_n18/questionnaire_quiz_amm_n18_24112026.png)
+
+Le score moyen est de **67 %** (de 33 % à 100 % selon les participants). Presque toutes les erreurs sont des **oublis** : une seule personne a coché une activité non encadrable. Les limites du métier sont donc bien comprises (alpinisme : 100 % de bonnes réponses ; randonnée glaciaire : 94 %), mais pas son étendue : la course d'orientation (22 %), le trail (33 %) et la randonnée dans la neige sans raquettes (50 %) sont rarement associés à l'accompagnateur.
+
+Pour le site, c'est une piste concrète : la page qui présente le métier transmet bien ce qu'un accompagnateur ne fait pas, mais devrait mettre davantage en avant les activités moins connues.
+
+![Connaissance perçue et réelle](data_analysis/resultats/24112026_n18/questionnaire_connaissance_amm_n18_24112026.png)
+
+La connaissance déclarée (« Je sais ce qu'un accompagnateur peut me proposer », de 1 à 5, moyenne 3,4) va dans le même sens que le score au quiz, sans lien statistiquement établi (corrélation de Spearman ρ = 0,42 ; p = 0,08).
+
+*Limite de la mesure : avec des cases à cocher, une case vide peut signifier « non » ou « je ne sais pas ». Les oublis surestiment donc peut-être la méconnaissance. Un format oui / non / je ne sais pas lèverait cette ambiguïté.*
+
+#### Réponses ouvertes
+
+Les deux questions ouvertes (« Que retenez-vous du site ? » et « Quelles questions vous restent-il avant de réserver une sortie ? ») ont fait l'objet d'une analyse thématique[4] : chaque réponse reçoit un ou plusieurs codes issus de son contenu, puis les codes sont regroupés en thèmes. Le codage est réalisé à la main et documenté dans `qualitativeReader.py`.
+
+[4]: Braun, V. & Clarke, V. (2006). Using thematic analysis in psychology. *Qualitative Research in Psychology*, 3(2), 77–101. <https://doi.org/10.1191/1478088706qp063oa>
+
+![Analyse thématique](data_analysis/resultats/24112026_n18/questionnaire_analyse_thematique_n18_24112026.png)
+
+**Ce que les participants retiennent.** L'interface est le thème le plus cité (13 participants sur 18) : l'esthétique (8), la fluidité (7), la clarté (4) et les photos (3). Viennent ensuite l'offre de sorties (9), surtout pour sa diversité (5), et la présentation de l'accompagnateur (8), en particulier mon parcours (6). Ces remarques rejoignent les scores élevés en attractivité (ATT) et en qualité pragmatique (QP). Les critiques sont rares et ponctuelles : trop de contenu, filtres peu utiles, images moins bien rendues sur ordinateur, absence de sorties en bivouac.
+
+**Les questions qui restent.** 5 participants n'ont aucune question. Les autres portent surtout sur la **préparation** (5 participants : quoi apporter, déroulé et programme de la journée, taille du groupe) et les **conditions** (4 : prix visible seulement dans le formulaire, annulation, chien, dates). Viennent ensuite la **confiance** (3 : avis d'anciens participants, gestion de l'environnement) et le **contenu** (2 : nom des sorties, localisation sur une carte IGN).
+
+Ces manques relèvent de l'information à ajouter, pas de défauts de conception. Une rubrique « Infos pratiques » sur chaque fiche de sortie (matériel, rendez-vous, programme, taille du groupe, prix, conditions d'annulation) répondrait à la plupart d'entre eux.
+
+#### Lien entre l'évaluation UX et l'intention de réserver
+
+En croisant les deux parties du questionnaire, les participants qui envisagent une sortie accompagnée dans l'année obtiennent les scores les plus élevés :
+
+| Intention de sortie | n | QP | QH | ATT |
+|---|---|---|---|---|
+| Oui | 5 | 2,11 | 2,11 | 2,86 |
+| Peut-être | 7 | 1,67 | 1,28 | 2,37 |
+| Non | 6 | 1,60 | 1,33 | 2,33 |
+
+Ce résultat est **exploratoire** : il repose sur de très petits groupes, il ne résiste pas à une correction pour comparaisons multiples (trois échelles testées), et une corrélation ne dit pas dans quel sens va le lien. On ne peut donc pas conclure que le site donne envie de réserver ; c'est une hypothèse à vérifier avec un échantillon plus large et plus extérieur à mon entourage.
 
 ---
 

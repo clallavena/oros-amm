@@ -12,6 +12,7 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.orosens.fr',
+  trailingSlash: 'never',
   fonts: [{
     provider: fontProviders.fontsource(),
     name: "Epilogue",

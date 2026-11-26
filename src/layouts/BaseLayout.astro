@@ -13,10 +13,20 @@ interface Props {
 }
 
 const {
-  title = "Accompagnateur en Montagne",
+  title = "Accompagnateur en Montagne Stagiaire",
   description = "Découvrez la montagne autrement.",
   theme = "forest",
 } = Astro.props;
+
+// `site` (astro.config.mjs) est la seule source de vérité sur le domaine :
+// sans lui, on échoue au build plutôt que de publier une canonique invalide.
+if (!Astro.site) {
+  throw new Error("BaseLayout : définir `site` dans astro.config.mjs.");
+}
+
+// URL canonique : domaine de `site` (www) + chemin de la page, sans query string
+// (?sortie=… sur /contact) ni slash final (trailingSlash: 'never').
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -28,7 +38,8 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <link rel="sitemap" href="sitemap-index.html" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
 

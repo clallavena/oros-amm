@@ -8,6 +8,7 @@
  * `class` : espacement vertical, pour suivre le rythme de la page hôte.
  */
 import Container from "./Container.astro";
+import SectionTitle from "./SectionTitle.astro";
 import { formatDate } from "../lib/dates";
 import type { Recit } from "../lib/carnet";
 
@@ -29,12 +30,7 @@ const lienCarnet = "min-h-11 items-center font-semibold text-primary underline-o
   <section aria-labelledby={id} class:list={[fond === "blanc" && "bg-white", classe]}>
     <Container>
       <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-widest text-primary">{surtitre}</p>
-          <h2 id={id} class="mt-3 max-w-2xl text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl">
-            {titre}
-          </h2>
-        </div>
+        <SectionTitle id={id} eyebrow={surtitre} title={titre} />
         <!-- Desktop : lien en face du titre. Mobile : après la liste. -->
         <a href="/carnet" class={`hidden md:inline-flex ${lienCarnet}`}>Tout le carnet →</a>
       </div>

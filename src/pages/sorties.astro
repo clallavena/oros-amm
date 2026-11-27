@@ -9,6 +9,7 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 import Button from "../components/Button.astro";
 import UniversCard from "../components/UniversCard.astro";
 import StatutEncadrement from "../components/StatutEncadrement.astro";
@@ -39,12 +40,6 @@ const formats = FORMATS.map((f) => ({
 
 /* 3 derniers récits du Carnet. */
 const recits = await getRecits({ limite: 3 });
-
-
-
-/* Classes partagées par les en-têtes de section (mêmes valeurs que les pages d'univers). */
-const surtitre = "text-xs font-semibold uppercase tracking-widest text-primary md:text-sm";
-const titreSection = "mt-3 text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl";
 ---
 
 <BaseLayout
@@ -105,12 +100,11 @@ const titreSection = "mt-3 text-[1.625rem] font-bold leading-tight tracking-tigh
   <!-- ========== UNIVERS ========== -->
   <section aria-labelledby="univers-titre" class="py-12 md:py-28">
     <Container>
-      <div class="max-w-2xl">
-        <p class={surtitre}>Trois univers</p>
-        <h2 id="univers-titre" class={titreSection}>
-          Chaque univers a sa saison, son rythme, sa lumière
-        </h2>
-      </div>
+      <SectionTitle
+        id="univers-titre"
+        eyebrow="Trois univers"
+        title="Chaque univers a sa saison, son rythme, sa lumière"
+      />
 
       <div data-grid-univers class="mt-6 grid gap-4 md:mt-12 md:gap-6 lg:grid-cols-3">
         {univers.map(({ univers: u, resume }) => (
@@ -136,10 +130,11 @@ const titreSection = "mt-3 text-[1.625rem] font-bold leading-tight tracking-tigh
   <!-- ========== COMPARATIF DES FORMATS ========== -->
   <section aria-labelledby="formats-titre" class="bg-white py-12 md:py-28">
     <Container>
-      <p class={surtitre}>Choisir son format</p>
-      <h2 id="formats-titre" class={`${titreSection} max-w-2xl`}>
-        Demi-journée, journée ou plusieurs jours ?
-      </h2>
+      <SectionTitle
+        id="formats-titre"
+        eyebrow="Choisir son format"
+        title="Demi-journée, journée ou plusieurs jours ?"
+      />
 
       <!--
         Mobile : une carte par format. Un tableau de 4 colonnes en défilement
@@ -240,12 +235,11 @@ const titreSection = "mt-3 text-[1.625rem] font-bold leading-tight tracking-tigh
   <!-- ========== GROUPES (renvoi vers /groupes) ========== -->
   <section id="groupes" aria-labelledby="groupes-titre" class="py-12 md:py-28">
     <Container>
-      <div class="max-w-2xl">
-        <p class={surtitre}>En groupe</p>
-        <h2 id="groupes-titre" class={titreSection}>
-          Une classe, une équipe ? On construit le programme ensemble.
-        </h2>
-      </div>
+      <SectionTitle
+        id="groupes-titre"
+        eyebrow="En groupe"
+        title="Une classe, une équipe ? On construit le programme ensemble."
+      />
 
       <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-2 md:gap-6">
         <li class="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5 md:gap-3 md:rounded-3xl md:p-8">

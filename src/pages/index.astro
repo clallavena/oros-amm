@@ -11,6 +11,7 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
+import SectionTitle from "../components/SectionTitle.astro";
 import Button from "../components/Button.astro";
 import UniversPorte from "../components/UniversPorte.astro";
 import SortieCard from "../components/SortieCard.astro";
@@ -22,6 +23,7 @@ import { UNIVERS } from "../lib/univers";
 import { getSorties, resumer } from "../lib/sorties";
 import { getRecits } from "../lib/carnet";
 import { formatDate } from "../lib/dates";
+import { SURTITRE } from "../lib/classes";
 import AppelContact from "../components/AppelContact.astro";
 
 import heroImage from "../images/glieres.jpg";
@@ -42,9 +44,6 @@ const aLaUne = sorties.slice(0, 3);
 /* Les deux derniers articles du Carnet. */
 const articles = await getRecits({ limite: 2 });
 
-/* Classes partagées par les en-têtes de section (mêmes valeurs que le hub /sorties). */
-const surtitre = "text-sm font-semibold uppercase tracking-widest text-primary";
-const titreSection = "mt-3 text-3xl font-bold leading-tight tracking-tight text-text md:text-4xl";
 const lienSection =
   "inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline";
 ---
@@ -133,12 +132,11 @@ const lienSection =
     <section aria-labelledby="une-titre" class="bg-surface py-16 md:py-26">
       <Container>
         <div class="flex flex-wrap items-end justify-between gap-4">
-          <div class="max-w-2xl">
-            <p class={surtitre}>Pour commencer</p>
-            <h2 id="une-titre" class={titreSection}>
-              {aLaUne.length > 1 ? "Quelques façons de partir avec moi" : "Une façon de partir avec moi"}
-            </h2>
-          </div>
+          <SectionTitle
+            id="une-titre"
+            eyebrow="Pour commencer"
+            title={aLaUne.length > 1 ? "Quelques façons de partir avec moi" : "Une façon de partir avec moi"}
+          />
           <a href="/sorties" class={`${lienSection} hidden md:inline-flex`}>
             Toutes les sorties →
           </a>
@@ -180,7 +178,7 @@ const lienSection =
         </div>
 
         <div class="flex min-w-0 flex-[1.2_1_480px] flex-col gap-4">
-          <p class={surtitre}>Votre accompagnateur</p>
+          <p class={SURTITRE}>Votre accompagnateur</p>
           <h2 id="clement-titre" class="text-3xl font-bold leading-tight tracking-tight text-text md:text-4xl">
             Bonjour, moi c'est Clément.
           </h2>
@@ -278,10 +276,7 @@ const lienSection =
     <section aria-labelledby="carnet-titre" class="bg-surface py-16 md:py-26">
       <Container>
         <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class={surtitre}>Le carnet</p>
-            <h2 id="carnet-titre" class={titreSection}>Conseils et récits de terrain</h2>
-          </div>
+          <SectionTitle id="carnet-titre" eyebrow="Le carnet" title="Conseils et récits de terrain" />
           <a href="/carnet" class={lienSection}>Tout le carnet →</a>
         </div>
 

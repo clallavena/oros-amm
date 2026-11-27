@@ -2,11 +2,10 @@
 import { NAV_LINKS, CONTACT_LINK, isActive } from "../lib/navigation";
 import { TITRE_MAJ } from "../lib/statut";
 import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
-import { PHONE_NUMBER } from "../lib/site";
+import { PHONE_NUMBER, TEL_HREF } from "../lib/site";
 
 const { pathname } = Astro.url;
 
-const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
 ---
 
 <header
@@ -243,7 +242,7 @@ const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
       {CONTACT_LINK.label}
     </a>
     <a
-      href={telHref}
+      href={TEL_HREF}
       class="flex min-h-12 items-center justify-center gap-2 rounded-full border border-border-strong font-semibold text-primary transition hover:bg-primary-light/20"
     >
       <svg

@@ -1,0 +1,74 @@
+---
+/**
+ * Section « récits du Carnet » : en-tête, jusqu'à trois cartes, lien vers le carnet.
+ * Ne rend rien s'il n'y a aucun récit.
+ *
+ * `fond` : "blanc" pour une section sur fond blanc (cartes couleur de page),
+ * "page" pour une section sur le fond de page (cartes en surface).
+ * `class` : espacement vertical, pour suivre le rythme de la page hôte.
+ */
+import Container from "./Container.astro";
+import { formatDate } from "../lib/dates";
+import type { Recit } from "../lib/carnet";
+
+interface Props {
+  recits: Recit[];
+  surtitre: string;
+  titre: string;
+  /** id du titre, référencé par aria-labelledby : unique dans la page. */
+  id: string;
+  fond?: "blanc" | "page";
+  class?: string;
+}
+
+const { recits, surtitre, titre, id, fond = "page", class: classe = "py-14 md:py-24" } = Astro.props;
+const lienCarnet = "min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline";
+---
+
+{recits.length > 0 && (
+  <section aria-labelledby={id} class:list={[fond === "blanc" && "bg-white", classe]}>
+    <Container>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-widest text-primary">{surtitre}</p>
+          <h2 id={id} class="mt-3 max-w-2xl text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl">
+            {titre}
+          </h2>
+        </div>
+        <!-- Desktop : lien en face du titre. Mobile : après la liste. -->
+        <a href="/carnet" class={`hidden md:inline-flex ${lienCarnet}`}>Tout le carnet →</a>
+      </div>
+
+      <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-3 md:gap-6">
+        {recits.map((recit) => (
+          <li
+            class:list={[
+              "group relative flex flex-col gap-3 rounded-2xl p-5 transition hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2 md:p-7",
+              fond === "blanc" ? "bg-background" : "bg-surface",
+            ]}
+          >
+            {recit.data.tags?.[0] && (
+              <span class="self-start rounded-full bg-primary-light/30 px-3 py-1 text-[13px] font-semibold text-primary">
+                {recit.data.tags[0]}
+              </span>
+            )}
+            <h3 class="text-lg font-bold leading-snug text-text md:text-xl">
+              <!-- Lien étendu à toute la carte (block link, comme SortieCard). -->
+              <a
+                href={`/carnet/${recit.id}`}
+                class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-hover:text-primary"
+              >
+                {recit.data.title}
+              </a>
+            </h3>
+            <p class="text-sm text-text-muted">
+              <time datetime={recit.data.pubDate.toISOString()}>{formatDate(recit.data.pubDate)}</time>
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <a href="/carnet" class={`mt-3 inline-flex md:hidden ${lienCarnet}`}>Tout le carnet →</a>
+    </Container>
+  </section>
+)}

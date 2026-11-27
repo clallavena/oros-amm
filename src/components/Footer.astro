@@ -1,7 +1,7 @@
 ---
 import Container from "./Container.astro";
 import { NAV_LINKS } from "../lib/navigation";
-import { CONTACT_EMAIL, NOM_SITE, NOM_SITE_HREF, PHONE_NUMBER } from "../lib/site";
+import { CONTACT_EMAIL, NOM_SITE, NOM_SITE_HREF, PHONE_NUMBER, TEL_HREF } from "../lib/site";
 import { NUMERO_DECLARATION, TITRE_MAJ } from "../lib/statut";
 
 const year = new Date().getFullYear();
@@ -73,7 +73,7 @@ const declarationNumero = NUMERO_DECLARATION;
             </a>
           </li>
           <li>
-            <a href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, '')}`} class="transition hover:text-white">
+            <a href={TEL_HREF} class="transition hover:text-white">
               {PHONE_NUMBER}
             </a>
           </li>

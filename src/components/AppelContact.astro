@@ -39,7 +39,7 @@ const { titre, secondaire = "telephone" } = Astro.props;
         </Button>
         <a
           href={secondaire === "telephone" ? TEL_HREF : "/sorties"}
-          class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:border-0 sm:px-0 sm:underline sm:underline-offset-4 sm:hover:bg-transparent sm:hover:text-white"
+          class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:border-0 sm:px-0 sm:underline sm:underline-offset-4 sm:hover:bg-transparent sm:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {secondaire === "telephone" ? (
             <>

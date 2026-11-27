@@ -3,8 +3,6 @@ import { defineConfig, envField, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
-import react from '@astrojs/react';
-
 import node from "@astrojs/node";
 
 import sitemap from "@astrojs/sitemap";
@@ -32,7 +30,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [react(), sitemap()],
+  integrations: [sitemap()],
 
   adapter: node({
     mode: "standalone"

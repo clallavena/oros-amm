@@ -37,6 +37,7 @@ jobs:
           fi
 
       - run: npm ci
+      - run: npm run check
       - run: npm run build
 
       - name: Configure SSH

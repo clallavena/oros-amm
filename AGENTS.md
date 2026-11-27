@@ -1,3 +1,7 @@
+# Project
+
+This is a website built with Astro 7 using Typescript strict and Tailwind 4.
+
 ## Development
 
 When starting the dev server, use background mode:

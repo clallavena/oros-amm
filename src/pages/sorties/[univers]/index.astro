@@ -15,17 +15,20 @@
  */
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Container from "../../../components/Container.astro";
+import SectionTitle from "../../../components/SectionTitle.astro";
+import { SURTITRE } from "../../../lib/classes";
 import Button from "../../../components/Button.astro";
 import SortieCard from "../../../components/SortieCard.astro";
 import SortieCardCompacte from "../../../components/SortieCardCompacte.astro";
 import { Image } from "astro:assets";
-import { getCollection } from "astro:content";
 
 import { UNIVERS, UNIVERS_INFO, type Univers } from "../../../lib/univers";
 import { THEMATIQUE_INFO } from "../../../lib/thematiques";
 import { getSorties, resumer, thematiquesAbordees } from "../../../lib/sorties";
 import { FORMAT_INFO, FORMAT_LABEL, formatPrix, type Format } from "../../../lib/formats";
-import { PHONE_NUMBER } from "../../../lib/site";
+import { getRecits } from "../../../lib/carnet";
+import ListeRecits from "../../../components/ListeRecits.astro";
+import AppelContact from "../../../components/AppelContact.astro";
 
 import { PHOTOS } from "../../../lib/univers";
 
@@ -117,17 +120,9 @@ const aPrevoir = info.page.aPrevoir ?? [];
 const bientot = info.page.bientot;
 
 /* Récits du Carnet rattachés à cet univers (champ `univers` du récit), 3 au plus. */
-const recits = (await getCollection("carnet", ({ data }) => data.univers === univers))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+const recits = await getRecits({ univers, limite: 3 });
 
-const telHref = `tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`;
 
-/* Classes partagées (mêmes valeurs que le hub /sorties et l'accueil). */
-const surtitre = "text-sm font-semibold uppercase tracking-widest text-primary";
-const titreSection = "mt-3 max-w-2xl text-[1.625rem] font-bold leading-tight tracking-tight text-text md:text-4xl";
 const classeFiltre =
   "min-h-11 cursor-pointer rounded-full border border-border-strong bg-surface px-4 text-sm font-semibold text-text transition hover:border-primary aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white";
 ---
@@ -232,10 +227,7 @@ const classeFiltre =
     <section id="thematiques" aria-labelledby="thematiques-titre" class="py-14 md:py-28">
       <Container>
         <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <div>
-            <p class={surtitre}>Découvrir</p>
-            <h2 id="thematiques-titre" class={titreSection}>{titreThematiques}</h2>
-          </div>
+          <SectionTitle id="thematiques-titre" eyebrow="Découvrir" title={titreThematiques} />
           <p class="max-w-md leading-relaxed text-text-muted">
             Chaque sortie a un fil conducteur. Choisissez celui qui vous attire.
           </p>
@@ -287,11 +279,8 @@ const classeFiltre =
   <!-- ========== FORMULES ========== -->
   <section id="formules" aria-labelledby="formules-titre" class="bg-surface py-14 md:py-28">
     <Container>
-      <p class={surtitre}>Les formules</p>
       <!-- tabindex="-1" : le script y place le focus après un choix de thématique. -->
-      <h2 id="formules-titre" tabindex="-1" class={`${titreSection} focus:outline-none`}>
-        {info.page.formules}
-      </h2>
+      <SectionTitle id="formules-titre" eyebrow="Les formules" title={info.page.formules} focusable />
 
       {sorties.length === 0 ? (
         <div class="mx-auto mt-10 max-w-xl rounded-3xl border border-border bg-background p-8 text-center md:p-10">
@@ -388,7 +377,7 @@ const classeFiltre =
         -->
         <div class="flex flex-col gap-5 rounded-3xl bg-primary-light/25 p-6 md:flex-row md:items-center md:justify-between md:gap-10 md:p-10">
           <div class="max-w-2xl">
-            <p class={surtitre}>Bientôt</p>
+            <p class={SURTITRE}>Bientôt</p>
             <h2 id="bientot-titre" class="mt-2 text-xl font-bold leading-snug text-text md:text-2xl">
               {bientot.titre}
             </h2>
@@ -445,47 +434,7 @@ const classeFiltre =
   )}
 
   <!-- ========== RÉCITS DU CARNET ========== -->
-  {recits.length > 0 && (
-    <section aria-labelledby="recits-titre" class="py-14 md:py-24">
-      <Container>
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class={surtitre}>Déjà vécu</p>
-            <h2 id="recits-titre" class={titreSection}>{info.page.recits}</h2>
-          </div>
-          <!-- Desktop : en face du titre. Mobile : après la liste. -->
-          <a href="/carnet" class="hidden min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:inline-flex">
-            Tout le carnet →
-          </a>
-        </div>
-
-        <ul class="mt-6 grid gap-3 md:mt-10 md:grid-cols-3 md:gap-6">
-          {recits.map((recit) => (
-            <li class="group relative flex flex-col gap-3 rounded-2xl bg-surface p-5 transition hover:shadow-lg has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus has-[a:focus-visible]:ring-offset-2 md:p-7">
-              {recit.data.tags?.[0] && (
-                <span class="self-start rounded-full bg-primary-light/30 px-3 py-1 text-[13px] font-semibold text-primary">
-                  {recit.data.tags[0]}
-                </span>
-              )}
-              <h3 class="text-lg font-bold leading-snug text-text md:text-xl">
-                <!-- Lien étendu à toute la carte (block link, comme SortieCard). -->
-                <a href={`/carnet/${recit.id}`} class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-hover:text-primary">
-                  {recit.data.title}
-                </a>
-              </h3>
-              <p class="text-sm text-text-muted">
-                <time datetime={recit.data.pubDate.toISOString()}>{formatDate(recit.data.pubDate)}</time>
-              </p>
-            </li>
-          ))}
-        </ul>
-
-        <a href="/carnet" class="mt-3 inline-flex min-h-11 items-center font-semibold text-primary underline-offset-4 hover:underline md:hidden">
-          Tout le carnet →
-        </a>
-      </Container>
-    </section>
-  )}
+  <ListeRecits recits={recits} id="recits-titre" surtitre="Déjà vécu" titre={info.page.recits} />
 
   <!-- ========== AUTRES UNIVERS ========== -->
   <section aria-labelledby="autres-titre" class="py-12 md:py-20">
@@ -511,29 +460,10 @@ const classeFiltre =
     </Container>
   </section>
 
-  <!-- ========== CONTACT ========== -->
-  <section class="bg-primary py-14 md:py-24">
-    <Container>
-      <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-[1.75rem] font-bold tracking-tight text-white md:text-5xl">
-          {info.page.appel}
-        </h2>
-        <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/85 md:mt-4 md:text-lg">
-          Dites-moi ce qui vous attire et avec qui vous venez : je vous propose
-          un itinéraire et une date.
-        </p>
-        <div class="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-6 md:mt-8">
-          <Button href="/contact" variant="secondary" size="lg">Me contacter</Button>
-          <a
-            href={telHref}
-            class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/60 px-7 font-semibold text-white transition hover:bg-white hover:text-primary sm:border-0 sm:px-0 sm:underline sm:underline-offset-4 sm:hover:bg-transparent sm:hover:text-white"
-          >
-            Appeler le {PHONE_NUMBER}
-          </a>
-        </div>
-      </div>
-    </Container>
-  </section>
+  <AppelContact titre={info.page.appel}>
+    Dites-moi ce qui vous attire et avec qui vous venez : je vous propose
+    un itinéraire et une date.
+  </AppelContact>
 </BaseLayout>
 
 <script>

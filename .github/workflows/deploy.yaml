@@ -39,6 +39,8 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      # Retire les devDependencies (astro check, typescript) avant l'envoi de node_modules.
+      - run: npm prune --omit=dev
 
       - name: Configure SSH
         if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')

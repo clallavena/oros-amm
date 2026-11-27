@@ -1,18 +1,11 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Container from "../../components/Container.astro";
-import { getCollection } from "astro:content";
+import { getRecits } from "../../lib/carnet";
+import { formatDate } from "../../lib/dates";
 
-const posts = (await getCollection("carnet")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const posts = await getRecits();
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 ---
 
 <BaseLayout

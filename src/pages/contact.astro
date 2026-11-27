@@ -6,7 +6,7 @@ import Container from "../components/Container.astro";
 import SectionTitle from "../components/SectionTitle.astro";
 import { UNIVERS, UNIVERS_INFO } from "../lib/univers";
 import { getSorties } from "../lib/sorties";
-import { CONTACT_EMAIL, PHONE_NUMBER } from "../lib/site";
+import { CONTACT_EMAIL, PHONE_NUMBER, TEL_HREF } from "../lib/site";
 import { TITRE, TITRE_MAJ } from "../lib/statut";
 import { actions, isInputError } from "astro:actions";
 
@@ -313,7 +313,7 @@ const etiquette = "text-sm font-semibold text-text";
               </li>
               <li>
                 <a
-                  href={`tel:${PHONE_NUMBER.replace(/[\s\-\(\)]/g, "")}`}
+                  href={TEL_HREF}
                   class="font-medium text-primary"
                 >
                   {PHONE_NUMBER}

@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Container from "../../components/Container.astro";
 import { getCollection, render } from "astro:content";
+import { formatDate } from "../../lib/dates";
 
 export async function getStaticPaths() {
   const posts = await getCollection("carnet");
@@ -14,12 +15,6 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 ---
 
 <BaseLayout
